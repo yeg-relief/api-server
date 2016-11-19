@@ -1,0 +1,7 @@
+curl -H "Content-Type: application/json" -XPOST -d '[ {" name": "age", "type": "number"}]' 'localhost:3000/keys/' | python -m json.tool
+
+curl -XGET 'localhost:3000/keys/' | python -m json.tool
+
+curl -H "Content-Type: application/json"  -XPOST 'localhost:3000/keys/' | python -m json.tool
+
+curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"age","type":"number"}]}'   'localhost:3000/keys/' | python -m json.tool
