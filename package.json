@@ -5,6 +5,10 @@
   "main": "app/index.js",
   "author": "Steven Myers",
   "license": "MIT",
+  "scripts": {
+    "start": "node --harmony-async-await app/index.js",
+    "seed": "node --harmony-async-await app/es/seed.js"
+  },
   "dependencies": {
     "babel-eslint": "6",
     "eslint": "^3.10.2",

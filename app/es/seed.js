@@ -9,9 +9,12 @@ emptyMapping[utils.CONSTANTS.TYPE] = {
 
 
 // will clear index if it exists
-async function seed(client) {
-  const driver = client || elasticsearch.Client({host: 'localhost:9200'});
-  await utils.testConnect(driver);
+async function seed(client, host = 'localhost:9200') {
+  const driver = client || elasticsearch.Client({host: host});
+  const connected = await utils.testConnect(driver);
+  if (!connected) {
+    throw new Error(`unable to ping test connection on ${host}`);
+  }
   const indexExists = await utils.indexExists(driver, utils.CONSTANTS.INDEX);
   if (indexExists) {
     await utils.deleteIndex(driver, utils.CONSTANTS.INDEX);

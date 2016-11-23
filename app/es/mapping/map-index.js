@@ -1,7 +1,7 @@
 const utils = require('../utils');
 
 module.exports = {
-  updateMasterMapping
+  addKeys
 };
 
 async function extractMasterMapping(client) {
@@ -15,8 +15,22 @@ async function extractMasterMapping(client) {
   return Object.assign({}, mappingReqRes[utils.CONSTANTS.INDEX].mappings[utils.CONSTANTS.TYPE].properties);
 }
 
-// poor naming? used for updating the mappings
-function compareProperties(upload, old){
+// poor naming? used when we need to add keys, compares current properties and missing properties
+function compareAddProperties(upload, old){
+  if (upload === undefined || old === undefined) {
+    throw new Error('[ADD_KEYS] upload or old undefined in app/es/mapping/map-index.compareAddProperties');
+  }
+
+  /* key in this context is just a property name
+  old:{                         upload: {           missing: {
+      age: 'integer',             income: 'integer'   income: 'integer'
+      married: 'boolean'
+    }                           }                   }
+
+    have to find missing, because we have to redefine mapping to include both new keys and old keys.
+    if, it does not matter that there is a redefinition we can simplify into one Object.assign(old, upload).
+    TODO: determine if it is possible to remap fields dynamically.
+  */
   const missing = Object.keys(upload).reduce((missing, key) => {
     if (old.hasOwnProperty(key) && upload[key].type === old[key].type) {
       return missing;
@@ -29,6 +43,7 @@ function compareProperties(upload, old){
   return Object.assign(old, missing);
 }
 
+
 // *** NEED TO ENSURE THAT A KEY DOES NOT HAVE A TYPE 'number' ****
 function keysToProperties(keys) {
   return keys.reduce( (properties, key) => {
@@ -40,10 +55,10 @@ function keysToProperties(keys) {
   }, {});
 }
 
-async function updateMasterMapping(client, newMapping) {
+async function addKeys(client, newMapping) {
   const currentMapping = await extractMasterMapping(client);
   const properties = keysToProperties(newMapping);
-  const updatedMapping = compareProperties(properties, currentMapping);
+  const updatedMapping = compareAddProperties(properties, currentMapping);
   const update = await utils.initMapping(client, utils.CONSTANTS.INDEX, utils.CONSTANTS.TYPE, updatedMapping);
   return update;
 }

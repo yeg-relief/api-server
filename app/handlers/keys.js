@@ -6,31 +6,24 @@ mapIndex     = require('../es/mapping/map-index'),
 utils        = require('../es/utils');
 
 class KeyHandler {
-  // make it available to set client with a config
-  static setConfig(config) {
-    if(config) {
-      this.CONFIG = Object.assign({}, config);
-    } else {
-      this.CONFIG = {
-        client: undefined
-      };
-    }
-  }
-
+  /*
+    mutate the application level router to handle all routes in the 'keys' API.
+  */
   static addRoutes(client, router) {
-    // bootstrapping
-    if (client === undefined && this.CONFIG.client === undefined) {
-      throw new Error('CONFIG.client and client argument both undefined in KeyHandler');
+    if (client === undefined) {
+      throw new Error('[BOOTSTRAP]: client argument undefined in KeyHandler');
     }
-    const cli = client || this.CONFIG.client;
     const api = Router();
     api.use(bodyParser.json());
 
-    // get the mapping for percolator index
-    api.get('/', getAllKeys(cli));
-    api.post('/', addKeys(cli));
-    // the router that was passed in as an argument is now composed from the api
-    // just built
+    // get the keys/properties for masterscreener
+    api.get('/', getAllKeys(client));
+    // add keys/properties to masterscreener
+    api.post('/', addKeys(client));
+    // delete keys/properties from masterscreener
+    api.delete('/', deleteKeys(client));
+    // sets the router arguement to use our 'keys' api
+    // this is the router that handles all incoming requests
     router.use('/keys', api);
   }
 }
@@ -62,18 +55,14 @@ function getAllKeys(cli) {
         }));
       })
       .catch(e => {
-        res.statusCode = 500;
         if (e.message === `mapping does not exists on ${utils.CONSTANTS.INDEX}/${utils.CONSTANTS.TYPE}`) {
           res.statusCode = 200;
           res.end(JSON.stringify({
             message: e.message,
             keys: []
           }));
-        } else if (e.message === undefined){
-          res.end(JSON.stringify({
-            message: 'undefined'
-          }));
         } else {
+          res.statusCode = 500;
           res.end(JSON.stringify({
             message: e.message
           }));
@@ -92,7 +81,7 @@ function addKeys(cli) {
         message: 'keys are undefined'
       }));
     }
-    mapIndex.updateMasterMapping(cli, req.body.keys)
+    mapIndex.addKeys(cli, req.body.keys)
       .then(update => {
         res.end(JSON.stringify({
           update: update
