@@ -1,6 +1,7 @@
 const CONSTANTS = {
   INDEX: 'master_screener',
-  TYPE: 'screener'
+  TYPE: 'screener',
+  QUERIES: 'queries'
 };
 
 module.exports = {
@@ -67,10 +68,10 @@ function mappingExists(elasticClient, indexName, typeName){
   });
 }
 
-function addPercolator(elasticClient, indexName, id, query){
+function addPercolator(elasticClient, id, query){
   return elasticClient.index({
-    index: indexName,
-    type: '.percolator',
+    index: CONSTANTS.INDEX,
+    type: CONSTANTS.QUERIES,
     id: id,
     body: {
       query

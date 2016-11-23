@@ -20,8 +20,6 @@ class KeyHandler {
     api.get('/', getAllKeys(client));
     // add keys/properties to masterscreener
     api.post('/', addKeys(client));
-    // delete keys/properties from masterscreener
-    api.delete('/', deleteKeys(client));
     // sets the router arguement to use our 'keys' api
     // this is the router that handles all incoming requests
     router.use('/keys', api);
