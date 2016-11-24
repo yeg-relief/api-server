@@ -68,11 +68,10 @@ function mappingExists(elasticClient, indexName, typeName){
   });
 }
 
-function addPercolator(elasticClient, id, query){
+function addPercolator(elasticClient, query){
   return elasticClient.index({
     index: CONSTANTS.INDEX,
     type: CONSTANTS.QUERIES,
-    id: id,
     body: {
       query
     }

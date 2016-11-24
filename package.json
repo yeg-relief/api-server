@@ -7,13 +7,18 @@
   "license": "MIT",
   "scripts": {
     "start": "node --harmony-async-await app/index.js",
-    "seed": "node --harmony-async-await app/es/seed.js"
+    "seed": "node --harmony-async-await app/es/seed.js",
+    "test": "./node_modules/mocha/bin/mocha --harmony-async-await"
   },
   "dependencies": {
     "babel-eslint": "6",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "elasticsearch-sanitize": "^2.0.0",
     "eslint": "^3.10.2",
     "eslint-plugin-async-await": "^0.0.0",
     "finalhandler": "^0.5.1",
+    "mocha": "^3.1.2",
     "node-uuid": "^1.4.7",
     "router": "^1.1.4",
     "rxjs": "^5.0.0-rc.3"

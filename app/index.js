@@ -11,11 +11,11 @@ router        = Router();
 
 // handler functions for calls
 const
-KeyHandler   = require('./handlers/keys').KeyHandler;
-
+KeyHandler     = require('./handlers/keys').KeyHandler,
+ProgramHandler = require('./handlers/programs').ProgramHandler;
 // apply all the api to the router
 KeyHandler.addRoutes(client, router);
-
+ProgramHandler.addRoutes(client, router);
 
 router.get('/ping', (_, res) => {
   res.statusCode = 200;

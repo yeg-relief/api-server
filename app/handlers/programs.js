@@ -3,11 +3,6 @@ bodyParser   = require('body-parser'),
 Router       = require('router'),
 percolator   = require('../es/percolator/init-percolator');
 
-module.exports = {
-  ProgramHandler
-};
-
-
 class ProgramHandler {
   static addRoutes(client, router) {
     if (client === undefined) {
@@ -24,6 +19,10 @@ class ProgramHandler {
   }
 }
 
+module.exports = {
+  ProgramHandler
+};
+
 function addQueries(client) {
   return (req, res) => {
     res.statusCode = 200;
@@ -34,7 +33,7 @@ function addQueries(client) {
         message: 'queries are undefined'
       }));
     }
-    percolator.addQueries(client, req.body.queries)
+    percolator.modules.addQueries(client, req.body.queries)
       .then( queries => res.end(JSON.stringify({ update: queries})) )
       .catch( error => {
         res.end(JSON.stringify({

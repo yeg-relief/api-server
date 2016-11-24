@@ -8,7 +8,13 @@ const utils = require('../utils');
     * deduplicating queries... done on client side but double checked here
 */
 exports.modules = {
-  addQueries
+  addQueries,
+  test: {
+    AppQueryESqueryConverter,
+    parseNumberCondition,
+    parseQualifiedNumberCondition,
+    parseBooleanCondition,
+  }
 };
 
 // the query structure in our app is different than the query structure used
@@ -48,9 +54,7 @@ function parseNumberCondition(condition) {
   if (condition.qualifier === undefined) {
     throw new Error('conditon qualifier undefined');
   } else if (condition.qualifier === 'equal') {
-    const obj = {
-      term: {}
-    };
+    const obj = { term: {} };
     obj.term[condition.key.name] = condition.value;
     return obj;
   } else {
@@ -61,34 +65,29 @@ function parseNumberCondition(condition) {
 }
 
 function parseQualifiedNumberCondition(condition) {
-  const obj = {
-    range: {
-
-    }
-  };
-  obj.condition.range[condition.key.name];
+  const obj = { range: {  } };
   // return statements are 'hidden' in these cases
   switch(condition.qualifier) {
     case 'lessThan': {
-      obj.condition.range[condition.key.name] = {
+      obj.range[condition.key.name] = {
         lt: condition.value
       };
       return obj;
     }
     case 'lessThanOrEqual': {
-      obj.condition.range[condition.key.name] = {
+      obj.range[condition.key.name] = {
         lte: condition.value
       };
       return obj;
     }
     case 'greaterThanOrEqual': {
-      obj.condition.range[condition.key.name] = {
+      obj.range[condition.key.name] = {
         gte: condition.value
       };
       return obj;
     }
     case 'greaterThan': {
-      obj.condition.range[condition.key.name] = {
+      obj.range[condition.key.name] = {
         gt: condition.value
       };
       return obj;
@@ -100,9 +99,7 @@ function parseQualifiedNumberCondition(condition) {
 }
 
 function parseBooleanCondition(condition) {
-  const obj = {
-    term: {}
-  };
+  const obj = { term: {} };
   obj.term[condition.key.name] = condition.value;
   return obj;
 }
@@ -111,7 +108,7 @@ async function addQueries(client, queries) {
   const promises = queries.reduce( (accum, query) => {
     const convertedQuery = AppQueryESqueryConverter(query);
     // must update the id prior to reaching here
-    const promise = utils.addPercolator(client, query.id, convertedQuery);
+    const promise = utils.addPercolator(client, convertedQuery);
     return [promise, ...accum];
   }, []);
   const response = await Promise.all(promises);
