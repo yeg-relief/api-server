@@ -15,7 +15,7 @@ class ProgramHandler {
     api.post('/', addQueries(client));
     // sets the router arguement to use our 'programs' api
     // this is the router that handles all incoming requests for the server
-    router.use('/programs', api);
+    router.use('/programs/', api);
   }
 }
 
@@ -30,7 +30,7 @@ function addQueries(client) {
     if(req.body.queries === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
-        message: 'queries are undefined'
+        message: 'programs are undefined'
       }));
     }
     percolator.modules.addQueries(client, req.body.queries)

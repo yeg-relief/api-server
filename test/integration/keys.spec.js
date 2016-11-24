@@ -3,8 +3,6 @@ chai      = require('chai'),
 chaiHttp  = require('chai-http');
 
 chai.use(chaiHttp);
-// Integration tests
-
 const HOST = 'http://localhost:3000';
 
 it('a get request at the keys index returns 200 and a keys array', function(done) {

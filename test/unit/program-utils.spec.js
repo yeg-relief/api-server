@@ -1,6 +1,6 @@
 const
 expect      = require('chai').expect,
-programUtils = require('../app/utils/programs');
+programUtils = require('../../app/utils/programs');
 
 describe('programUtils is a set of functions that ... TODO: describe', function() {
   it('\n applyGUID generates a guid and assigns it to a new program', function() {

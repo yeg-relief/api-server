@@ -1,6 +1,6 @@
 const
 expect = require('chai').expect,
-initPercolator = require('../app/es/percolator/init-percolator');
+initPercolator = require('../../app/es/percolator/init-percolator');
 
 describe('initPercolator.test is a set of functions that focus on converting our Application Query to a proper ES Query', function() {
   it('\ncan form a proper boolean query', function() {
