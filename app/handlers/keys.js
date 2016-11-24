@@ -54,7 +54,6 @@ function getAllKeys(cli) {
       })
       .catch(e => {
         if (e.message === `mapping does not exists on ${utils.CONSTANTS.INDEX}/${utils.CONSTANTS.TYPE}`) {
-          res.statusCode = 200;
           res.end(JSON.stringify({
             message: e.message,
             keys: []
