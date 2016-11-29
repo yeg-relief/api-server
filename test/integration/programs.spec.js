@@ -36,7 +36,18 @@ it('can register a query for a new program', function(done) {
       }
     ],
     user: {
-
+      guid: 'new',
+      description: {
+        guid: 'new',
+        title: 'a test program',
+        details: 'this is just a test to see if i can upload a new program',
+        externalLink: 'http://test.not.real.address'
+      },
+      created: '',
+      tags: [
+        'test',
+        'fake'
+      ]
     }
   };
 
@@ -44,9 +55,8 @@ it('can register a query for a new program', function(done) {
     .post('/programs/')
     .send(mockProgram)
     .end(function(err, res){
-      chai.expect(res).to.have.status(200);
       // expect no error
-      console.log(res);
+      chai.expect(res).to.have.status(200);
       done();
     });
 });

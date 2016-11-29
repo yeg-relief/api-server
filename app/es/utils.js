@@ -1,4 +1,4 @@
-const CONSTANTS = {
+const PERCOLATOR_CONSTANTS = {
   INDEX: 'master_screener',
   TYPE: 'screener',
   QUERIES: 'queries'
@@ -19,7 +19,7 @@ module.exports = {
   percolateDocument,
   search,
   testConnect,
-  CONSTANTS
+  CONSTANTS: PERCOLATOR_CONSTANTS
 };
 
 /*
@@ -70,8 +70,8 @@ function mappingExists(elasticClient, indexName, typeName){
 
 function addPercolator(elasticClient, query){
   return elasticClient.index({
-    index: CONSTANTS.INDEX,
-    type: CONSTANTS.QUERIES,
+    index: PERCOLATOR_CONSTANTS.INDEX,
+    type: PERCOLATOR_CONSTANTS.QUERIES,
     body: {
       query
     }
@@ -88,11 +88,10 @@ function percolateDocument(elasticClient, indexName, typeName, doc){
   });
 }
 
-function indexDoc(elasticClient, indexName, id, doc, type){
+function indexDoc(elasticClient, indexName, doc, type){
   if (type === undefined){
     return elasticClient.index({
       index: indexName,
-      id: id,
       body: {
         doc
       }
@@ -101,7 +100,6 @@ function indexDoc(elasticClient, indexName, id, doc, type){
     return elasticClient.index({
       index: indexName,
       type: type,
-      id: id,
       body: {
         doc
       }
@@ -152,11 +150,6 @@ function getMapping(elasticClient, index, type){
   });
 }
 
-/**
-  tests the connection to the elastic search server
-  @param {Object} elasticClient - driver for elasticsearch
-  @return {Promise}
- */
 function testConnect(elasticClient) {
   return new Promise(
     (resolve, reject) => {

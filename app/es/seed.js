@@ -11,36 +11,55 @@ const percolatorMapping = {
     }
 };
 
-
-// will clear index if it exists
+// TODO: make less procedural
 async function seed(client, host = 'localhost:9200') {
   const driver = client || elasticsearch.Client({host: host});
 
   // delete index if exists, add empty mapping for screener type
-  const indexExists = await utils.indexExists(driver, utils.CONSTANTS.INDEX);
-  if (indexExists) {
+  const masterScreenerIndexExists = await utils.indexExists(driver, utils.CONSTANTS.INDEX);
+  if (masterScreenerIndexExists) {
     await utils.deleteIndex(driver, utils.CONSTANTS.INDEX);
   }
+  let programsIndexExists = await utils.indexExists(driver, 'programs');
+  if (programsIndexExists) {
+    await utils.deleteIndex(driver, 'programs');
+  }
+
+
   await utils.initIndex(driver, utils.CONSTANTS.INDEX);
   // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html
   // add mapping for screener type
   await utils.initMapping(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.TYPE, emptyMapping);
   // add mapping for percolator/query type
   await utils.initMapping(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.QUERIES, percolatorMapping);
-  // ensure the mappings exist
-  const screenerExists = await utils.mappingExists(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.TYPE);
-  if (!screenerExists) {
+
+  // ensure "master-screener" index exists
+  const screenerIndexExists = await utils.indexExists(driver, utils.CONSTANTS.INDEX);
+  if (!screenerIndexExists) {
+    throw new Error('unable to set up screener index');
+  }
+
+  // create mappings
+  const screenerMappingExists = await utils.mappingExists(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.TYPE);
+  const queriesExists = await utils.mappingExists(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.QUERIES);
+  if (!screenerMappingExists) {
     throw new Error('screener mapping does not exist');
   }
-  const queriesExists = await utils.mappingExists(driver, utils.CONSTANTS.INDEX, utils.CONSTANTS.QUERIES);
+
   if (!queriesExists) {
     throw new Error('query mapping does not exist');
+  }
+  // we will rely on dynamic mappings for the programs index
+  await utils.initIndex(driver, 'programs');
+  programsIndexExists = await utils.indexExists(driver, 'programs');
+  if (!programsIndexExists) {
+    throw new Error('unable to set up programs index');
   }
   return true;
 }
 
-function init(){
-  seed().then(success => console.error(`seed program was a success: ${success}`)).catch(e => console.error(e.message));
+function main(){
+  seed().then(success => console.log(`seed program was a success: ${success}`)).catch(e => console.error(e.message));
 }
 
-init();
+main();

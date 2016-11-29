@@ -19,19 +19,17 @@ describe('initPercolator.test is a set of functions that focus on converting our
       ]
     };
     const expected = {
-      query: {
-        bool: {
-          must: [
-            {
-              term: {
-                married: true
-              }
+      bool: {
+        must: [
+          {
+            term: {
+              married: true
             }
-          ]
-        }
+          }
+        ]
       }
     };
-    const actual = initPercolator.modules.test.AppQueryESqueryConverter(query);
+    const actual = initPercolator.test.AppQueryESqueryConverter(query);
     expect(expected).to.deep.equal(actual);
   });
 
@@ -53,21 +51,19 @@ describe('initPercolator.test is a set of functions that focus on converting our
     };
 
     const expected = {
-      query: {
-        bool: {
-          must: [
-            {
-              range: {
-                age: {
-                  lt: 10
-                }
+      bool: {
+        must: [
+          {
+            range: {
+              age: {
+                lt: 10
               }
             }
-          ]
-        }
+          }
+        ]
       }
     };
-    const actual = initPercolator.modules.test.AppQueryESqueryConverter(query);
+    const actual = initPercolator.test.AppQueryESqueryConverter(query);
     expect(expected).to.deep.equal(actual);
   });
 });

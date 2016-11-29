@@ -7,7 +7,7 @@ const utils = require('../utils');
     * ensuring queries are well formed
     * deduplicating queries... done on client side but double checked here
 */
-exports.modules = {
+module.exports = {
   addQueries,
   test: {
     AppQueryESqueryConverter,

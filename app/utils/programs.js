@@ -9,9 +9,14 @@ module.exports = {
 
 function applyGUID(program) {
   if (program.guid === 'new') {
-    Object.assign(program, {
-      guid: guid.v4()
+    const newGuid = guid.v4();
+    program.guid = newGuid;
+    program.application.guid = newGuid;
+    program.application.forEach( query => {
+      query.guid = newGuid;
     });
+    program.user.guid = newGuid;
+    program.user.description.guid = newGuid;
   }
   return program;
 }
