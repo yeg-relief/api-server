@@ -22,14 +22,12 @@ exports.modules = {
 function AppQueryESqueryConverter(applicationQuery) {
   // could use a filter. Most likely negligible improvement for our small dataset
   const convertedQuery = {
-    query: {
-      bool: {
-        must: [ ]
-      }
+    bool: {
+      must: [ ]
     }
   };
   // build our query from the conditions associate with the program
-  convertedQuery.query.bool.must = applicationQuery.conditions.reduce( (accum, condition) => {
+  convertedQuery.bool.must = applicationQuery.conditions.reduce( (accum, condition) => {
     switch(condition.type) {
       case 'number': {
         if( condition.qualifier === undefined) {

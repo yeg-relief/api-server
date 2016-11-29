@@ -7,3 +7,42 @@ curl -H "Content-Type: application/json"  -XPOST 'localhost:3000/keys/' | python
 curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"age","type":"number"}]}'   'localhost:3000/keys/' | python -m json.tool
 
 curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"income","type":"number"}]}'   'localhost:3000/keys/' | python -m json.tool
+
+curl -XPUT 'localhost:9200/master_screener/queries/1?refresh&pretty' -d'
+{
+   "query" : {
+       "bool" : {
+           "must" : [
+              {
+                "term": {
+                  "age": 10
+                }
+              }
+           ]
+       }
+   }
+}'
+
+curl -H "Content-Type: application/json" -XPOST  'localhost:3000/programs/' -d'
+{
+  "guid": 'new',
+  "application": [
+    {
+      "guid": 'new',
+      "conditions": [
+        {
+          "key": {
+            "name": 'age',
+            "type": 'number'
+          },
+          "value": 10,
+          "qualifier": 'equal',
+          "type": 'number'
+        }
+      ]
+    }
+  ],
+  "user": {
+
+  }
+}'

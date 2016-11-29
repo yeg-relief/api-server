@@ -25,17 +25,20 @@ module.exports = {
 
 function addQueries(client) {
   return (req, res) => {
+    console.log('CALLED');
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    if(req.body.queries === undefined) {
+    if(req.body === undefined || req.body.application === undefined || req.body.user === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
-        message: 'programs are undefined'
+        message: 'program is not well formed'
       }));
     }
-    percolator.modules.addQueries(client, req.body.queries)
+    const application = req.body.application;
+    percolator.modules.addQueries(client, application)
       .then( queries => res.end(JSON.stringify({ update: queries})) )
       .catch( error => {
+        res.statusCode = 500;
         res.end(JSON.stringify({
           message: error.message
         }));
