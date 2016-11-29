@@ -5,17 +5,20 @@ finalhandler  = require('finalhandler'),
 Router        = require('router'),
 // elasticsearch client
 elasticsearch = require('elasticsearch'),
-client = elasticsearch.Client({host: 'localhost:9200', log: 'trace'}),
+client        = elasticsearch.Client({host: 'localhost:9200', log: 'trace'}),
 // the router for our app
 router        = Router();
 
 // handler functions for calls
 const
-KeyHandler     = require('./handlers/keys').KeyHandler,
-ProgramHandler = require('./handlers/programs').ProgramHandler;
+KeyHandler            = require('./handlers/keys').KeyHandler,
+ProgramHandler        = require('./handlers/programs').ProgramHandler,
+UserScreenerHandler   = require('./handlers/percolate').UserDocumentHandler;
+
 // apply all the api to the router
-KeyHandler.addRoutes(client, router);
-ProgramHandler.addRoutes(client, router);
+KeyHandler.addRoutes(client, router); // /keys/
+ProgramHandler.addRoutes(client, router); // /programs/
+UserScreenerHandler.addRoutes(client, router); // /userMasterScreener/ TODO: think of better name
 
 router.get('/ping', (_, res) => {
   res.statusCode = 200;

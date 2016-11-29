@@ -78,12 +78,17 @@ function addPercolator(elasticClient, query){
   });
 }
 
-function percolateDocument(elasticClient, indexName, typeName, doc){
-  return elasticClient.percolate({
-    index: indexName,
-    type: typeName,
+function percolateDocument(elasticClient, doc){
+  return elasticClient.search({
+    index: PERCOLATOR_CONSTANTS.INDEX,
     body: {
-      doc
+      query: {
+        percolate: {
+          field: 'query',
+          document_type: PERCOLATOR_CONSTANTS.TYPE,
+          document: doc
+        }
+      }
     }
   });
 }

@@ -8,14 +8,13 @@ applyGUID    = require('../utils/programs').applyGUID;
 class ProgramHandler {
   static addRoutes(client, router) {
     if (client === undefined) {
-      throw new Error('[BOOTSTRAP]: client argument undefined in KeyHandler');
+      throw new Error('[BOOTSTRAP]: client argument undefined in ProgramHandler');
     }
     const api = Router();
     api.use(bodyParser.json());
 
     // add queries for programs to the ES /search index
     api.post('/', uploadNewProgram(client));
-    // sets the router arguement to use our 'programs' api
     // this is the router that handles all incoming requests for the server
     router.use('/programs/', api);
   }
