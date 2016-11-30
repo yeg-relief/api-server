@@ -6,10 +6,23 @@ const emptyMapping = {
 };
 
 const percolatorMapping = {
-  'query': {
-      'type': 'percolator'
+  query: {
+      type: 'percolator'
     }
 };
+
+const programMapping = {
+  guid: {
+    type: 'keyword',
+  },
+  created: {
+    type: 'date'
+  },
+  tags: {
+    type: 'keyword',
+  }
+};
+
 
 // TODO: make less procedural
 async function seed(client, host = 'localhost:9200') {
@@ -54,6 +67,11 @@ async function seed(client, host = 'localhost:9200') {
   programsIndexExists = await utils.indexExists(driver, 'programs');
   if (!programsIndexExists) {
     throw new Error('unable to set up programs index');
+  }
+  await utils.initMapping(driver, 'programs', 'user_facing', programMapping);
+  const userProgrammingMappingExists = await utils.mappingExists(driver, 'programs', 'user_facing');
+  if (!userProgrammingMappingExists) {
+    throw new Error('unable to map programs/user_facing');
   }
   return true;
 }

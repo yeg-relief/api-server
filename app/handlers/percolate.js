@@ -1,7 +1,8 @@
 const
 bodyParser   = require('body-parser'),
 Router       = require('router'),
-percolator   = require('../es/percolator/percolate-document').percolateUserData;
+percolator   = require('../es/percolator/percolate-document').percolateUserData,
+search       = require('../es/programs/search').searchProgramByGuid;
 
 // handle a user submitted 'master screener' form
 class UserDocumentHandler {
@@ -35,14 +36,11 @@ function percolateUserData(client) {
     }
 
     const data = req.body.data;
-    console.log('*** data ***');
-    console.log(data);
     percolator(client, data)
-      .then(data => res.end(JSON.stringify({response: data})))
+      .then(guids => search(client, guids))
+      .then(programs => res.end(JSON.stringify({programs: programs})))
       .catch(error => {
         res.statusCode = 500;
-        console.log('*** error ****');
-        console.log(error.message);
         res.end(JSON.stringify({
           message : error.message
         }));

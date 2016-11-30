@@ -59,7 +59,6 @@ function uploadNewProgram(client) {
       .then( () => programs.handleProgramUpload(client, program))
       .then( () => res.end(JSON.stringify({created: true})))
       .catch( error => {
-        console.error(error.message);
         res.statusCode = 500;
         res.end(JSON.stringify({
           message: error.message

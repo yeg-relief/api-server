@@ -16,7 +16,6 @@ function applyGUID(program) {
       query.guid = newGuid;
     });
     program.user.guid = newGuid;
-    program.user.description.guid = newGuid;
   }
   return program;
 }

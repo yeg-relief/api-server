@@ -105,8 +105,10 @@ function parseBooleanCondition(condition) {
 async function addQueries(client, queries) {
   const promises = queries.reduce( (accum, query) => {
     const convertedQuery = AppQueryESqueryConverter(query);
-    // must update the id prior to reaching here
-    const promise = utils.addPercolator(client, convertedQuery);
+    const meta = {
+      program_guid: query.guid
+    };
+    const promise = utils.addPercolator(client, convertedQuery, meta);
     return [promise, ...accum];
   }, []);
   const response = await Promise.all(promises);

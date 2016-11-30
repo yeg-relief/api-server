@@ -68,12 +68,16 @@ function mappingExists(elasticClient, indexName, typeName){
   });
 }
 
-function addPercolator(elasticClient, query){
+function addPercolator(elasticClient, query, meta){
+  if (meta === undefined) {
+    throw new Error('attempting to add percolator without meta information');
+  }
   return elasticClient.index({
     index: PERCOLATOR_CONSTANTS.INDEX,
     type: PERCOLATOR_CONSTANTS.QUERIES,
     body: {
-      query
+      query,
+      meta
     }
   });
 }
@@ -88,12 +92,15 @@ function percolateDocument(elasticClient, doc){
           document_type: PERCOLATOR_CONSTANTS.TYPE,
           document: doc
         }
+      },
+      _source: {
+        includes: 'meta.*'
       }
     }
   });
 }
 
-function indexDoc(elasticClient, indexName, doc, type){
+function indexDoc(elasticClient, indexName, doc, type, id){
   if (type === undefined){
     return elasticClient.index({
       index: indexName,
@@ -105,6 +112,7 @@ function indexDoc(elasticClient, indexName, doc, type){
     return elasticClient.index({
       index: indexName,
       type: type,
+      id: id,
       body: {
         doc
       }
@@ -112,13 +120,20 @@ function indexDoc(elasticClient, indexName, doc, type){
   }
 }
 
-function search(elasticClient, index, type, query){
+function search(elasticClient, index, type, guid){
   return elasticClient.search({
     index: index,
     type: type,
     body: {
-      query: query
+      query: {
+        constant_score : {
+          filter : {
+            term : { guid : guid}
+          }
+        }
+      }
     }
+
   });
 }
 
@@ -127,7 +142,7 @@ function mGet(elasticClient, index, type, ids){
     index: index,
     type: type,
     body: {
-      ids: ids
+      ids
     }
   });
 }

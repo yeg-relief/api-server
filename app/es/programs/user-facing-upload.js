@@ -10,7 +10,7 @@ async function handleProgramUpload(client, program) {
   if (program.guid === 'new') {
     throw new Error('program guid is not assigned in handleProgramUpload');
   }
-  const res = await utils.indexDoc(client, 'programs', program, 'user_facing');
+  const res = await utils.indexDoc(client, 'programs', program, 'user_facing', program.guid);
   return res;
 }
 

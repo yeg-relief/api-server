@@ -48,12 +48,6 @@ it('can register a query for a new program', function(done) {
     ],
     user: {
       guid: 'new',
-      description: {
-        guid: 'new',
-        title: 'a test program',
-        details: 'this is just a test to see if i can upload a new program',
-        externalLink: 'http://test.not.real.address'
-      },
       created: '',
       tags: [
         'test',

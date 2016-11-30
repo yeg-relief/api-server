@@ -12,7 +12,7 @@ const HOST = 'http://localhost:3000';
 
 // IF YOU THINK THIS MAKES ME A BAD PROGRAMMER THEN FIGHT ME IRL LUL
 
-/*
+
 it('will percolate a user submitted master screener data', function(done) {
   const mockMasterScreener = {
     data: {
@@ -25,10 +25,11 @@ it('will percolate a user submitted master screener data', function(done) {
     .post('/userMasterScreener/')
     .send(mockMasterScreener)
     .end(function(err, res){
+      console.log(res.body.programs);
+      console.log(res.body.message);
       // expect no error
       chai.expect(res).to.have.status(200);
-      console.log(res.body.response);
+
       done();
     });
 });
-*/

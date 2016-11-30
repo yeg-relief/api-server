@@ -57,3 +57,9 @@ curl -H "Content-Type: application/json" -XPOST  'localhost:3000/programs/' -d'
     ]
   }
 }'
+
+curl -XGET 'localhost:9200/programs/_analyze?pretty' -d'
+{
+    "field": "guid",
+    "text": "0e47b4ee-7d4d-4c9d-9a9f-22fb9a5643fa"
+}'
