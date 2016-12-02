@@ -120,18 +120,12 @@ function indexDoc(elasticClient, indexName, doc, type, id){
   }
 }
 
-function search(elasticClient, index, type, guid){
+function search(elasticClient, index, type, query){
   return elasticClient.search({
     index: index,
     type: type,
     body: {
-      query: {
-        constant_score : {
-          filter : {
-            term : { guid : guid}
-          }
-        }
-      }
+      query
     }
 
   });

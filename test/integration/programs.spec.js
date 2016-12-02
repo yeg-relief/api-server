@@ -47,12 +47,14 @@ it('can register a query for a new program', function(done) {
       }
     ],
     user: {
-      guid: 'new',
       created: '',
       tags: [
         'test',
         'fake'
-      ]
+      ],
+      title: 'a fake program',
+      details: 'this is a fake program to upload',
+      externalLink: 'http://website.ca'
     }
   };
 

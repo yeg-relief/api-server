@@ -12,15 +12,10 @@ const percolatorMapping = {
 };
 
 const programMapping = {
-  guid: {
-    type: 'keyword',
-  },
-  created: {
-    type: 'date'
-  },
-  tags: {
-    type: 'keyword',
-  }
+  title: { type: 'string'},
+  externalLink: { type: 'string'},
+  tags: { type: 'keyword'},
+  created: { type: 'date' }
 };
 
 

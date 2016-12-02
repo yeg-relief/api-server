@@ -25,7 +25,7 @@ module.exports = {
 };
 
 function percolateUserData(client) {
-  return (req, res) => {
+  return (req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     if (req.body === undefined || req.body.data === undefined) {
@@ -33,6 +33,7 @@ function percolateUserData(client) {
       res.end(JSON.stringify({
         message: 'master_screener user data is not well formed'
       }));
+      return next();
     }
 
     const data = req.body.data;

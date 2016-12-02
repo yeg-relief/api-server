@@ -3,8 +3,7 @@ guid          = require('node-uuid'),
 escapeElastic = require('elasticsearch-sanitize');
 
 module.exports = {
-  applyGUID,
-  sanitize
+  applyMetaData
 };
 
 function applyGUID(program) {
@@ -15,8 +14,21 @@ function applyGUID(program) {
     program.application.forEach( query => {
       query.guid = newGuid;
     });
-    program.user.guid = newGuid;
   }
+  return program;
+}
+
+function applyTimestamp(program) {
+  if (program.created === '' || program.created === undefined || program.created === 0) {
+    program.user.created = (new Date).getTime();
+  }
+  return program;
+}
+
+function applyMetaData(program) {
+  console.log(program);
+  applyGUID(program);
+  applyTimestamp(program);
   return program;
 }
 

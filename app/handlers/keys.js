@@ -68,7 +68,7 @@ function getAllKeys(cli) {
 }
 
 function addKeys(cli) {
-  return (req, res) => {
+  return (req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     if(req.body.keys === undefined) {
@@ -76,6 +76,7 @@ function addKeys(cli) {
       res.end(JSON.stringify({
         message: 'keys are undefined'
       }));
+      return next();
     }
     mapIndex.addKeys(cli, req.body.keys)
       .then(update => {
