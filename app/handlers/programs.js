@@ -46,7 +46,7 @@ function uploadNewProgram(client) {
     // mutate the uploaded program and apply timestamp and GUID
     let programWithMetaData;
     try {
-      programWithMetaData = applyMetaData(JSON.parse(req.body));
+      programWithMetaData = applyMetaData(req.body);
     } catch(error) {
       console.error(error.message);
       res.statusCode = 500;

@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "babel-eslint": "6",
+    "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "elasticsearch": "^12.1.0",
     "elasticsearch-sanitize": "^2.0.0",
     "eslint": "^3.10.2",
     "eslint-plugin-async-await": "^0.0.0",
