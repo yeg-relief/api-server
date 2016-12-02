@@ -101,14 +101,14 @@ function percolateDocument(elasticClient, doc){
 }
 
 function indexDoc(elasticClient, indexName, doc, type, id){
-  if (type === undefined){
+  if (type === undefined && id === undefined){
     return elasticClient.index({
       index: indexName,
       body: {
         doc
       }
     });
-  }else{
+  }else if (type !== undefined && id !== undefined){
     return elasticClient.index({
       index: indexName,
       type: type,
@@ -117,6 +117,17 @@ function indexDoc(elasticClient, indexName, doc, type, id){
         doc
       }
     });
+  } else if (type !== undefined && id === undefined) {
+    return elasticClient.index({
+      index: indexName,
+      type: type,
+      body: {
+        doc
+      }
+    });
+  } else {
+    // bad error message?
+    throw new Error('indexDoc called improperly');
   }
 }
 

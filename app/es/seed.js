@@ -19,6 +19,8 @@ const programMapping = {
 };
 
 // TODO: make less procedural
+// note: creating these index and mappings isn't strictly required, but we may, or will, want to change the default settings
+// we don't really need replicas or shards.
 async function seed(client, host = 'localhost:9200') {
   const driver = client || elasticsearch.Client({host: host});
 
@@ -66,6 +68,12 @@ async function seed(client, host = 'localhost:9200') {
   const userProgrammingMappingExists = await utils.mappingExists(driver, 'programs', 'user_facing');
   if (!userProgrammingMappingExists) {
     throw new Error('unable to map programs/user_facing');
+  }
+
+  await utils.initIndex(driver, 'questions');
+  const questionsIndexExists = await utils.indexExists(driver, 'questions');
+  if (!questionsIndexExists) {
+    throw new Error('unable to set up questions index');
   }
   return true;
 }
