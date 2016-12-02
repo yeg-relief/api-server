@@ -78,7 +78,7 @@ function addKeys(cli) {
       }));
       return next();
     }
-    mapIndex.addKeys(cli, req.body.keys)
+    mapIndex.addKeys(cli, JSON.parse(req.body.keys))
       .then(update => {
         res.end(JSON.stringify({
           update: update

@@ -18,7 +18,6 @@ const programMapping = {
   created: { type: 'date' }
 };
 
-
 // TODO: make less procedural
 async function seed(client, host = 'localhost:9200') {
   const driver = client || elasticsearch.Client({host: host});

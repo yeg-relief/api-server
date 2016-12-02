@@ -36,7 +36,7 @@ function percolateUserData(client) {
       return next();
     }
 
-    const data = req.body.data;
+    const data = JSON.parse(req.body.data);
     percolator(client, data)
       .then(guids => search(client, guids))
       .then(programs => res.end(JSON.stringify({programs: programs})))
