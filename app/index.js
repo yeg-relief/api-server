@@ -9,6 +9,18 @@ client        = elasticsearch.Client({host: 'localhost:9200', log: 'trace'}),
 // the router for our app
 router        = Router();
 
+// secret.js contains credentials
+let credentials;
+try {
+  credentials = require('./secret');
+} catch(error) {
+  // default credentials if file doesn't exist
+  credentials = {
+    name: 'admin',
+    pass: 'pass'
+  };
+}
+
 // handler functions for calls
 const
 KeyHandler            = require('./handlers/keys').KeyHandler,

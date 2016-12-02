@@ -1,7 +1,5 @@
 const utils = require('../utils');
 
-
-
 // program in this context is the user facing portion
 async function handleProgramUpload(client, program, guid) {
   if (client === undefined || program == undefined) {
