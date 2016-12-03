@@ -15,7 +15,7 @@ const HOST = 'http://localhost:3000';
 // IF YOU THINK THIS MAKES ME A BAD PROGRAMMER THEN FIGHT ME IRL LUL
 
 
-
+/*
 it('an empty put request at the programs index returns 400 and an error message', function(done) {
   chai.request(HOST)
     .post('/programs/')
@@ -26,7 +26,7 @@ it('an empty put request at the programs index returns 400 and an error message'
       done();
     });
 });
-
+*/
 it('can register a query for a new program', function(done) {
   const mockProgram = {
     guid: 'new',
@@ -63,6 +63,7 @@ it('can register a query for a new program', function(done) {
     .send(mockProgram)
     .end(function(err, res){
       // expect no error
+      console.log(res.message);
       chai.expect(res).to.have.status(200);
       done();
     });

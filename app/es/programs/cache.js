@@ -25,6 +25,7 @@ class Cache{
       }
       return accum;
     }, {})
+    // share the observable for mutliple observers
     .multicast(new Rx.ReplaySubject(1)).refCount();
     // intiate the observable TODO: better way?
     this.data$.subscribe();
@@ -37,19 +38,35 @@ class Cache{
            .filter(res => res.hits.total >  0)
            .pluck('hits', 'hits');
   }
-  // fails silently -- by ommitting malformed programs.
+
+
   addPrograms(programs) {
     if (!Array.isArray(programs)){
-      console.log('programs is not an array');
+      console.error('programs is not an array');
       return;
     }
-    programs.forEach( (program, index) => {
+    // mutate programs into proper format (ES style)
+    const transformedPrograms = programs.map(program => {
+      const newProgram = {};
+      if (program.id !== undefined && program.program !== undefined) {
+        newProgram._id = program.id;
+        newProgram._source = {
+          doc: {
+            value: program.program
+          }
+        };
+      }
+      return newProgram;
+    });
+
+
+    transformedPrograms.forEach( (program, index) => {
       if (program._id === undefined || program._source === undefined || program._source.doc === undefined || program._source.doc.value === undefined) {
-        console.log(program);
+        console.error(program);
         programs.splice(index, 1);
       }
     });
-    this.addPrograms$.next(programs);
+    this.addPrograms$.next(transformedPrograms);
   }
 
   // will return hits (program objects) and misses (program ids)

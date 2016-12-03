@@ -6,7 +6,7 @@ search       = require('../es/programs/search').searchProgramByGuid;
 
 // handle a user submitted 'master screener' form
 class UserDocumentHandler {
-  static addRoutes(client, router) {
+  static addRoutes(client, cache, router) {
     if (client === undefined) {
       throw new Error('[BOOTSTRAP]: client argument undefined in UserDocumentHandler');
     }
@@ -14,7 +14,7 @@ class UserDocumentHandler {
     api.use(bodyParser.json());
 
     // percolate the user submitted data => find programs the user qualifies for
-    api.post('/', percolateUserData(client));
+    api.post('/', percolateUserData(client, cache));
     // this is the router that handles all incoming requests for the server
     router.use('/userMasterScreener/', api);
   }
@@ -24,7 +24,7 @@ module.exports = {
   UserDocumentHandler
 };
 
-function percolateUserData(client) {
+function percolateUserData(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');

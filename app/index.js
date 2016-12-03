@@ -32,8 +32,8 @@ UserScreenerHandler   = require('./handlers/percolate').UserDocumentHandler;
 
 // apply all the api to the router
 KeyHandler.addRoutes(client, router); // /keys/
-ProgramHandler.addRoutes(client, router); // /programs/
-UserScreenerHandler.addRoutes(client, router); // /userMasterScreener/ TODO: think of better name
+ProgramHandler.addRoutes(client, programCache, router); // /programs/
+UserScreenerHandler.addRoutes(client, programCache, router); // /userMasterScreener/ TODO: think of better name
 
 router.get('/ping', (_, res) => {
   res.statusCode = 200;

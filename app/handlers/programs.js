@@ -6,15 +6,15 @@ programs        = require('../es/programs/user-facing-upload'),
 applyMetaData   = require('../utils/programs').applyMetaData;
 
 class ProgramHandler {
-  static addRoutes(client, router) {
-    if (client === undefined) {
-      throw new Error('[BOOTSTRAP]: client argument undefined in ProgramHandler');
+  static addRoutes(client, cache, router) {
+    if (client === undefined || cache === undefined) {
+      throw new Error('[BOOTSTRAP]: client or cache undefined in ProgramHandler');
     }
     const api = Router();
     api.use(bodyParser.json());
 
     // add queries for programs to the ES /search index
-    api.post('/', uploadNewProgram(client));
+    api.post('/', uploadNewProgram(client, cache));
     // this is the router that handles all incoming requests for the server
     router.use('/programs/', api);
   }
@@ -24,7 +24,7 @@ module.exports = {
   ProgramHandler
 };
 
-function uploadNewProgram(client) {
+function uploadNewProgram(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -60,8 +60,11 @@ function uploadNewProgram(client) {
     percolator.addQueries(client, application)
       .then( () => programs.handleProgramUpload(client, program, programWithMetaData.guid))
       .then( () => res.end(JSON.stringify({created: true})))
+      .then( () => cache.addPrograms([{ program: program, id: programWithMetaData.guid}]))
       .catch( error => {
         res.statusCode = 500;
+        console.error('*** ERROR ***');
+        console.error(error.message);
         res.end(JSON.stringify({
           message: error.message
         }));
