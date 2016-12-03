@@ -33,6 +33,10 @@ async function seed(client, host = 'localhost:9200') {
   if (programsIndexExists) {
     await utils.deleteIndex(driver, 'programs');
   }
+  const questionsIndexExists = await utils.indexExists(driver, 'questions');
+  if (questionsIndexExists) {
+    await utils.deleteIndex(driver, 'questions');
+  }
 
 
   await utils.initIndex(driver, utils.CONSTANTS.INDEX);
@@ -70,11 +74,9 @@ async function seed(client, host = 'localhost:9200') {
     throw new Error('unable to map programs/user_facing');
   }
 
+
   await utils.initIndex(driver, 'questions');
-  const questionsIndexExists = await utils.indexExists(driver, 'questions');
-  if (!questionsIndexExists) {
-    throw new Error('unable to set up questions index');
-  }
+
   return true;
 }
 

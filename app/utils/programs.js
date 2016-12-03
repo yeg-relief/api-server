@@ -1,6 +1,4 @@
-const
-guid          = require('node-uuid'),
-escapeElastic = require('elasticsearch-sanitize');
+const guid = require('node-uuid');
 
 module.exports = {
   applyMetaData
@@ -26,26 +24,7 @@ function applyTimestamp(program) {
 }
 
 function applyMetaData(program) {
-  console.log(program);
   applyGUID(program);
   applyTimestamp(program);
-  return program;
-}
-
-function sanitize(program) {
-  let sanitized = sanitizeES(program);
-  sanitized = sanitizeSQL(sanitized);
-  return sanitized;
-}
-
-function sanitizeES(program) {
-  // value will appear in the query string
-  program.conditions = program.conditions.forEach(condition => {
-    condition.value = escapeElastic(condition.value);
-  });
-  return program;
-}
-
-function sanitizeSQL(program) {
   return program;
 }

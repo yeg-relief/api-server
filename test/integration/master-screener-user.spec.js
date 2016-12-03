@@ -12,7 +12,7 @@ const HOST = 'http://localhost:3000';
 
 // IF YOU THINK THIS MAKES ME A BAD PROGRAMMER THEN FIGHT ME IRL LUL
 
-
+/*
 it('will percolate a user submitted master screener data', function(done) {
   const mockMasterScreener = {
     data: {
@@ -33,3 +33,4 @@ it('will percolate a user submitted master screener data', function(done) {
       done();
     });
 });
+*/
