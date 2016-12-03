@@ -22,44 +22,8 @@ try {
 }
 
 
-const Cache = require('./es/programs/cache').Cache;
-const cache = new Cache(client);
-setTimeout(() => {
-  cache.getPrograms(['4abee839-3958-4914-a9c1-2bb1a3fc17ea', 'test']).then((thing) => console.log(thing));
-  console.log('timeout executed');
-}, 2500);
-setTimeout(() => {
-  cache.addPrograms([
-    {
-      _id: 'test-1',
-      _source: {
-        doc: {
-          value: 'a value'
-        }
-      }
-    },
-    {
-      _id: 'test-2',
-      _source: {
-        doc: {
-          value: 'a valuezzz'
-        }
-      }
-    }
-  ]);
-}, 5000);
-setTimeout(() => {
-  cache.getPrograms(['test-2']).then((thing) => console.log(thing));
-  console.log('timeout executed');
-}, 7500);
-setTimeout(() => {
-  console.log('getting all programgs \n\n');
-  cache.getAllPrograms().then(thing => console.log(thing));
-}, 10000);
-/*
-setTimeout( () => cache.cache$.subscribe(val => console.log(val)), 5000);
-setTimeout( () => cache.cache$.do(() => console.log('subscribed')).subscribe(val => console.log(val)), 7000);
-*/
+const ProgramCache = require('./es/programs/cache').Cache;
+const programCache = new ProgramCache(client);
 // handler functions for calls
 const
 KeyHandler            = require('./handlers/keys').KeyHandler,
