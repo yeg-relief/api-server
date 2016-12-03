@@ -3,7 +3,8 @@ bodyParser      = require('body-parser'),
 Router          = require('router'),
 percolator      = require('../es/percolator/init-percolator'),
 programs        = require('../es/programs/user-facing-upload'),
-applyMetaData   = require('../utils/programs').applyMetaData;
+applyMetaData   = require('../utils/programs').applyMetaData,
+Rx              = require('rxjs/Rx');
 
 class ProgramHandler {
   static addRoutes(client, cache, router) {
@@ -13,8 +14,9 @@ class ProgramHandler {
     const api = Router();
     api.use(bodyParser.json());
 
-    // add queries for programs to the ES /search index
     api.post('/', uploadNewProgram(client, cache));
+    api.get('/', getAllPrograms(client, cache));
+
     // this is the router that handles all incoming requests for the server
     router.use('/programs/', api);
   }
@@ -63,11 +65,17 @@ function uploadNewProgram(client, cache) {
       .then( () => cache.addPrograms([{ program: program, id: programWithMetaData.guid}]))
       .catch( error => {
         res.statusCode = 500;
-        console.error('*** ERROR ***');
         console.error(error.message);
         res.end(JSON.stringify({
           message: error.message
         }));
       });
+  };
+}
+
+function getAllPrograms(client, cache) {
+  return (_, res, next) => {
+    Rx.Observable.from(_)
+      .
   };
 }

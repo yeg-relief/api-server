@@ -8,6 +8,7 @@ const getAllPrograms = {
   match_all: {}
 };
 
+// TODO: consider applying OOP and super/sub classing
 class Cache{
   constructor(client) {
     const MAX_SIZE = 100;
@@ -70,7 +71,7 @@ class Cache{
   }
 
   // will return hits (program objects) and misses (program ids)
-  async getPrograms(programIDS){
+  getProgramsBase(programIDS){
     const data = this.data$.take(1);
     const ids = Rx.Observable.of(programIDS);
 
@@ -84,14 +85,32 @@ class Cache{
                }
              });
              return accum;
-           }, {hits: [], misses: []})
-           .toPromise();
+           }, {hits: [], misses: []});
+  }
+
+  // can get the above as promise or observable with either of the following 2 functions
+  async getProgramsPromise(programIDS){
+    return this.getProgramsBase(programIDS).toPromise();
+  }
+
+  getProgramsObservable(programIDS) {
+    return this.getProgramsBase(programIDS);
+  }
+
+
+  getAllProgramsBase() {
+    return this.data$.take(1);
   }
 
   // gets all programs in cache
-  async getAllPrograms() {
-    return this.data$.take(1).toPromise();
+  async getAllProgramsPromise() {
+    return this.getAllProgramsBase().toPromise();
   }
+
+  getAllProgramsObservable() {
+    return this.getAllProgramsBase();
+  }
+
 }
 
 module.exports = {
