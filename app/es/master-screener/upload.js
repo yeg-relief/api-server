@@ -9,7 +9,7 @@ module.exports = {
 
 async function uploadMasterScreenerQuestions(client, questions) {
   // throws error if invalid
-  verify(questions);
+  verify.verify(questions);
   const res = await utils.indexDoc(client, 'questions', questions, 'screener');
   return res;
 }

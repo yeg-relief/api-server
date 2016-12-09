@@ -74,7 +74,7 @@ async function seed(client, host = 'localhost:9200') {
     throw new Error('unable to map programs/user_facing');
   }
 
-
+  // index for the question set (or master screener)
   await utils.initIndex(driver, 'questions');
 
   return true;

@@ -29,11 +29,13 @@ const
 KeyHandler            = require('./handlers/keys').KeyHandler,
 ProgramHandler        = require('./handlers/programs').ProgramHandler,
 UserScreenerHandler   = require('./handlers/percolate').UserDocumentHandler;
+QuestionsHandler      = require('./handlers/questions').QuestionsHandler;
 
 // apply all the api to the router
 KeyHandler.addRoutes(client, router); // /keys/
 ProgramHandler.addRoutes(client, programCache, router); // /programs/
 UserScreenerHandler.addRoutes(client, programCache, router); // /userMasterScreener/ TODO: think of better name
+QuestionsHandler.addRoutes(client, router);
 
 router.get('/ping', (_, res) => {
   res.statusCode = 200;

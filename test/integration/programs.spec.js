@@ -5,15 +5,10 @@ chaiHttp  = require('chai-http');
 chai.use(chaiHttp);
 const HOST = 'http://localhost:3000';
 
-
 // THESE TESTS ARE A WIP AND ARE NOT STATE INDEPENDENT
 // ie, I HAVE TO ENSURE THAT THE ES SERVER HAS A PATICULAR STATE
-// TRY TO THINK OF THESE AS EXPLORATORY TESTS AT SOME POINT THEY WILL
-// SET THE STATE OF ES THEMSELVES, BUT I HAVE MANY THINGS TO DO RIGHT NOW
-// TO BE EXPLICIT THE MASTER_SCREENER/SCREENER NEEDS A AGE MAPPING OF TYPE NUMBER
-
-// IF YOU THINK THIS MAKES ME A BAD PROGRAMMER THEN FIGHT ME IRL LUL
-
+// TRY TO THINK OF THESE AS EXPLORATORY TESTS BUT AT SOME POINT THEY WILL
+// SET THE STATE OF ES THEMSELVES.
 
 /*
 it('an empty put request at the programs index returns 400 and an error message', function(done) {
@@ -26,7 +21,7 @@ it('an empty put request at the programs index returns 400 and an error message'
       done();
     });
 });
-*/
+
 it('can register a query for a new program', function(done) {
   const mockProgram = {
     guid: 'new',
@@ -68,3 +63,4 @@ it('can register a query for a new program', function(done) {
       done();
     });
 });
+*/

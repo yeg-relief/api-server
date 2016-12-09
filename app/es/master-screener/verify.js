@@ -2,6 +2,8 @@ module.exports = {
   verify
 };
 
+/* IS THIS REALLY NEEDED ??? */
+
 
 function verify(masterScreener) {
   if (masterScreener === undefined ){
@@ -55,7 +57,7 @@ function verifyQuestions(questions) {
 
 function verifyNumberQuestion(question, index){
   if (question.value === undefined || typeof question.value !== 'number') {
-    throw new Error(`question of type number @ index ${index} has an improper value`);
+    //throw new Error(`question of type number @ index ${index} has an improper value`);
   }
 }
 
@@ -94,7 +96,7 @@ function verifySharedQuestionProps(question, index){
   if (question.key === undefined || typeof question.key !== 'string') {
     throw new Error(`question @index ${index} has an invalid key`);
   }
-  if (question.controlType === undefined || (question.controlType !== 'radio' || question.controlType !== 'input')){
+  if (question.controlType === undefined || !( (question.controlType !== 'radio' || question.controlType !== 'input')) ){
     throw new Error(`question @index ${index} has an invalid control type`);
   }
 }

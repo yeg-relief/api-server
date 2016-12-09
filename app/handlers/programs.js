@@ -63,12 +63,14 @@ function uploadNewProgram(client, cache) {
       .then( () => programs.handleProgramUpload(client, program, programWithMetaData.guid))
       .then( () => res.end(JSON.stringify({created: true})))
       .then( () => cache.addPrograms([{ program: program, id: programWithMetaData.guid}]))
+      .then( () => next())
       .catch( error => {
         res.statusCode = 500;
         console.error(error.message);
         res.end(JSON.stringify({
           message: error.message
         }));
+        return next();
       });
   };
 }
@@ -76,6 +78,16 @@ function uploadNewProgram(client, cache) {
 function getAllPrograms(client, cache) {
   return (_, res, next) => {
     Rx.Observable.from(_)
-      .
+      .flatMap( () => cache.getProgramsObservable())
+      .do( () => res.statusCode = 200)
+      .subscribe({
+        next: programs => res.end(JSON.stringify({programs: programs})),
+        error: err => {
+          res.statusCode = 500;
+          console.error(err.message);
+          res.end();
+        },
+        complete: () => next()
+      });
   };
 }
