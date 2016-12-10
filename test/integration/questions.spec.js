@@ -47,7 +47,7 @@ it('an empty put request at the programs index returns 400 and an error message'
   };
 
   chai.request(HOST)
-    .post('/questions/')
+    .post('/api/questions/')
     .send(mockScreener)
     .end(function(err, res) {
       //chai.expect(res).to.have.status(500);
@@ -59,7 +59,7 @@ it('an empty put request at the programs index returns 400 and an error message'
 
 it('can get a master screener with a specific version', function(done) {
   chai.request(HOST)
-    .get('/questions/3')
+    .get('/api/questions/version/3')
     .end(function(err, res) {
       chai.expect(res).to.have.status(200);
       console.log(res.body);

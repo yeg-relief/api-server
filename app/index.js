@@ -5,7 +5,7 @@ finalhandler  = require('finalhandler'),
 Router        = require('router'),
 // elasticsearch client
 elasticsearch = require('elasticsearch'),
-client        = elasticsearch.Client({host: 'localhost:9200', log: 'trace'}),
+client        = elasticsearch.Client({host: 'localhost:9200'}),
 // the router for our app
 router        = Router();
 

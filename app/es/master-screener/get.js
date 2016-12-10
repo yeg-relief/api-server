@@ -19,9 +19,17 @@ async function getAll(client) {
 }
 
 async function getVersion(client, version) {
-
-  // I can't figure out the query right now... should be simple using match all
-  // until another time.
+  /*
+  "query": {
+    "constant_score" : {
+      "filter" : {
+        "term" : {  "version" : version }
+      }
+    }
+  }
+  */
+  // I can't figure out the query right now... will use match all and integrate
+  // a cache, but it should be noted that this function is not efficient.
   const query = {
     match_all: {}
   };

@@ -15,9 +15,10 @@ class QuestionsHandler {
 
     api.post('/', uploadNewQuestionSet(client));
     api.get('/', getAllQuestions(client));
-    api.get('/:version', getVersion(client));
+    api.get('/version/:version/', getVersion(client));
+    api.get('/latest/', getLatestVersion(client));
     // this is the router that handles all incoming requests for the server
-    router.use('/questions/', api);
+    router.use('/api/questions/', api);
   }
 }
 
@@ -66,6 +67,31 @@ function getVersion(client) {
     res.statusCode = 200;
     get(client, req.params.version)
       .then( questions => res.end(JSON.stringify({response: questions})))
+      .catch( error => {
+        console.error(error);
+        res.statusCode = 500;
+        res.end(JSON.stringify({
+          message: error.message
+        }));
+        next();
+      });
+  };
+}
+
+function getLatestVersion(client) {
+  return (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.statusCode = 200;
+    getAll(client)
+      .then(questions => {
+        if (Array.isArray(questions) && questions.length > 1) {
+          const sorted = questions.sort((a, b) => a.version > b.version);
+          res.end(JSON.stringify({response: sorted[0].questions}));
+          next();
+        }
+        res.end(JSON.stringify({response: {}}));
+        next();
+      })
       .catch( error => {
         console.error(error);
         res.statusCode = 500;
