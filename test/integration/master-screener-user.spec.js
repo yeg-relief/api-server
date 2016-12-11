@@ -14,13 +14,13 @@ const HOST = 'http://localhost:3000';
 it('will percolate a user submitted master screener data', function(done) {
   const mockMasterScreener = {
     data: {
-      age: 10
+      age: '10'
     }
   };
 
 
   chai.request(HOST)
-    .post('/userMasterScreener/')
+    .post('/api/user_master_screener/')
     .send(mockMasterScreener)
     .end(function(err, res){
       chai.expect(res).to.have.status(200);

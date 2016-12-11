@@ -16,7 +16,7 @@ class UserDocumentHandler {
     // percolate the user submitted data => find programs the user qualifies for
     api.post('/', percolateUserData(client, cache));
     // this is the router that handles all incoming requests for the server
-    router.use('/userMasterScreener/', api);
+    router.use('/api/user_master_screener/', api);
   }
 }
 
@@ -35,11 +35,17 @@ function percolateUserData(client, cache) {
       }));
       return next();
     }
-
     const data = req.body.data;
     percolator(client, data)
       .then(guids => search(client, guids))
-      .then(programs => res.end(JSON.stringify({programs: programs})))
+      .then(programs => {
+        const extractedPrograms = programs.reduce( (accum, program) => {
+          accum.push(program.doc);
+          return accum;
+        }, []);
+        res.end(JSON.stringify({response: extractedPrograms}));
+        next();
+      })
       .catch(error => {
         res.statusCode = 500;
         res.end(JSON.stringify({

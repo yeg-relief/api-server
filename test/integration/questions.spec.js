@@ -12,7 +12,7 @@ const HOST = 'http://localhost:3000';
 
 it('can get all programs', function(done) {
   chai.request(HOST)
-    .get('/questions/')
+    .get('/api/questions/')
     .end(function(err, res) {
       chai.expect(res).to.have.status(200);
       console.log(res.body);
