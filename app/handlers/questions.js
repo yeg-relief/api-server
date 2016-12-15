@@ -73,6 +73,7 @@ function getVersion(client) {
         res.end(JSON.stringify({
           message: error.message
         }));
+        // needed?
         next();
       });
   };
@@ -84,13 +85,16 @@ function getLatestVersion(client) {
     res.statusCode = 200;
     getAll(client)
       .then(questions => {
+        // we dont actually query ES right now... just grab all masterscreeners in index
+        // obviously this can be -- and will -- be improved
         if (Array.isArray(questions) && questions.length > 1) {
+          // sort for latest version
           const sorted = questions.sort((a, b) => a.version > b.version);
           res.end(JSON.stringify({response: sorted[0].questions}));
-          next();
+        } else {
+          res.end(JSON.stringify({response: questions[0].questions}));
         }
         res.end(JSON.stringify({response: {}}));
-        next();
       })
       .catch( error => {
         console.error(error);
@@ -98,6 +102,7 @@ function getLatestVersion(client) {
         res.end(JSON.stringify({
           message: error.message
         }));
+        // needed?
         next();
       });
   };

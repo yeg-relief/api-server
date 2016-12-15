@@ -10,7 +10,7 @@ const HOST = 'http://localhost:3000';
 // TRY TO THINK OF THESE AS EXPLORATORY TESTS BUT AT SOME POINT THEY WILL
 // SET THE STATE OF ES THEMSELVES.
 
-/*
+
 it('an empty put request at the programs index returns 400 and an error message', function(done) {
   chai.request(HOST)
     .post('/programs/')
@@ -63,4 +63,3 @@ it('can register a query for a new program', function(done) {
       done();
     });
 });
-*/

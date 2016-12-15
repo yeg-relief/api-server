@@ -99,9 +99,12 @@ class Cache{
 
 
   getAllProgramsBase() {
-    return this.data$.take(1);
+    return this.data$.take(1)
+            .reduce( (accum, cacheObj) => {
+              Object.keys(cacheObj).forEach(key => accum.push(cacheObj[key]));
+              return accum;
+            }, []);
   }
-
   // gets all programs in cache
   async getAllProgramsPromise() {
     return this.getAllProgramsBase().toPromise();

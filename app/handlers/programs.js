@@ -18,7 +18,7 @@ class ProgramHandler {
     api.get('/', getAllPrograms(client, cache));
 
     // this is the router that handles all incoming requests for the server
-    router.use('/programs/', api);
+    router.use('/api/programs/', api);
   }
 }
 
@@ -77,8 +77,8 @@ function uploadNewProgram(client, cache) {
 
 function getAllPrograms(client, cache) {
   return (_, res, next) => {
-    Rx.Observable.from(_)
-      .flatMap( () => cache.getProgramsObservable())
+    res.setHeader('Content-Type', 'application/json');
+    cache.getAllProgramsBase()
       .do( () => res.statusCode = 200)
       .subscribe({
         next: programs => res.end(JSON.stringify({programs: programs})),
