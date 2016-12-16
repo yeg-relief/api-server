@@ -21,7 +21,7 @@ class KeyHandler {
     // add keys/properties to masterscreener
     api.post('/', addKeys(client));
     // this is the router that handles all incoming requests
-    router.use('/keys/', api);
+    router.use('/api/keys/', api);
   }
 }
 

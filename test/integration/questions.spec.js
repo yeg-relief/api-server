@@ -9,7 +9,7 @@ const HOST = 'http://localhost:3000';
 // ie, I HAVE TO ENSURE THAT THE ES SERVER HAS A PATICULAR STATE
 // TRY TO THINK OF THESE AS EXPLORATORY TESTS BUT AT SOME POINT THEY WILL
 // SET THE STATE OF ES THEMSELVES.
-
+/*
 it('can get all programs', function(done) {
   chai.request(HOST)
     .get('/api/questions/')
@@ -23,10 +23,10 @@ it('can get all programs', function(done) {
 
 it('an empty put request at the programs index returns 400 and an error message', function(done) {
   const mockScreener = {
-    version: 3,
+    version: 1,
     meta: {
       screener: {
-        version: 3,
+        version: 1,
         created: 51515511
       },
       questions: {
@@ -66,3 +66,4 @@ it('can get a master screener with a specific version', function(done) {
       done();
     });
 });
+*/

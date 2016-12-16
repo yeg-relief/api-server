@@ -28,14 +28,16 @@ const programCache = new ProgramCache(client);
 const
 KeyHandler            = require('./handlers/keys').KeyHandler,
 ProgramHandler        = require('./handlers/programs').ProgramHandler,
-UserScreenerHandler   = require('./handlers/percolate').UserDocumentHandler;
-QuestionsHandler      = require('./handlers/questions').QuestionsHandler;
+UserScreenerHandler   = require('./handlers/percolate').UserDocumentHandler,
+QuestionsHandler      = require('./handlers/questions').QuestionsHandler,
+MasterScreenerHandler = require('./handlers/master-screener').MasterScreenerHandler;
 
 // apply all the api to the router
-KeyHandler.addRoutes(client, router); // /keys/
-ProgramHandler.addRoutes(client, programCache, router); // /programs/
-UserScreenerHandler.addRoutes(client, programCache, router); // /userMasterScreener/ TODO: think of better name
+KeyHandler.addRoutes(client, router); // /api/keys/
+ProgramHandler.addRoutes(client, programCache, router); // /api/programs/
+UserScreenerHandler.addRoutes(client, programCache, router); // /api/user_master_screener/ TODO: think of better name
 QuestionsHandler.addRoutes(client, router);
+MasterScreenerHandler.addRoutes(client, router);
 
 router.get('/ping', (_, res) => {
   res.statusCode = 200;

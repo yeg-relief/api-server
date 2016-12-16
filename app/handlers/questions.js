@@ -15,6 +15,7 @@ class QuestionsHandler {
 
     api.post('/', uploadNewQuestionSet(client));
     api.get('/', getAllQuestions(client));
+    
     api.get('/version/:version/', getVersion(client));
     api.get('/latest/', getLatestVersion(client));
     // this is the router that handles all incoming requests for the server
@@ -91,10 +92,11 @@ function getLatestVersion(client) {
           // sort for latest version
           const sorted = questions.sort((a, b) => a.version > b.version);
           res.end(JSON.stringify({response: sorted[0].questions}));
-        } else {
+        } else if(Array.isArray(questions) && questions.length === 1){
           res.end(JSON.stringify({response: questions[0].questions}));
+        } else {
+          res.end(JSON.stringify({response: {}}));
         }
-        res.end(JSON.stringify({response: {}}));
       })
       .catch( error => {
         console.error(error);

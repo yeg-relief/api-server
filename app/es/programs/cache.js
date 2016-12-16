@@ -13,31 +13,52 @@ class Cache{
   constructor(client) {
     const MAX_SIZE = 100;
     this.addPrograms$ = new Rx.Subject();
+    this.removeProgram$ = new Rx.Subject();
 
     this.data$ = Rx.Observable.merge(
       this.addPrograms$,
-      this.initCache(client)
+      this.removeProgram$
     )
-    // flatten arrays
-    .flatMap(x => x)
-    .scan( (accum, program) => {
-      if(Object.keys(accum).length <= MAX_SIZE) {
-        accum[program._id] = program._source.doc;
+    .scan( (accum, action) => {
+      switch(action.type){
+        case 'ADD_PROGRAMS': {
+          if(Object.keys(accum).length <= MAX_SIZE) {
+            action.payload.forEach(program => {
+              accum[program._id] = program._source.doc;
+            })
+          }
+          return accum;
+        }
+
+        case 'REMOVE_PROGRAM': {
+          const guid = action.payload;
+          delete accum[guid];
+          return accum;
+        }
+
+        default: {
+          return accum;
+        }
       }
-      return accum;
     }, {})
     // share the observable for mutliple observers
-    .multicast(new Rx.ReplaySubject(1)).refCount();
+    .multicast(new Rx.ReplaySubject(1)).refCount()
     // intiate the observable TODO: better way?
     this.data$.subscribe();
+    // kind of gross
+    this.initCache(client)
   }
   // runs a query to get ALL programs.. if somehow we actually ammass a large number of programs then this will be prohibitive
   initCache(client){
-    const initLoad$ = Rx.Observable.fromPromise(utils.search(client, 'programs', 'user_facing', getAllPrograms));
-
-    return initLoad$
-           .filter(res => res.hits.total >  0)
-           .pluck('hits', 'hits');
+    utils.search(client, 'programs', 'user_facing', getAllPrograms)
+      .then( (rawPrograms) => {
+        if (rawPrograms.hits.total > 0) {
+          this.addPrograms$.next({
+            type: 'ADD_PROGRAMS',
+            payload: rawPrograms.hits.hits
+          });
+        } 
+      });
   }
 
 
@@ -67,7 +88,22 @@ class Cache{
         programs.splice(index, 1);
       }
     });
-    this.addPrograms$.next(transformedPrograms);
+    this.addPrograms$.next({
+      type: 'ADD_PROGRAMS',
+      payload: transformedPrograms
+    });
+  }
+
+  deleteProgram(guid) {
+    if(guid === undefined || typeof guid !== 'string') {
+      throw new Error('obviously invalid guid');
+    }
+
+    this.removeProgram$.next({
+      type: 'REMOVE_PROGRAM',
+      payload: guid
+    });
+    return Promise.resolve(true);
   }
 
   // will return hits (program objects) and misses (program ids)

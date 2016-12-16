@@ -1,10 +1,11 @@
 const
-bodyParser      = require('body-parser'),
-Router          = require('router'),
-percolator      = require('../es/percolator/init-percolator'),
-programs        = require('../es/programs/user-facing-upload'),
-applyMetaData   = require('../utils/programs').applyMetaData,
-Rx              = require('rxjs/Rx');
+  bodyParser = require('body-parser'),
+  Router = require('router'),
+  percolator = require('../es/percolator/init-percolator'),
+  programs = require('../es/programs/user-facing-upload'),
+  applyMetaData = require('../utils/programs').applyMetaData,
+  Rx = require('rxjs/Rx'),
+  utils = require('../es/utils');
 
 class ProgramHandler {
   static addRoutes(client, cache, router) {
@@ -16,6 +17,7 @@ class ProgramHandler {
 
     api.post('/', uploadNewProgram(client, cache));
     api.get('/', getAllPrograms(client, cache));
+    api.delete(':guid', deleteProgram(client, cache));
 
     // this is the router that handles all incoming requests for the server
     router.use('/api/programs/', api);
@@ -30,14 +32,14 @@ function uploadNewProgram(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    if(req.body === undefined || req.body.application === undefined || req.body.user === undefined) {
+    if (req.body === undefined || req.body.application === undefined || req.body.user === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'program is not well formed'
       }));
       return next();
     }
-    if(req.body.guid !== 'new') {
+    if (req.body.guid !== 'new') {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'POST messages to /programs/ are for programs with a "new" guid only'
@@ -49,7 +51,7 @@ function uploadNewProgram(client, cache) {
     let programWithMetaData;
     try {
       programWithMetaData = applyMetaData(req.body);
-    } catch(error) {
+    } catch (error) {
       console.error(error.message);
       res.statusCode = 500;
       res.end(JSON.stringify({
@@ -60,11 +62,11 @@ function uploadNewProgram(client, cache) {
     const application = programWithMetaData.application;
     const program = programWithMetaData.user;
     percolator.addQueries(client, application)
-      .then( () => programs.handleProgramUpload(client, program, programWithMetaData.guid))
-      .then( () => res.end(JSON.stringify({created: true})))
-      .then( () => cache.addPrograms([{ program: program, id: programWithMetaData.guid}]))
-      .then( () => next())
-      .catch( error => {
+      .then(() => programs.handleProgramUpload(client, program, programWithMetaData.guid))
+      .then(() => res.end(JSON.stringify({ created: true })))
+      .then(() => cache.addPrograms([{ program: program, id: programWithMetaData.guid }]))
+      .then(() => next())
+      .catch(error => {
         res.statusCode = 500;
         console.error(error.message);
         res.end(JSON.stringify({
@@ -79,15 +81,31 @@ function getAllPrograms(client, cache) {
   return (_, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     cache.getAllProgramsBase()
-      .do( () => res.statusCode = 200)
+      .do(() => res.statusCode = 200)
       .subscribe({
-        next: programs => res.end(JSON.stringify({programs: programs})),
+        next: programs => res.end(JSON.stringify({ programs: programs })),
         error: err => {
           res.statusCode = 500;
           console.error(err.message);
-          res.end();
+          res.send(JSON.stringify({ message: err.message }));
         },
         complete: () => next()
       });
   };
+}
+
+function deleteProgram(client, cache) {
+  return (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.statusCode = 200;
+
+    utils.deleteDoc(client, 'programs', 'user_facing', req.body)
+      .then((_) => cache.deleteProgram(req.body))
+      .then(valid => res.end(JSON.stringify({ removed: valid })))
+      .catch(error => {
+        console.error(error.message);
+        res.statusCode = 500;
+        res.send(JSON.stringify({ message: error.message }));
+      })
+  }
 }
