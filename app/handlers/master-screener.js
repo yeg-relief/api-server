@@ -45,7 +45,7 @@ function getAllScreeners(client) {
 function addScreener(client) {
     return (req, res, next) => {
         res.setHeader('Content-Type', 'application/json');
-        const screener = req.body;
+        const screener = req.body.data;
         res.statusCode = 200;
         upload.uploadMasterScreenerQuestions(client, screener)
             .then(questions => res.end(JSON.stringify({ response: screener })))

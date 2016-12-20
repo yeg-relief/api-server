@@ -86,12 +86,16 @@ function getLatestVersion(client) {
     res.statusCode = 200;
     getAll(client)
       .then(questions => {
+        console.log(questions);
         // we dont actually query ES right now... just grab all masterscreeners in index
         // obviously this can be -- and will -- be improved
         if (Array.isArray(questions) && questions.length > 1) {
+          console.log('mulitple questions');
           // sort for latest version
-          const sorted = questions.sort((a, b) => a.version > b.version);
-          res.end(JSON.stringify({response: sorted[0].questions}));
+          const sorted = questions.sort((a, b) => a.version - b.version);
+          console.log(sorted);
+          const last = sorted.length - 1;
+          res.end(JSON.stringify({response: sorted[last].questions}));
         } else if(Array.isArray(questions) && questions.length === 1){
           res.end(JSON.stringify({response: questions[0].questions}));
         } else {

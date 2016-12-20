@@ -27,10 +27,10 @@ it('an empty put request at the programs index returns 400 and an error message'
     meta: {
       screener: {
         version: 1,
-        created: 51515511
+        created: 1481964210
       },
       questions: {
-        totalCount: 5,
+        totalCount: 1,
       }
     },
     questions: [
