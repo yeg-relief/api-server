@@ -62,9 +62,6 @@ function verifyNumberQuestion(question, index){
 }
 
 function verifyBoolQuestion(question, index){
-  if (question.value === undefined || typeof question.value !== 'boolean') {
-    throw new Error(`question of type boolean @ index ${index} has an improper value`);
-  }
   if (question.options === undefined || !Array.isArray(question.options)) {
     throw new Error(`question of type boolean @ index ${index} has improper options`);
   }
@@ -73,7 +70,7 @@ function verifyBoolQuestion(question, index){
       if(option.display === undefined || typeof option.display !== 'string'){
         throw new Error(`question @index ${index} has an option with improper display @optionIndex ${optIndex}`);
       }
-      if (option.value === undefined || (typeof option.value !== 'number' || typeof option.value !== 'boolean')){
+      if (option.value === undefined || typeof option.value !== 'boolean'){
         throw new Error(`question @index ${index} has an option with improper value @optionIndex ${optIndex}`);
       }
     });
