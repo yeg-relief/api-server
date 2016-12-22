@@ -93,7 +93,6 @@ function getLatestVersion(client) {
           console.log('mulitple questions');
           // sort for latest version
           const sorted = questions.sort((a, b) => a.version - b.version);
-          console.log(sorted);
           const last = sorted.length - 1;
           res.end(JSON.stringify({response: sorted[last].questions}));
         } else if(Array.isArray(questions) && questions.length === 1){

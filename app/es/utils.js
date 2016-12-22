@@ -19,7 +19,8 @@ module.exports = {
   percolateDocument,
   search,
   testConnect,
-  CONSTANTS: PERCOLATOR_CONSTANTS
+  CONSTANTS: PERCOLATOR_CONSTANTS,
+  getAllPercolators
 };
 
 /*
@@ -99,6 +100,18 @@ function percolateDocument(elasticClient, doc){
     }
   });
 }
+
+function getAllPercolators(elasticClient){
+  return elasticClient.search({
+    index: PERCOLATOR_CONSTANTS.INDEX,
+    body: {
+      query: {
+        match_all: {}
+      }
+    }
+  });
+}
+
 
 function indexDoc(elasticClient, indexName, doc, type, id){
   if (type === undefined && id === undefined){

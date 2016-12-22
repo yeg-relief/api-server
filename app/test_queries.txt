@@ -1,12 +1,10 @@
-curl -H "Content-Type: application/json" -XPOST -d '[ {" name": "age", "type": "number"}]' 'localhost:3000/keys/' | python -m json.tool
+curl -H "Content-Type: application/json" -XPOST -d '[ {" name": "age", "type": "number"}]' 'localhost:3000/api/keys/' | python -m json.tool
 
-curl -XGET 'localhost:3000/keys/' | python -m json.tool
+curl -XGET 'localhost:3000/api/keys/' | python -m json.tool
 
-curl -H "Content-Type: application/json"  -XPOST 'localhost:3000/keys/' | python -m json.tool
+curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"age","type":"number"}]}'   'localhost:3000/api/keys/' | python -m json.tool
 
-curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"age","type":"number"}]}'   'localhost:3000/keys/' | python -m json.tool
-
-curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"income","type":"number"}]}'   'localhost:3000/keys/' | python -m json.tool
+curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"income","type":"number"}]}'   'localhost:3000/api/keys/' | python -m json.tool
 
 curl -XPUT 'localhost:9200/master_screener/queries/1?refresh&pretty' -d'
 {
@@ -23,7 +21,7 @@ curl -XPUT 'localhost:9200/master_screener/queries/1?refresh&pretty' -d'
    }
 }'
 
-curl -H "Content-Type: application/json" -XPOST  'localhost:3000/programs/' -d'
+curl -H "Content-Type: application/json" -XPOST  'localhost:3000/api/programs/' -d'
 {
   "guid": 'new',
   "application": [

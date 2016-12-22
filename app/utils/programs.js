@@ -5,6 +5,9 @@ module.exports = {
 };
 
 function applyGUID(program) {
+  console.log('in applyGUID')
+  console.log(program)
+  console.log('================')
   if (program.guid === 'new') {
     const newGuid = guid.v4();
     program.guid = newGuid;
@@ -12,6 +15,8 @@ function applyGUID(program) {
     program.application.forEach( query => {
       query.guid = newGuid;
     });
+    program.user.guid = newGuid;
+    
   }
   return program;
 }

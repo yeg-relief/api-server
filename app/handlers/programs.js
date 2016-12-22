@@ -16,8 +16,10 @@ class ProgramHandler {
     api.use(bodyParser.json());
 
     api.post('/', uploadNewProgram(client, cache));
+    // user facing programs
     api.get('/', getAllPrograms(client, cache));
     api.delete(':guid', deleteProgram(client, cache));
+    api.get('/application', getAllProgramsApplicationIncluded(client));
 
     // this is the router that handles all incoming requests for the server
     router.use('/api/programs/', api);
@@ -31,15 +33,17 @@ module.exports = {
 function uploadNewProgram(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
+    const data = req.body.data;
+    console.log(data);
     res.setHeader('Content-Type', 'application/json');
-    if (req.body === undefined || req.body.application === undefined || req.body.user === undefined) {
+    if (data === undefined || data.application === undefined || data.user === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'program is not well formed'
       }));
       return next();
     }
-    if (req.body.guid !== 'new') {
+    if (data.guid !== 'new') {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'POST messages to /programs/ are for programs with a "new" guid only'
@@ -50,7 +54,7 @@ function uploadNewProgram(client, cache) {
     // mutate the uploaded program and apply timestamp and GUID
     let programWithMetaData;
     try {
-      programWithMetaData = applyMetaData(req.body);
+      programWithMetaData = applyMetaData(data);
     } catch (error) {
       console.error(error.message);
       res.statusCode = 500;
@@ -59,8 +63,15 @@ function uploadNewProgram(client, cache) {
       }));
       return next();
     }
+    console.log('===========================')
+    console.log('programWithMetaData')
+    console.log(programWithMetaData)
+    console.log('===========================')
+
     const application = programWithMetaData.application;
     const program = programWithMetaData.user;
+
+    // TODO: investigate wether or not this properly adds queries to percolator -- seems doubtful
     percolator.addQueries(client, application)
       .then(() => programs.handleProgramUpload(client, program, programWithMetaData.guid))
       .then(() => res.end(JSON.stringify({ created: true })))
@@ -82,6 +93,7 @@ function getAllPrograms(client, cache) {
     res.setHeader('Content-Type', 'application/json');
     cache.getAllProgramsBase()
       .do(() => res.statusCode = 200)
+      //.reduce( (accum, program) => [program.value, ...accum], [])
       .subscribe({
         next: programs => res.end(JSON.stringify({ programs: programs })),
         error: err => {
@@ -107,5 +119,61 @@ function deleteProgram(client, cache) {
         res.statusCode = 500;
         res.send(JSON.stringify({ message: error.message }));
       })
+  }
+}
+
+function getAllProgramsApplicationIncluded(client, cache) {
+  //const userFacingPrograms = utils.search(client, 'programs', 'user_facing', getAllPrograms);
+  const filterHits = (searchResult) => {
+    console.log(searchResult);
+    if (searchResult.hits.total > 0) {
+      const reducedHits = searchResult.hits.hits.reduce((hits, hit) => {
+        let guidQueries;
+        if (hits.has(hit._source.meta.program_guid)) {
+          guidQueries = [...hits.get(hit._source.meta.program_guid)];
+        } else {
+          guidQueries = [];
+        }
+        guidQueries.push(hit._source.query);
+        hits.set(hit._source.meta.program_guid, guidQueries);
+        return hits;
+      }, new Map());
+      console.log(reducedHits);
+      return Promise.resolve(reducedHits);
+    } else {
+      console.log('no hits');
+      return Promise.resolve(new Map());
+    }
+  }
+
+  const strMapToObj = (strMap) => {
+    let obj = Object.create(null);
+    for (let [k, v] of strMap) {
+      // We don’t escape the key '__proto__'
+      // which can cause problems on older engines
+      obj[k] = v;
+    }
+    return obj;
+  }
+
+
+  return (_, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.statusCode = 200;
+    utils.getAllPercolators(client)
+      .then(data => filterHits(data))
+      .then(data => {
+        console.log('about to stringify!')
+        console.log(data);
+        const payload = JSON.stringify({ queries: strMapToObj(data) })
+        console.log(payload)
+        res.end(payload)
+      })
+      .catch(error => {
+        console.error(error.message);
+        res.statusCode = 500;
+        res.send(JSON.stringify({ message: error.message }));
+      })
+
   }
 }
