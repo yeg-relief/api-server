@@ -19,7 +19,7 @@ class ProgramHandler {
     // user facing programs
     api.get('/', getAllPrograms(client, cache));
     api.delete(':guid', deleteProgram(client, cache));
-    api.get('/application', getAllProgramsApplicationIncluded(client));
+    api.get('/application', getAllProgramsApplicationIncluded(client, cache));
 
     // this is the router that handles all incoming requests for the server
     router.use('/api/programs/', api);
@@ -138,10 +138,8 @@ function getAllProgramsApplicationIncluded(client, cache) {
         hits.set(hit._source.meta.program_guid, guidQueries);
         return hits;
       }, new Map());
-      console.log(reducedHits);
       return Promise.resolve(reducedHits);
     } else {
-      console.log('no hits');
       return Promise.resolve(new Map());
     }
   }
@@ -161,12 +159,49 @@ function getAllProgramsApplicationIncluded(client, cache) {
     res.setHeader('Content-Type', 'application/json');
     res.statusCode = 200;
     utils.getAllPercolators(client)
-      .then(data => filterHits(data))
       .then(data => {
-        console.log('about to stringify!')
-        console.log(data);
-        const payload = JSON.stringify({ queries: strMapToObj(data) })
-        console.log(payload)
+        console.log('=======================')
+        console.log('getAllPercolators')
+        console.log(data)
+        console.log('=======================')
+        return filterHits(data)
+      })
+      .then( (applicationProgramMap) => {
+        console.log('=======================')
+        console.log('applicationProgramMap')
+        console.log(applicationProgramMap)
+        console.log('=======================')
+        // can be simplified?
+        return Promise.all([Promise.resolve(applicationProgramMap), cache.getAllProgramsPromise()]);
+      })
+      .then(data => {
+        console.log('============================')
+        console.log('final')
+        console.log('data[0]')
+        console.log(data[0])
+        console.log('\n\ndata[1]')
+        console.log(data[1])
+        console.log('============================')
+        const applicationFacing = data[0]; // this is a Map
+        const userFacing = data[1]; // this is an array of objects
+        /*
+          export interface ApplicationFacingProgram {
+            guid: string;
+            application: ProgramQuery[];
+            user: UserFacingProgram;
+          }
+        */
+        const joined = userFacing.reduce( (accum, uProgram) => {
+          const joinedProgram = Object.create(null);
+          if (applicationFacing.has(uProgram.value.guid)) {
+            joinedProgram['guid'] = uProgram.value.guid;
+            joinedProgram['user'] = uProgram.value;
+            joinedProgram['application'] = applicationFacing.get(uProgram.value.guid);
+            return [joinedProgram, ...accum];
+          }
+          return accum;
+        }, []);
+        const payload = JSON.stringify({ data: joined });
         res.end(payload)
       })
       .catch(error => {

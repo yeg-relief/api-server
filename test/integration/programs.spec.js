@@ -1,6 +1,6 @@
 const
-chai      = require('chai'),
-chaiHttp  = require('chai-http');
+  chai = require('chai'),
+  chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
 const HOST = 'http://localhost:3000';
@@ -11,10 +11,10 @@ const HOST = 'http://localhost:3000';
 // SET THE STATE OF ES THEMSELVES.
 
 
-it('an empty put request at the programs index returns 400 and an error message', function(done) {
+it('an empty put request at the programs index returns 400 and an error message', function (done) {
   chai.request(HOST)
     .post('/api/programs/')
-    .end(function(err, res) {
+    .end(function (err, res) {
       chai.expect(res).to.have.status(400);
       chai.expect(res.body.message).to.exist;
       chai.expect(res.body.message).to.equal('program is not well formed');
@@ -22,41 +22,55 @@ it('an empty put request at the programs index returns 400 and an error message'
     });
 });
 
-it('can register a query for a new program', function(done) {
+it('can register a query for a new program', function (done) {
   const mockProgram = {
-    guid: 'new',
-    application: [
-      {
-        guid: 'new',
-        conditions: [
-          {
-            key: {
-              name: 'age',
+    data: {
+      guid: 'new',
+      application: [
+        {
+          guid: 'new',
+          conditions: [
+            {
+              key: {
+                name: 'age',
+                type: 'number'
+              },
+              value: 10,
+              qualifier: 'equal',
               type: 'number'
             },
-            value: 10,
-            qualifier: 'equal',
-            type: 'number'
-          }
-        ]
-      }
-    ],
-    user: {
-      created: '',
-      tags: [
-        'test',
-        'fake'
+            {
+              key: {
+                name: 'income',
+                type: 'number'
+              },
+              value: 200,
+              qualifier: 'lessThan',
+              type: 'number'
+            }
+          ]
+        }
       ],
-      title: 'a fake program',
-      details: 'this is a fake program to upload',
-      externalLink: 'http://website.ca'
+      user: {
+        guid: 'new',
+        created: '',
+        tags: [
+          'test',
+          'fake',
+          'testy'
+        ],
+        title: 'a more fake program',
+        details: 'this is a fake program to upload',
+        externalLink: 'http://website.ca'
+      }
     }
+
   };
 
   chai.request(HOST)
     .post('/api/programs/')
     .send(mockProgram)
-    .end(function(err, res){
+    .end(function (err, res) {
       // expect no error
       console.log(res.message);
       chai.expect(res).to.have.status(200);

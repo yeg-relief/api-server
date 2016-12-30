@@ -53,6 +53,10 @@ class Cache{
     utils.search(client, 'programs', 'user_facing', getAllPrograms)
       .then( (rawPrograms) => {
         if (rawPrograms.hits.total > 0) {
+          console.log('=================')
+          console.log('in initCache')
+          console.log(rawPrograms.hits.hits)
+          console.log('=================')
           this.addPrograms$.next({
             type: 'ADD_PROGRAMS',
             payload: rawPrograms.hits.hits
@@ -137,7 +141,9 @@ class Cache{
 
   getAllProgramsBase() {
     return this.data$.take(1)
+            .do(() => console.log('THIS IS the data$ stream'))
             .do(thing => console.log(thing))
+            .do( () => console.log('===================='))
             .reduce( (accum, cacheObj) => {
               Object.keys(cacheObj).forEach(key => accum.push(cacheObj[key]));
               return accum;
