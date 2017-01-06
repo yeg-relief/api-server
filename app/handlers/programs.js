@@ -5,7 +5,8 @@ const
   programs = require('../es/programs/user-facing-upload'),
   applyMetaData = require('../utils/programs').applyMetaData,
   Rx = require('rxjs/Rx'),
-  utils = require('../es/utils');
+  utils = require('../es/utils'),
+  progUtils = require('../utils/programs');
 
 class ProgramHandler {
   static addRoutes(client, cache, router) {
@@ -196,7 +197,9 @@ function getAllProgramsApplicationIncluded(client, cache) {
           if (applicationFacing.has(uProgram.value.guid)) {
             joinedProgram['guid'] = uProgram.value.guid;
             joinedProgram['user'] = uProgram.value;
-            joinedProgram['application'] = applicationFacing.get(uProgram.value.guid);
+            console.log(applicationFacing.get(uProgram.value.guid));
+            console.log(progUtils.applicationToConditions(applicationFacing.get(uProgram.value.guid)));
+            joinedProgram['application'] = progUtils.applicationToConditions(applicationFacing.get(uProgram.value.guid));
             return [joinedProgram, ...accum];
           }
           return accum;

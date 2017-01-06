@@ -1,7 +1,8 @@
 const guid = require('node-uuid');
 
 module.exports = {
-  applyMetaData
+  applyMetaData,
+  applicationToConditions
 };
 
 function applyGUID(program) {
@@ -49,7 +50,13 @@ export interface Key {
 
 */
 function applicationToConditions(programApplication) {
-
+  console.log('================ HERE ================');
+  console.log(programApplication);
+  const transformedPrograms = programApplication.reduce((accum, program) => {
+    return [[...transformToConditions(program.bool.must)], ...accum];
+  }, [])
+  console.log(transformedPrograms)
+  return transformedPrograms;
 }
 
 /*
@@ -73,17 +80,32 @@ bool: {
 }	
 */
 // programCondition is the 'must' array
-function transformToCondition(mustQueries) {
+function transformToConditions(mustQueries) {
+  console.log('============= mustQuery ===============')
+  console.log(mustQueries)
+  console.log('----------------------------------------\n\n')
   const conditions = [];
   mustQueries.forEach(query => {
-    const condition = {};
-    extractKey(condition, query);
+    console.log(query);
+    const condition = { key: {} };
+    const {keyName, keyType} = extractKey(query);
+    condition.key.name = keyName;
+    condition.key.type = keyType;
+    if (condition.key.type === 'number') {
+      condition.qualifier = qualifier(condition.key.name, condition.key.type, query);
+    }
 
+    condition.value = getKeyValue(condition.key.name, query);
+    conditions.push(condition);
   })
+  console.log(conditions);
+  return conditions;
 }
 
-function extractKey(condition, query) {
-  const getKeyName = () => {
+function extractKey(query) {
+
+  const getKeyName = (query) => {
+    console.log(query);
     let queryKey; // will be an array due to Object.keys ... length should not be greater than 1
     if (query['term'] !== undefined) {
       queryKey = Object.keys(query['term']);
@@ -96,23 +118,88 @@ function extractKey(condition, query) {
     return queryKey[0];
   }
 
-  const getKeyType = (key) => {
-    let keyValue;
-    if (query['term'] !== undefined) {
-      keyValue = query['term'].key;
-    } else if (query['range'] !== undefined) {
-      const rangeContainer = query['range'].key
-      const containerKey = Object.keys(rangeContainer)[0];
-      keyValue = rangeContainer[containerKey];
-    }
+  const getKeyType = (key, query) => {
+    return typeof getKeyValue(key, query);
+  }
 
-    return typeof keyValue;
-  } 
-
-  const keyName = getKeyName();
-  const keyType = getKeyType(keyName);
+  const keyName = getKeyName(query);
+  console.log(`keyName: ${keyName}`);
+  const keyType = getKeyType(keyName, query);
+  console.log(`keyType: ${keyType}`);
   return {
-    name: keyName,
-    type: keyType
+    keyName,
+    keyType
   };
 }
+
+function qualifier(keyName, keyType, query) {
+  if (keyType === 'boolean') {
+    return undefined;
+  }
+  // keyName is of number type so it will be a range or equal
+  const container = extractEScontainer(query);
+  if (container === 'range') {
+    const rawQualifier = getRawQualifier(keyName, query);
+    console.log('==================== rawQualifier ======================')
+    console.log(rawQualifier)
+    console.log('--------------------------------------------------------\n\n')
+    switch (rawQualifier) {
+      case 'lt': return 'lessThan';
+
+      case 'lte': return 'lessThanOrEqual';
+
+      case 'gt': return 'greaterThan';
+
+      case 'gte': return 'greaterThanOrEqual';
+
+      default: {
+        return undefined;
+      }
+    }
+  } else if (container === 'term') {
+    return 'equal';
+  }
+  else {
+    return undefined;
+  }
+}
+
+function getKeyValue(keyName, query) {
+  console.log('==================== getKeyValue =======================')
+  console.log(query)
+  console.log('---------------------------------------------------------')
+  let keyValue;
+  if (query['term'] !== undefined) {
+    keyValue = query['term'][keyName];
+  } else if (query['range'] !== undefined) {
+    const rangeContainer = query['range'][keyName];
+    const containerKey = Object.keys(rangeContainer)[0];
+    keyValue = rangeContainer[containerKey];
+  }
+  return keyValue;
+}
+
+function getRawQualifier(keyName, query) {
+  console.log(' ++++++++++++ IN RAW QUALIFIER ++++++++++++++ \n')
+  console.log(query);
+  console.log(keyName);
+  console.log(' ++++++++++++++++++++++++++++++++++++++++++++ \n');
+  let qualifier;
+  if (query['term'] !== undefined) {
+    return undefined;
+  }
+  if (query['range'] !== undefined) {
+    return Object.keys(query['range'][keyName])[0];
+  }
+}
+
+
+function extractEScontainer(query) {
+  if (query['term'] !== undefined) {
+    return 'term';
+  } else if (query['range'] !== undefined) {
+    return 'range';
+  }
+  return undefined;
+}
+
