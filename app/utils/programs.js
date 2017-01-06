@@ -6,9 +6,6 @@ module.exports = {
 };
 
 function applyGUID(program) {
-  console.log('in applyGUID')
-  console.log(program)
-  console.log('================')
   if (program.guid === 'new') {
     const newGuid = guid.v4();
     program.guid = newGuid;
@@ -50,13 +47,9 @@ export interface Key {
 
 */
 function applicationToConditions(programApplication) {
-  console.log('================ HERE ================');
-  console.log(programApplication);
-  const transformedPrograms = programApplication.reduce((accum, program) => {
-    return [[...transformToConditions(program.bool.must)], ...accum];
+  return programApplication.reduce((accum, program) => {
+    return [{ id: program.id, query: [...transformToConditions(program.query.bool.must)]}, ...accum];
   }, [])
-  console.log(transformedPrograms)
-  return transformedPrograms;
 }
 
 /*
@@ -81,12 +74,8 @@ bool: {
 */
 // programCondition is the 'must' array
 function transformToConditions(mustQueries) {
-  console.log('============= mustQuery ===============')
-  console.log(mustQueries)
-  console.log('----------------------------------------\n\n')
   const conditions = [];
   mustQueries.forEach(query => {
-    console.log(query);
     const condition = { key: {} };
     const {keyName, keyType} = extractKey(query);
     condition.key.name = keyName;
@@ -98,14 +87,12 @@ function transformToConditions(mustQueries) {
     condition.value = getKeyValue(condition.key.name, query);
     conditions.push(condition);
   })
-  console.log(conditions);
   return conditions;
 }
 
 function extractKey(query) {
 
   const getKeyName = (query) => {
-    console.log(query);
     let queryKey; // will be an array due to Object.keys ... length should not be greater than 1
     if (query['term'] !== undefined) {
       queryKey = Object.keys(query['term']);
@@ -123,9 +110,7 @@ function extractKey(query) {
   }
 
   const keyName = getKeyName(query);
-  console.log(`keyName: ${keyName}`);
   const keyType = getKeyType(keyName, query);
-  console.log(`keyType: ${keyType}`);
   return {
     keyName,
     keyType
@@ -140,9 +125,6 @@ function qualifier(keyName, keyType, query) {
   const container = extractEScontainer(query);
   if (container === 'range') {
     const rawQualifier = getRawQualifier(keyName, query);
-    console.log('==================== rawQualifier ======================')
-    console.log(rawQualifier)
-    console.log('--------------------------------------------------------\n\n')
     switch (rawQualifier) {
       case 'lt': return 'lessThan';
 
@@ -165,9 +147,6 @@ function qualifier(keyName, keyType, query) {
 }
 
 function getKeyValue(keyName, query) {
-  console.log('==================== getKeyValue =======================')
-  console.log(query)
-  console.log('---------------------------------------------------------')
   let keyValue;
   if (query['term'] !== undefined) {
     keyValue = query['term'][keyName];
@@ -180,10 +159,6 @@ function getKeyValue(keyName, query) {
 }
 
 function getRawQualifier(keyName, query) {
-  console.log(' ++++++++++++ IN RAW QUALIFIER ++++++++++++++ \n')
-  console.log(query);
-  console.log(keyName);
-  console.log(' ++++++++++++++++++++++++++++++++++++++++++++ \n');
   let qualifier;
   if (query['term'] !== undefined) {
     return undefined;

@@ -126,16 +126,16 @@ function deleteProgram(client, cache) {
 function getAllProgramsApplicationIncluded(client, cache) {
   //const userFacingPrograms = utils.search(client, 'programs', 'user_facing', getAllPrograms);
   const filterHits = (searchResult) => {
-    console.log(searchResult);
     if (searchResult.hits.total > 0) {
       const reducedHits = searchResult.hits.hits.reduce((hits, hit) => {
+        console.log(hit);
         let guidQueries;
         if (hits.has(hit._source.meta.program_guid)) {
           guidQueries = [...hits.get(hit._source.meta.program_guid)];
         } else {
           guidQueries = [];
         }
-        guidQueries.push(hit._source.query);
+        guidQueries.push({query: hit._source.query, id: hit._id});
         hits.set(hit._source.meta.program_guid, guidQueries);
         return hits;
       }, new Map());
@@ -160,29 +160,9 @@ function getAllProgramsApplicationIncluded(client, cache) {
     res.setHeader('Content-Type', 'application/json');
     res.statusCode = 200;
     utils.getAllPercolators(client)
+      .then(data => filterHits(data))
+      .then( (applicationProgramMap) => Promise.all([Promise.resolve(applicationProgramMap), cache.getAllProgramsPromise()]))
       .then(data => {
-        console.log('=======================')
-        console.log('getAllPercolators')
-        console.log(data)
-        console.log('=======================')
-        return filterHits(data)
-      })
-      .then( (applicationProgramMap) => {
-        console.log('=======================')
-        console.log('applicationProgramMap')
-        console.log(applicationProgramMap)
-        console.log('=======================')
-        // can be simplified?
-        return Promise.all([Promise.resolve(applicationProgramMap), cache.getAllProgramsPromise()]);
-      })
-      .then(data => {
-        console.log('============================')
-        console.log('final')
-        console.log('data[0]')
-        console.log(data[0])
-        console.log('\n\ndata[1]')
-        console.log(data[1])
-        console.log('============================')
         const applicationFacing = data[0]; // this is a Map
         const userFacing = data[1]; // this is an array of objects
         /*
@@ -197,8 +177,6 @@ function getAllProgramsApplicationIncluded(client, cache) {
           if (applicationFacing.has(uProgram.value.guid)) {
             joinedProgram['guid'] = uProgram.value.guid;
             joinedProgram['user'] = uProgram.value;
-            console.log(applicationFacing.get(uProgram.value.guid));
-            console.log(progUtils.applicationToConditions(applicationFacing.get(uProgram.value.guid)));
             joinedProgram['application'] = progUtils.applicationToConditions(applicationFacing.get(uProgram.value.guid));
             return [joinedProgram, ...accum];
           }
@@ -212,6 +190,5 @@ function getAllProgramsApplicationIncluded(client, cache) {
         res.statusCode = 500;
         res.send(JSON.stringify({ message: error.message }));
       })
-
   }
 }
