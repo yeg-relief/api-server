@@ -20,20 +20,21 @@ module.exports = {
   search,
   testConnect,
   CONSTANTS: PERCOLATOR_CONSTANTS,
-  getAllPercolators
+  getAllPercolators,
+  updatePercolator
 };
 
 /*
   Function names are self-describing.
 */
-function deleteIndex(elasticClient, indexName){
+function deleteIndex(elasticClient, indexName) {
   return elasticClient.indices.delete({
     index: indexName
   });
 }
 
-function initIndex(elasticClient, indexName, mappings){
-  if (mappings === undefined){
+function initIndex(elasticClient, indexName, mappings) {
+  if (mappings === undefined) {
     return elasticClient.indices.create({
       index: indexName
     });
@@ -46,13 +47,13 @@ function initIndex(elasticClient, indexName, mappings){
   });
 }
 
-function indexExists(elasticClient, indexName){
+function indexExists(elasticClient, indexName) {
   return elasticClient.indices.exists({
     index: indexName
   });
 }
 
-function initMapping(elasticClient, indexName, typeName, properties){
+function initMapping(elasticClient, indexName, typeName, properties) {
   return elasticClient.indices.putMapping({
     index: indexName,
     type: typeName,
@@ -62,14 +63,14 @@ function initMapping(elasticClient, indexName, typeName, properties){
   });
 }
 
-function mappingExists(elasticClient, indexName, typeName){
+function mappingExists(elasticClient, indexName, typeName) {
   return elasticClient.indices.existsType({
     index: indexName,
     type: typeName
   });
 }
 
-function addPercolator(elasticClient, query, meta){
+function addPercolator(elasticClient, query, meta) {
   if (meta === undefined) {
     throw new Error('attempting to add percolator without meta information');
   }
@@ -83,7 +84,23 @@ function addPercolator(elasticClient, query, meta){
   });
 }
 
-function percolateDocument(elasticClient, doc){
+function updatePercolator(elasticClient, query, meta, id) {
+  if (meta === undefined) {
+    throw new Error('attempting to add percolator without meta information');
+  }
+  return elasticClient.index({
+    index: PERCOLATOR_CONSTANTS.INDEX,
+    type: PERCOLATOR_CONSTANTS.QUERIES,
+    id: id,
+    body: {
+      query,
+      meta
+    }
+  });
+}
+
+
+function percolateDocument(elasticClient, doc) {
   return elasticClient.search({
     index: PERCOLATOR_CONSTANTS.INDEX,
     body: {
@@ -101,7 +118,7 @@ function percolateDocument(elasticClient, doc){
   });
 }
 
-function getAllPercolators(elasticClient){
+function getAllPercolators(elasticClient) {
   return elasticClient.search({
     index: PERCOLATOR_CONSTANTS.INDEX,
     body: {
@@ -113,15 +130,15 @@ function getAllPercolators(elasticClient){
 }
 
 
-function indexDoc(elasticClient, indexName, doc, type, id){
-  if (type === undefined && id === undefined){
+function indexDoc(elasticClient, indexName, doc, type, id) {
+  if (type === undefined && id === undefined) {
     return elasticClient.index({
       index: indexName,
       body: {
         doc
       }
     });
-  }else if (type !== undefined && id !== undefined){
+  } else if (type !== undefined && id !== undefined) {
     return elasticClient.index({
       index: indexName,
       type: type,
@@ -144,7 +161,7 @@ function indexDoc(elasticClient, indexName, doc, type, id){
   }
 }
 
-function search(elasticClient, index, type, query){
+function search(elasticClient, index, type, query) {
   return elasticClient.search({
     index: index,
     type: type,
@@ -155,7 +172,7 @@ function search(elasticClient, index, type, query){
   });
 }
 
-function mGet(elasticClient, index, type, ids){
+function mGet(elasticClient, index, type, ids) {
   return elasticClient.mget({
     index: index,
     type: type,
@@ -165,7 +182,7 @@ function mGet(elasticClient, index, type, ids){
   });
 }
 
-function get(elasticClient, index, type, id){
+function get(elasticClient, index, type, id) {
   return elasticClient.get({
     index: index,
     type: type,
@@ -173,7 +190,7 @@ function get(elasticClient, index, type, id){
   });
 }
 
-function deleteDoc(elasticClient, index, type, id){
+function deleteDoc(elasticClient, index, type, id) {
   return elasticClient.delete({
     index: index,
     type: type,
@@ -181,7 +198,7 @@ function deleteDoc(elasticClient, index, type, id){
   });
 }
 
-function getMapping(elasticClient, index, type){
+function getMapping(elasticClient, index, type) {
   return elasticClient.indices.getMapping({
     index: index,
     type: type
@@ -191,7 +208,7 @@ function getMapping(elasticClient, index, type){
 function testConnect(elasticClient) {
   return new Promise(
     (resolve, reject) => {
-        elasticClient.ping({
+      elasticClient.ping({
         // ping usually has a 3000ms timeout
         requestTimeout: Infinity,
         // undocumented params are appended to the query string

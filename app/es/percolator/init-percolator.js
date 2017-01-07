@@ -9,6 +9,7 @@ const utils = require('../utils');
 */
 module.exports = {
   addQueries,
+  updateQueries,
   test: {
     AppQueryESqueryConverter,
     parseNumberCondition,
@@ -102,13 +103,31 @@ function parseBooleanCondition(condition) {
   return obj;
 }
 
-async function addQueries(client, queries) {
+async function addQueries(client, queries, programGUID) {
   const promises = queries.reduce( (accum, query) => {
     const convertedQuery = AppQueryESqueryConverter(query);
     const meta = {
-      program_guid: query.guid
+      program_guid: programGUID
     };
     const promise = utils.addPercolator(client, convertedQuery, meta);
+    return [promise, ...accum];
+  }, []);
+  const response = await Promise.all(promises);
+  return response;
+}
+
+async function updateQueries(client, queries, programGUID) {
+  const promises = queries.reduce( (accum, query) => {
+    const convertedQuery = AppQueryESqueryConverter(query);
+    const meta = {
+      program_guid: programGUID
+    };
+    let promise;
+    if (query.id === 'new'){
+      promise = utils.addPercolator(client, convertedQuery, meta);
+    } else {
+      promise = utils.updatePercolator(client, convertedQuery, meta, query.id);
+    }
     return [promise, ...accum];
   }, []);
   const response = await Promise.all(promises);

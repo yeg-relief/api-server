@@ -48,7 +48,7 @@ export interface Key {
 */
 function applicationToConditions(programApplication) {
   return programApplication.reduce((accum, program) => {
-    return [{ id: program.id, query: [...transformToConditions(program.query.bool.must)]}, ...accum];
+    return [{ id: program.id, conditions: [...transformToConditions(program.query.bool.must)]}, ...accum];
   }, [])
 }
 

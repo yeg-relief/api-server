@@ -22,6 +22,8 @@ class ProgramHandler {
     api.delete(':guid', deleteProgram(client, cache));
     api.get('/application', getAllProgramsApplicationIncluded(client, cache));
 
+    api.put('/', updateProgram(client, cache));
+
     // this is the router that handles all incoming requests for the server
     router.use('/api/programs/', api);
   }
@@ -31,13 +33,53 @@ module.exports = {
   ProgramHandler
 };
 
+function updateProgram(client, cache) {
+  return (req, res, next) => {
+    res.statusCode = 200;
+    const program = req.body.data;
+    res.setHeader('Content-Type', 'application/json');
+    if (program === undefined || program.application === undefined || program.user === undefined) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({
+        message: 'program is not well formed'
+      }));
+      return next();
+    }
+    if (data.guid === 'new') {
+      res.statusCode = 400;
+      res.end(JSON.stringify({
+        message: 'PUT messages to /programs/ are for programs with an already allocated guid'
+      }));
+      return next();
+    }
+    // update the creation/uploaded date
+    program.user.created = (new Date).getTime();
+
+    const appliction = program.application;
+    const user = program.user;
+    percolator.updateQueries(client, application, program.guid)
+      .then(() => cache.updateProgram(user))
+      .then(() => res.end(JSON.stringify({ created: true })))
+      .then(() => next())
+      .catch(error => {
+        res.statusCode = 500;
+        console.error(error.message);
+        res.end(JSON.stringify({
+          message: error.message
+        }));
+        return next();
+      })
+  }
+}
+
+
 function uploadNewProgram(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
     const data = req.body.data;
     console.log(data);
     res.setHeader('Content-Type', 'application/json');
-    if (data === undefined || data.application === undefined || data.user === undefined) {
+    if (data === undefined || data.application === undefined || data.user === undefined || data.application.length === 0) {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'program is not well formed'
@@ -73,10 +115,10 @@ function uploadNewProgram(client, cache) {
     const program = programWithMetaData.user;
 
     // TODO: investigate wether or not this properly adds queries to percolator -- seems doubtful
-    percolator.addQueries(client, application)
+    percolator.addQueries(client, application, programWithMetaData.guid)
       .then(() => programs.handleProgramUpload(client, program, programWithMetaData.guid))
-      .then(() => res.end(JSON.stringify({ created: true })))
       .then(() => cache.addPrograms([{ program: program, id: programWithMetaData.guid }]))
+      .then(() => res.end(JSON.stringify({ created: true })))
       .then(() => next())
       .catch(error => {
         res.statusCode = 500;
@@ -135,7 +177,7 @@ function getAllProgramsApplicationIncluded(client, cache) {
         } else {
           guidQueries = [];
         }
-        guidQueries.push({query: hit._source.query, id: hit._id});
+        guidQueries.push({ query: hit._source.query, id: hit._id });
         hits.set(hit._source.meta.program_guid, guidQueries);
         return hits;
       }, new Map());
@@ -161,7 +203,7 @@ function getAllProgramsApplicationIncluded(client, cache) {
     res.statusCode = 200;
     utils.getAllPercolators(client)
       .then(data => filterHits(data))
-      .then( (applicationProgramMap) => Promise.all([Promise.resolve(applicationProgramMap), cache.getAllProgramsPromise()]))
+      .then((applicationProgramMap) => Promise.all([Promise.resolve(applicationProgramMap), cache.getAllProgramsPromise()]))
       .then(data => {
         const applicationFacing = data[0]; // this is a Map
         const userFacing = data[1]; // this is an array of objects
@@ -172,7 +214,7 @@ function getAllProgramsApplicationIncluded(client, cache) {
             user: UserFacingProgram;
           }
         */
-        const joined = userFacing.reduce( (accum, uProgram) => {
+        const joined = userFacing.reduce((accum, uProgram) => {
           const joinedProgram = Object.create(null);
           if (applicationFacing.has(uProgram.value.guid)) {
             joinedProgram['guid'] = uProgram.value.guid;

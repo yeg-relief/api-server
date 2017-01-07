@@ -44,6 +44,11 @@ function getAllKeys(cli) {
             type: mapping[key].type
           });
         });
+        keys.forEach(key => {
+          if (key.type === 'integer'){
+            key.type = 'number';
+          }
+        })
         return keys;
       })
       .then(keys => {
