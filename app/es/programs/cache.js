@@ -32,8 +32,10 @@ class Cache {
           }
 
           case 'REMOVE_PROGRAM': {
+            console.log(action.type);
             const guid = action.payload;
             delete accum[guid];
+            console.log(accum);
             return accum;
           }
 

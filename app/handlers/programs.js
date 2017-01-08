@@ -19,7 +19,7 @@ class ProgramHandler {
     api.post('/', uploadNewProgram(client, cache));
     // user facing programs
     api.get('/', getAllPrograms(client, cache));
-    api.delete(':guid', deleteProgram(client, cache));
+    api.delete('/:guid', deleteProgram(client, cache));
     api.get('/application', getAllProgramsApplicationIncluded(client, cache));
 
     api.put('/', updateProgram(client, cache));
@@ -150,17 +150,36 @@ function getAllPrograms(client, cache) {
 }
 
 function deleteProgram(client, cache) {
+  const filterPercolators = (searchResults, guid) => {
+    if (searchResults.hits.total > 0) {
+      const filtered = searchResults.hits.hits.filter(hit => hit._source.meta.program_guid === guid)
+      const ids = filtered.reduce( (accum, hit) => {
+        return [hit._id, ...accum];
+      }, [])
+      return Promise.resolve(ids);
+    }
+    return Promise.resolve([]);
+  }
+
+
   return (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.statusCode = 200;
+    const guid = req.params.guid;
+    console.log('=========================================');
+    console.log(`delete program called with guid: ${guid}`);
+    console.log('==========================================');
 
-    utils.deleteDoc(client, 'programs', 'user_facing', req.body)
-      .then((_) => cache.deleteProgram(req.body))
+    utils.deleteDoc(client, 'programs', 'user_facing', guid)
+      .then((_) => cache.deleteProgram(guid))
+      .then(() => utils.getAllPercolators(client))
+      .then(percolators => filterPercolators(percolators, guid))
+      .then(ids => percolator.deleteQueries(client, ids))
       .then(valid => res.end(JSON.stringify({ removed: valid })))
       .catch(error => {
         console.error(error.message);
         res.statusCode = 500;
-        res.send(JSON.stringify({ message: error.message }));
+        res.end(JSON.stringify({ message: error.message }));
       })
   }
 }
@@ -182,9 +201,8 @@ function getAllProgramsApplicationIncluded(client, cache) {
         return hits;
       }, new Map());
       return Promise.resolve(reducedHits);
-    } else {
-      return Promise.resolve(new Map());
-    }
+    } 
+    return Promise.resolve(new Map());
   }
 
   const strMapToObj = (strMap) => {
@@ -230,7 +248,7 @@ function getAllProgramsApplicationIncluded(client, cache) {
       .catch(error => {
         console.error(error.message);
         res.statusCode = 500;
-        res.send(JSON.stringify({ message: error.message }));
+        res.end(JSON.stringify({ message: error.message }));
       })
   }
 }

@@ -10,6 +10,7 @@ const utils = require('../utils');
 module.exports = {
   addQueries,
   updateQueries,
+  deleteQueries,
   test: {
     AppQueryESqueryConverter,
     parseNumberCondition,
@@ -128,6 +129,15 @@ async function updateQueries(client, queries, programGUID) {
     } else {
       promise = utils.updatePercolator(client, convertedQuery, meta, query.id);
     }
+    return [promise, ...accum];
+  }, []);
+  const response = await Promise.all(promises);
+  return response;
+}
+
+async function deleteQueries(client, ids) {
+  const promises = ids.reduce( (accum, id) => {
+    const promise = utils.deletePercolator(client, id);
     return [promise, ...accum];
   }, []);
   const response = await Promise.all(promises);

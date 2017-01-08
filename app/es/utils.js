@@ -21,7 +21,8 @@ module.exports = {
   testConnect,
   CONSTANTS: PERCOLATOR_CONSTANTS,
   getAllPercolators,
-  updatePercolator
+  updatePercolator,
+  deletePercolator
 };
 
 /*
@@ -96,6 +97,14 @@ function updatePercolator(elasticClient, query, meta, id) {
       query,
       meta
     }
+  });
+}
+
+function deletePercolator(elasticClient, id){
+  return elasticClient.delete({
+    index: PERCOLATOR_CONSTANTS.INDEX,
+    type: PERCOLATOR_CONSTANTS.QUERIES,
+    id: id
   });
 }
 
