@@ -18,9 +18,11 @@ class Cache {
 
     this.data$ = Rx.Observable.merge(
       this.addPrograms$,
-      this.removeProgram$
+      this.removeProgram$,
+      this.updateProgram$
     )
       .scan((accum, action) => {
+        console.log(action.type);
         switch (action.type) {
           case 'ADD_PROGRAMS': {
             if (Object.keys(accum).length <= MAX_SIZE) {
@@ -32,16 +34,18 @@ class Cache {
           }
 
           case 'REMOVE_PROGRAM': {
-            console.log(action.type);
             const guid = action.payload;
             delete accum[guid];
-            console.log(accum);
             return accum;
           }
 
           case 'UPDATE_PROGRAM': {
+            console.log('================================')
+            console.log(action.type);
             const program = action.payload;
             accum[program._id] = program._source.doc;
+            console.log(accum);
+            console.log('=================================')
             return accum;
           }
 
@@ -120,14 +124,13 @@ class Cache {
   }
 
   updateProgram(userProgram) {
-    if (guid === undefined || typeof guid !== 'string') {
-      throw new Error('obviously invalid guid');
-    }
+    console.log('++++++++++++++++++++++++++++++++++++++++++++++')
+    console.log('IN UPDATE PROGRAM')
     console.log(userProgram);
     // strange format...
-    const transformedProgram = transformProgram({ program: userProgram, id: userProgram.guid });
+    const transformedProgram = this.transformProgram({ program: userProgram, id: userProgram.guid });
     console.log(transformedProgram);
-
+    console.log('++++++++++++++++++++++++++++++++++++++++++++++++')
 
     this.updateProgram$.next({
       type: 'UPDATE_PROGRAM',

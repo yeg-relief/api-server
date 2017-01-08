@@ -35,6 +35,7 @@ module.exports = {
 
 function updateProgram(client, cache) {
   return (req, res, next) => {
+    console.log('UPDATE PROGRAM CALLED');
     res.statusCode = 200;
     const program = req.body.data;
     res.setHeader('Content-Type', 'application/json');
@@ -45,7 +46,7 @@ function updateProgram(client, cache) {
       }));
       return next();
     }
-    if (data.guid === 'new') {
+    if (program.guid === 'new') {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'PUT messages to /programs/ are for programs with an already allocated guid'
@@ -55,12 +56,14 @@ function updateProgram(client, cache) {
     // update the creation/uploaded date
     program.user.created = (new Date).getTime();
 
-    const appliction = program.application;
+    const application = program.application;
     const user = program.user;
+    console.log(program);
+    console.log(program.guid);
     percolator.updateQueries(client, application, program.guid)
+      .then(() => programs.handleProgramUpload(client, user, program.guid))
       .then(() => cache.updateProgram(user))
       .then(() => res.end(JSON.stringify({ created: true })))
-      .then(() => next())
       .catch(error => {
         res.statusCode = 500;
         console.error(error.message);
@@ -119,7 +122,6 @@ function uploadNewProgram(client, cache) {
       .then(() => programs.handleProgramUpload(client, program, programWithMetaData.guid))
       .then(() => cache.addPrograms([{ program: program, id: programWithMetaData.guid }]))
       .then(() => res.end(JSON.stringify({ created: true })))
-      .then(() => next())
       .catch(error => {
         res.statusCode = 500;
         console.error(error.message);
