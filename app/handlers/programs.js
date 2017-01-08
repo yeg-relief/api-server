@@ -34,10 +34,43 @@ module.exports = {
 };
 
 function updateProgram(client, cache) {
+  const filterPercolators = (searchResults, guid) => {
+    if (searchResults.hits.total > 0) {
+      const filtered = searchResults.hits.hits.filter(hit => hit._source.meta.program_guid === guid)
+      const ids = filtered.reduce((accum, hit) => {
+        return [hit._id, ...accum];
+      }, [])
+      return Promise.resolve(ids);
+    }
+    return Promise.resolve([]);
+  }
+
+  // returns the ids of percolators no longer associated with the program -- deleted by client
+  const findMissingPercolators = (all, present) => {    
+    const missing = all.reduce((accum, percolatorID) => {
+      console.log(percolator);
+      const findFn = query => query.id === percolatorID;
+      if (present.findIndex(findFn) < 0) {
+        return [percolatorID, ...accum];
+      }
+      return accum;
+    }, []);
+    console.log('+++++++++++++++++')
+    console.log('missing')
+    console.log(missing);
+    console.log('+++++++++++++++++')
+    return Promise.resolve(missing);
+  }
+
+
   return (req, res, next) => {
+    console.log('++++++++++++++++++++++');
     console.log('UPDATE PROGRAM CALLED');
+
     res.statusCode = 200;
     const program = req.body.data;
+    console.log(program);
+    console.log('++++++++++++++++++++++');
     res.setHeader('Content-Type', 'application/json');
     if (program === undefined || program.application === undefined || program.user === undefined) {
       res.statusCode = 400;
@@ -58,9 +91,17 @@ function updateProgram(client, cache) {
 
     const application = program.application;
     const user = program.user;
-    console.log(program);
-    console.log(program.guid);
-    percolator.updateQueries(client, application, program.guid)
+    const guid = program.guid;
+    // grab all percolators... sloppy low hanging optimization 
+    utils.getAllPercolators(client)
+      // take only the ones associated with this program
+      .then(percolators => filterPercolators(percolators, guid))
+      // find ones that are no longer associated with the program -- deleted by client
+      .then(filteredPercolators => findMissingPercolators(filteredPercolators, application))
+      // delete the queries no longer associated
+      .then(missingPercolators => percolator.deleteQueries(client, missingPercolators))
+      // update the remaining ones -- no distinction is made between ones actually changed etc
+      .then(() => percolator.updateQueries(client, application, program.guid))
       .then(() => programs.handleProgramUpload(client, user, program.guid))
       .then(() => cache.updateProgram(user))
       .then(() => res.end(JSON.stringify({ created: true })))
@@ -80,7 +121,6 @@ function uploadNewProgram(client, cache) {
   return (req, res, next) => {
     res.statusCode = 200;
     const data = req.body.data;
-    console.log(data);
     res.setHeader('Content-Type', 'application/json');
     if (data === undefined || data.application === undefined || data.user === undefined || data.application.length === 0) {
       res.statusCode = 400;
@@ -109,10 +149,6 @@ function uploadNewProgram(client, cache) {
       }));
       return next();
     }
-    console.log('===========================')
-    console.log('programWithMetaData')
-    console.log(programWithMetaData)
-    console.log('===========================')
 
     const application = programWithMetaData.application;
     const program = programWithMetaData.user;
@@ -155,7 +191,7 @@ function deleteProgram(client, cache) {
   const filterPercolators = (searchResults, guid) => {
     if (searchResults.hits.total > 0) {
       const filtered = searchResults.hits.hits.filter(hit => hit._source.meta.program_guid === guid)
-      const ids = filtered.reduce( (accum, hit) => {
+      const ids = filtered.reduce((accum, hit) => {
         return [hit._id, ...accum];
       }, [])
       return Promise.resolve(ids);
@@ -168,9 +204,6 @@ function deleteProgram(client, cache) {
     res.setHeader('Content-Type', 'application/json');
     res.statusCode = 200;
     const guid = req.params.guid;
-    console.log('=========================================');
-    console.log(`delete program called with guid: ${guid}`);
-    console.log('==========================================');
 
     utils.deleteDoc(client, 'programs', 'user_facing', guid)
       .then((_) => cache.deleteProgram(guid))
@@ -191,7 +224,6 @@ function getAllProgramsApplicationIncluded(client, cache) {
   const filterHits = (searchResult) => {
     if (searchResult.hits.total > 0) {
       const reducedHits = searchResult.hits.hits.reduce((hits, hit) => {
-        console.log(hit);
         let guidQueries;
         if (hits.has(hit._source.meta.program_guid)) {
           guidQueries = [...hits.get(hit._source.meta.program_guid)];
@@ -203,7 +235,7 @@ function getAllProgramsApplicationIncluded(client, cache) {
         return hits;
       }, new Map());
       return Promise.resolve(reducedHits);
-    } 
+    }
     return Promise.resolve(new Map());
   }
 
@@ -240,6 +272,11 @@ function getAllProgramsApplicationIncluded(client, cache) {
             joinedProgram['guid'] = uProgram.value.guid;
             joinedProgram['user'] = uProgram.value;
             joinedProgram['application'] = progUtils.applicationToConditions(applicationFacing.get(uProgram.value.guid));
+            return [joinedProgram, ...accum];
+          } else {
+            joinedProgram['guid'] = uProgram.value.guid;
+            joinedProgram['user'] = uProgram.value;
+            joinedProgram['application'] = [];
             return [joinedProgram, ...accum];
           }
           return accum;

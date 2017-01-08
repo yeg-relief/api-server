@@ -25,14 +25,14 @@ function AppQueryESqueryConverter(applicationQuery) {
   // could use a filter. Most likely negligible improvement for our small dataset
   const convertedQuery = {
     bool: {
-      must: [ ]
+      must: []
     }
   };
   // build our query from the conditions associate with the program
-  convertedQuery.bool.must = applicationQuery.conditions.reduce( (accum, condition) => {
-    switch(condition.type) {
+  convertedQuery.bool.must = applicationQuery.conditions.reduce((accum, condition) => {
+    switch (condition.type) {
       case 'number': {
-        if( condition.qualifier === undefined) {
+        if (condition.qualifier === undefined) {
           throw new Error('condition type number with qualifier undefined');
         }
         const numberCondition = parseNumberCondition(condition);
@@ -65,9 +65,9 @@ function parseNumberCondition(condition) {
 }
 
 function parseQualifiedNumberCondition(condition) {
-  const obj = { range: {  } };
+  const obj = { range: {} };
   // return statements are 'hidden' in these cases
-  switch(condition.qualifier) {
+  switch (condition.qualifier) {
     case 'lessThan': {
       obj.range[condition.key.name] = {
         lt: condition.value
@@ -105,7 +105,7 @@ function parseBooleanCondition(condition) {
 }
 
 async function addQueries(client, queries, programGUID) {
-  const promises = queries.reduce( (accum, query) => {
+  const promises = queries.reduce((accum, query) => {
     const convertedQuery = AppQueryESqueryConverter(query);
     const meta = {
       program_guid: programGUID
@@ -118,13 +118,13 @@ async function addQueries(client, queries, programGUID) {
 }
 
 async function updateQueries(client, queries, programGUID) {
-  const promises = queries.reduce( (accum, query) => {
+  const promises = queries.reduce((accum, query) => {
     const convertedQuery = AppQueryESqueryConverter(query);
     const meta = {
       program_guid: programGUID
     };
     let promise;
-    if (query.id === 'new'){
+    if (query.id.substring(0,4) === 'temp') {
       promise = utils.addPercolator(client, convertedQuery, meta);
     } else {
       promise = utils.updatePercolator(client, convertedQuery, meta, query.id);
@@ -136,7 +136,7 @@ async function updateQueries(client, queries, programGUID) {
 }
 
 async function deleteQueries(client, ids) {
-  const promises = ids.reduce( (accum, id) => {
+  const promises = ids.reduce((accum, id) => {
     const promise = utils.deletePercolator(client, id);
     return [promise, ...accum];
   }, []);

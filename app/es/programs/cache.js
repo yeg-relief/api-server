@@ -22,7 +22,6 @@ class Cache {
       this.updateProgram$
     )
       .scan((accum, action) => {
-        console.log(action.type);
         switch (action.type) {
           case 'ADD_PROGRAMS': {
             if (Object.keys(accum).length <= MAX_SIZE) {
@@ -40,12 +39,8 @@ class Cache {
           }
 
           case 'UPDATE_PROGRAM': {
-            console.log('================================')
-            console.log(action.type);
             const program = action.payload;
             accum[program._id] = program._source.doc;
-            console.log(accum);
-            console.log('=================================')
             return accum;
           }
 
@@ -66,10 +61,6 @@ class Cache {
     utils.search(client, 'programs', 'user_facing', getAllPrograms)
       .then((rawPrograms) => {
         if (rawPrograms.hits.total > 0) {
-          console.log('=================')
-          console.log('in initCache')
-          console.log(rawPrograms.hits.hits)
-          console.log('=================')
           this.addPrograms$.next({
             type: 'ADD_PROGRAMS',
             payload: rawPrograms.hits.hits
@@ -124,13 +115,8 @@ class Cache {
   }
 
   updateProgram(userProgram) {
-    console.log('++++++++++++++++++++++++++++++++++++++++++++++')
-    console.log('IN UPDATE PROGRAM')
-    console.log(userProgram);
     // strange format...
     const transformedProgram = this.transformProgram({ program: userProgram, id: userProgram.guid });
-    console.log(transformedProgram);
-    console.log('++++++++++++++++++++++++++++++++++++++++++++++++')
 
     this.updateProgram$.next({
       type: 'UPDATE_PROGRAM',
@@ -184,9 +170,6 @@ class Cache {
 
   getAllProgramsBase() {
     return this.data$.take(1)
-      .do(() => console.log('THIS IS the data$ stream'))
-      .do(thing => console.log(thing))
-      .do(() => console.log('===================='))
       .reduce((accum, cacheObj) => {
         Object.keys(cacheObj).forEach(key => accum.push(cacheObj[key]));
         return accum;
