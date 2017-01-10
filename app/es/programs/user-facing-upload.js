@@ -2,10 +2,6 @@ const utils = require('../utils');
 
 // program in this context is the user facing portion
 async function handleProgramUpload(client, program, guid) {
-  console.log('++++++++++++++++++++++');
-  console.log('IN USER FACING UPLOAD');
-  console.log(program);
-  console.log('++++++++++++++++++++++');
   // add value in there for conformity with rest of program
   const valueProgram = Object.create(null);
   valueProgram['value'] = program;

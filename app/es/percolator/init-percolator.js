@@ -28,8 +28,13 @@ function AppQueryESqueryConverter(applicationQuery) {
       must: []
     }
   };
+  console.log('in AppQueryESqueryConverter')
   // build our query from the conditions associate with the program
   convertedQuery.bool.must = applicationQuery.conditions.reduce((accum, condition) => {
+    // new conditions may not be assigned type on client side
+    if (condition.type === undefined) {
+      condition.type = condition.key.type;
+    }
     switch (condition.type) {
       case 'number': {
         if (condition.qualifier === undefined) {

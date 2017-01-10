@@ -48,29 +48,19 @@ function updateProgram(client, cache) {
   // returns the ids of percolators no longer associated with the program -- deleted by client
   const findMissingPercolators = (all, present) => {    
     const missing = all.reduce((accum, percolatorID) => {
-      console.log(percolator);
       const findFn = query => query.id === percolatorID;
       if (present.findIndex(findFn) < 0) {
         return [percolatorID, ...accum];
       }
       return accum;
     }, []);
-    console.log('+++++++++++++++++')
-    console.log('missing')
-    console.log(missing);
-    console.log('+++++++++++++++++')
     return Promise.resolve(missing);
   }
 
 
   return (req, res, next) => {
-    console.log('++++++++++++++++++++++');
-    console.log('UPDATE PROGRAM CALLED');
-
     res.statusCode = 200;
     const program = req.body.data;
-    console.log(program);
-    console.log('++++++++++++++++++++++');
     res.setHeader('Content-Type', 'application/json');
     if (program === undefined || program.application === undefined || program.user === undefined) {
       res.statusCode = 400;
