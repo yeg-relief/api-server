@@ -40,7 +40,11 @@ function percolateUserData(client, cache) {
       .then(guids => search(client, guids))
       .then(programs => {
         const extractedPrograms = programs.reduce( (accum, program) => {
-          accum.push(program.doc);
+          // de-duplicate results
+          const index = accum.findIndex(accumProgram => accumProgram.value.guid === program.doc.value.guid); 
+          if(index < 0){
+            accum.push(program.doc);
+          }
           return accum;
         }, []);
         res.end(JSON.stringify({response: extractedPrograms}));
