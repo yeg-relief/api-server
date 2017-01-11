@@ -20,6 +20,9 @@ class KeyHandler {
     api.get('/', getAllKeys(client));
     // add keys/properties to masterscreener
     api.post('/', addKeys(client));
+    // delete key
+    api.delete('/:key_name', deleteKey(client));
+
     // this is the router that handles all incoming requests
     router.use('/api/keys/', api);
   }
@@ -82,7 +85,6 @@ function addKeys(cli) {
       res.end(JSON.stringify({
         message: 'keys are undefined'
       }));
-      return next();
     }
     mapIndex.addKeys(cli, keys)
       .then(update => {
@@ -97,4 +99,14 @@ function addKeys(cli) {
         }));
       });
   };
+}
+
+function deleteKey(client){
+  return (req, res, next) => {
+    res.statusCode = 400;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+      message: 'this route is unimplemented'
+    }));
+  }
 }
