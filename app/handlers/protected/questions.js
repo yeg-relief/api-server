@@ -1,11 +1,11 @@
 const
 bodyParser   = require('body-parser'),
 Router       = require('router'),
-upload       = require('../es/master-screener/upload'),
-getAll       = require('../es/master-screener/get').getAll,
-get          = require('../es/master-screener/get').getVersion;
+upload       = require('../../es/master-screener/upload'),
+getAll       = require('../../es/master-screener/get').getAll,
+get          = require('../../es/master-screener/get').getVersion;
 
-class QuestionsHandler {
+class ProtectedQuestionsHandler {
   static addRoutes(client, router) {
     if (client === undefined ) {
       throw new Error('[BOOTSTRAP]: client or cache undefined in ProgramHandler');
@@ -14,17 +14,16 @@ class QuestionsHandler {
     api.use(bodyParser.json());
 
     api.post('/', uploadNewQuestionSet(client));
-    api.get('/', getAllQuestions(client));
     
     api.get('/version/:version/', getVersion(client));
     api.get('/latest/', getLatestVersion(client));
     // this is the router that handles all incoming requests for the server
-    router.use('/api/questions/', api);
+    router.use('/protected/questions/', api);
   }
 }
 
 module.exports = {
-  QuestionsHandler
+  ProtectedQuestionsHandler
 };
 
 function uploadNewQuestionSet(client) {
@@ -33,23 +32,6 @@ function uploadNewQuestionSet(client) {
     const questions = req.body;
     res.statusCode = 200;
     upload.uploadMasterScreenerQuestions(client, questions)
-      .then( questions => res.end(JSON.stringify({response: questions})))
-      .catch( error => {
-        console.error(error);
-        res.statusCode = 500;
-        res.end(JSON.stringify({
-          message: error.message
-        }));
-        next();
-      });
-  };
-}
-
-function getAllQuestions(client) {
-  return (req, res, next) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.statusCode = 200;
-    getAll(client)
       .then( questions => res.end(JSON.stringify({response: questions})))
       .catch( error => {
         console.error(error);

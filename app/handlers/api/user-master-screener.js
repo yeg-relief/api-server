@@ -1,8 +1,8 @@
 const
 bodyParser   = require('body-parser'),
 Router       = require('router'),
-percolator   = require('../es/percolator/percolate-document').percolateUserData,
-search       = require('../es/programs/search').searchProgramByGuid;
+percolator   = require('../../es/percolator/percolate-document').percolateUserData,
+search       = require('../../es/programs/search').searchProgramByGuid;
 
 // handle a user submitted 'master screener' form
 class UserDocumentHandler {

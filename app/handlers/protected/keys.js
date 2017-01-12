@@ -1,9 +1,9 @@
 const
 bodyParser   = require('body-parser'),
 Router       = require('router'),
-getMapping   = require('../es/mapping/get-mapping'),
-mapIndex     = require('../es/mapping/map-index'),
-utils        = require('../es/utils');
+getMapping   = require('../../es/mapping/get-mapping'),
+mapIndex     = require('../../es/mapping/map-index'),
+utils        = require('../../es/utils');
 
 class KeyHandler {
   /*
@@ -24,7 +24,7 @@ class KeyHandler {
     api.delete('/:key_name', deleteKey(client));
 
     // this is the router that handles all incoming requests
-    router.use('/api/keys/', api);
+    router.use('/protected/keys/', api);
   }
 }
 

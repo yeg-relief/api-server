@@ -1,8 +1,8 @@
 const
     bodyParser = require('body-parser'),
     Router = require('router'),
-    masterScreener = require('../es/master-screener/get'),
-    upload = require('../es/master-screener/upload');
+    masterScreener = require('../../es/master-screener/get'),
+    upload = require('../../es/master-screener/upload');
 
 class MasterScreenerHandler {
     /*
@@ -20,7 +20,7 @@ class MasterScreenerHandler {
         // add keys/properties to masterscreener
         api.post('/', addScreener(client));
         // this is the router that handles all incoming requests
-        router.use('/api/master_screener/', api);
+        router.use('/protected/master_screener/', api);
     }
 }
 
