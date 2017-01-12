@@ -110,7 +110,7 @@ function uploadNewProgram(client, cache) {
     res.statusCode = 200;
     const data = req.body.data;
     res.setHeader('Content-Type', 'application/json');
-    if (data === undefined || data.application === undefined || data.user === undefined || data.application.length === 0) {
+    if (data === undefined || data.application === undefined || data.user === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'program is not well formed'
