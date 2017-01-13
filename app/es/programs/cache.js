@@ -155,7 +155,7 @@ class Cache {
         });
         return accum;
       }, { hits: [], misses: [] })
-      .timeoutWith(2000, Rx.Observable.of({ hits: [], misses: [] }))
+      .timeoutWith(500, Rx.Observable.of({ hits: [], misses: [] }))
   }
 
   // can get the above as promise or observable with either of the following 2 functions
@@ -174,7 +174,7 @@ class Cache {
         Object.keys(cacheObj).forEach(key => accum.push(cacheObj[key]));
         return accum;
       }, [])
-      .timeoutWith(2000, Rx.Observable.of([]))
+      .timeoutWith(500, Rx.Observable.of([]))
   }
   // gets all programs in cache
   async getAllProgramsPromise() {

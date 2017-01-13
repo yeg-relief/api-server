@@ -1,8 +1,8 @@
 const
-bodyParser   = require('body-parser'),
-Router       = require('router'),
-percolator   = require('../../es/percolator/percolate-document').percolateUserData,
-search       = require('../../es/programs/search').searchProgramByGuid;
+  bodyParser = require('body-parser'),
+  Router = require('router'),
+  percolator = require('../../es/percolator/percolate-document').percolateUserData,
+  search = require('../../es/programs/search').searchProgramByGuid;
 
 // handle a user submitted 'master screener' form
 class UserDocumentHandler {
@@ -39,21 +39,21 @@ function percolateUserData(client, cache) {
     percolator(client, data)
       .then(guids => search(client, guids))
       .then(programs => {
-        const extractedPrograms = programs.reduce( (accum, program) => {
+        const extractedPrograms = programs.reduce((accum, program) => {
           // de-duplicate results
-          const index = accum.findIndex(accumProgram => accumProgram.value.guid === program.doc.value.guid); 
-          if(index < 0){
+          const index = accum.findIndex(accumProgram => accumProgram.value.guid === program.doc.value.guid);
+          if (index < 0) {
             accum.push(program.doc);
           }
           return accum;
         }, []);
-        res.end(JSON.stringify({response: extractedPrograms}));
+        res.end(JSON.stringify({ response: extractedPrograms }));
         next();
       })
       .catch(error => {
         res.statusCode = 500;
         res.end(JSON.stringify({
-          message : error.message
+          message: error.message
         }));
       });
   };

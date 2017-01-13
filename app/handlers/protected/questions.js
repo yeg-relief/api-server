@@ -1,20 +1,20 @@
 const
-bodyParser   = require('body-parser'),
-Router       = require('router'),
-upload       = require('../../es/master-screener/upload'),
-getAll       = require('../../es/master-screener/get').getAll,
-get          = require('../../es/master-screener/get').getVersion;
+  bodyParser = require('body-parser'),
+  Router = require('router'),
+  upload = require('../../es/master-screener/upload'),
+  getAll = require('../../es/master-screener/get').getAll,
+  get = require('../../es/master-screener/get').getVersion;
 
 class ProtectedQuestionsHandler {
   static addRoutes(client, router) {
-    if (client === undefined ) {
-      throw new Error('[BOOTSTRAP]: client or cache undefined in ProgramHandler');
+    if (client === undefined) {
+      throw new Error('[BOOTSTRAP]: client undefined in ProtectedQuestionsHandler');
     }
     const api = Router();
     api.use(bodyParser.json());
 
     api.post('/', uploadNewQuestionSet(client));
-    
+
     api.get('/version/:version/', getVersion(client));
     api.get('/latest/', getLatestVersion(client));
     // this is the router that handles all incoming requests for the server
@@ -32,8 +32,8 @@ function uploadNewQuestionSet(client) {
     const questions = req.body;
     res.statusCode = 200;
     upload.uploadMasterScreenerQuestions(client, questions)
-      .then( questions => res.end(JSON.stringify({response: questions})))
-      .catch( error => {
+      .then(questions => res.end(JSON.stringify({ response: questions })))
+      .catch(error => {
         console.error(error);
         res.statusCode = 500;
         res.end(JSON.stringify({
@@ -49,8 +49,8 @@ function getVersion(client) {
     res.setHeader('Content-Type', 'application/json');
     res.statusCode = 200;
     get(client, req.params.version)
-      .then( questions => res.end(JSON.stringify({response: questions})))
-      .catch( error => {
+      .then(questions => res.end(JSON.stringify({ response: questions })))
+      .catch(error => {
         console.error(error);
         res.statusCode = 500;
         res.end(JSON.stringify({
@@ -76,14 +76,14 @@ function getLatestVersion(client) {
           // sort for latest version
           const sorted = questions.sort((a, b) => a.version - b.version);
           const last = sorted.length - 1;
-          res.end(JSON.stringify({response: sorted[last].questions}));
-        } else if(Array.isArray(questions) && questions.length === 1){
-          res.end(JSON.stringify({response: questions[0].questions}));
+          res.end(JSON.stringify({ response: sorted[last].questions }));
+        } else if (Array.isArray(questions) && questions.length === 1) {
+          res.end(JSON.stringify({ response: questions[0].questions }));
         } else {
-          res.end(JSON.stringify({response: {}}));
+          res.end(JSON.stringify({ response: {} }));
         }
       })
-      .catch( error => {
+      .catch(error => {
         console.error(error);
         res.statusCode = 500;
         res.end(JSON.stringify({

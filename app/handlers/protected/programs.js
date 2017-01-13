@@ -11,7 +11,7 @@ const
 class ProtectedProgramHandler {
   static addRoutes(client, cache, router) {
     if (client === undefined || cache === undefined) {
-      throw new Error('[BOOTSTRAP]: client or cache undefined in ProgramHandler');
+      throw new Error('[BOOTSTRAP]: client or cache undefined in ProtectedProgramHandler');
     }
     const api = Router();
     api.use(bodyParser.json());
@@ -44,7 +44,7 @@ function updateProgram(client, cache) {
   }
 
   // returns the ids of percolators no longer associated with the program -- deleted by client
-  const findMissingPercolators = (all, present) => {    
+  const findMissingPercolators = (all, present) => {
     const missing = all.reduce((accum, percolatorID) => {
       const findFn = query => query.id === percolatorID;
       if (present.findIndex(findFn) < 0) {

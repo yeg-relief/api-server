@@ -10,7 +10,7 @@ class MasterScreenerHandler {
     */
     static addRoutes(client, router) {
         if (client === undefined) {
-            throw new Error('[BOOTSTRAP]: client argument undefined in KeyHandler');
+            throw new Error('[BOOTSTRAP]: client argument undefined in MasterScreenerHandler');
         }
         const api = Router();
         api.use(bodyParser.json());

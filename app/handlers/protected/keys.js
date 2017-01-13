@@ -1,9 +1,9 @@
 const
-bodyParser   = require('body-parser'),
-Router       = require('router'),
-getMapping   = require('../../es/mapping/get-mapping'),
-mapIndex     = require('../../es/mapping/map-index'),
-utils        = require('../../es/utils');
+  bodyParser = require('body-parser'),
+  Router = require('router'),
+  getMapping = require('../../es/mapping/get-mapping'),
+  mapIndex = require('../../es/mapping/map-index'),
+  utils = require('../../es/utils');
 
 class KeyHandler {
   /*
@@ -48,7 +48,7 @@ function getAllKeys(cli) {
           });
         });
         keys.forEach(key => {
-          if (key.type === 'integer'){
+          if (key.type === 'integer') {
             key.type = 'number';
           }
         })
@@ -80,7 +80,7 @@ function addKeys(cli) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     const keys = req.body.keys;
-    if(keys === undefined) {
+    if (keys === undefined) {
       res.statusCode = 400;
       res.end(JSON.stringify({
         message: 'keys are undefined'
@@ -101,7 +101,7 @@ function addKeys(cli) {
   };
 }
 
-function deleteKey(client){
+function deleteKey(client) {
   return (req, res, next) => {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'application/json');

@@ -34,8 +34,8 @@ const
 KeyHandler                = require('./handlers/protected/keys').KeyHandler,
 MasterScreenerHandler     = require('./handlers/protected/master-screener').MasterScreenerHandler,
 ProtectedProgramHandler   = require('./handlers/protected/programs').ProtectedProgramHandler,
-ProtectedQuestionsHandler = require('./handlers/protected/questions').ProtectedQuestionsHandler;
-
+ProtectedQuestionsHandler = require('./handlers/protected/questions').ProtectedQuestionsHandler,
+LoginHandler              = require('./handlers/protected/login').LoginHandler;
 // ProgramHandler        = require('./handlers/programs').ProgramHandler,
 // QuestionsHandler      = require('./handlers/questions').QuestionsHandler,
 
@@ -48,6 +48,7 @@ KeyHandler.addRoutes(client, router);
 MasterScreenerHandler.addRoutes(client, router);
 ProtectedProgramHandler.addRoutes(client, programCache, router);
 ProtectedQuestionsHandler.addRoutes(client, router);
+LoginHandler.addRoutes(router);
 
 UserProgramsHandler.addRoutes(client, programCache, router);
 UserScreenerHandler.addRoutes(client, programCache, router); 

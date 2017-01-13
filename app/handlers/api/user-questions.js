@@ -1,13 +1,13 @@
 const
-bodyParser   = require('body-parser'),
-Router       = require('router'),
-getAll       = require('../../es/master-screener/get').getAll;
+  bodyParser = require('body-parser'),
+  Router = require('router'),
+  getAll = require('../../es/master-screener/get').getAll;
 
 
 class QuestionsHandler {
   static addRoutes(client, router) {
-    if (client === undefined ) {
-      throw new Error('[BOOTSTRAP]: client or cache undefined in ProgramHandler');
+    if (client === undefined) {
+      throw new Error('[BOOTSTRAP]: client undefined in QuestionsHandler');
     }
     const api = Router();
     api.use(bodyParser.json());
@@ -35,14 +35,14 @@ function getLatestVersion(client) {
           // sort for latest version
           const sorted = questions.sort((a, b) => a.version - b.version);
           const last = sorted.length - 1;
-          res.end(JSON.stringify({response: sorted[last].questions}));
-        } else if(Array.isArray(questions) && questions.length === 1){
-          res.end(JSON.stringify({response: questions[0].questions}));
+          res.end(JSON.stringify({ response: sorted[last].questions }));
+        } else if (Array.isArray(questions) && questions.length === 1) {
+          res.end(JSON.stringify({ response: questions[0].questions }));
         } else {
-          res.end(JSON.stringify({response: {}}));
+          res.end(JSON.stringify({ response: {} }));
         }
       })
-      .catch( error => {
+      .catch(error => {
         console.error(error);
         res.statusCode = 500;
         res.end(JSON.stringify({
