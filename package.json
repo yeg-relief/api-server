@@ -18,20 +18,11 @@
     "chai-http": "^3.0.0",
     "elasticsearch": "^12.1.0",
     "elasticsearch-sanitize": "^2.0.0",
-    "eslint": "^3.10.2",
-    "eslint-plugin-async-await": "^0.0.0",
     "finalhandler": "^0.5.1",
     "mocha": "^3.1.2",
     "node-uuid": "^1.4.7",
     "router": "^1.1.4",
     "rxjs": "^5.0.0-rc.3"
   },
-  "devDependencies": {
-    "eslint": "^3.10.2",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-config-google": "^0.7.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.1",
-    "eslint-plugin-react": "^6.7.1"
-  }
+  "devDependencies": {}
 }
