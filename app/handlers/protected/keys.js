@@ -65,6 +65,11 @@ function getAllKeys(cli) {
             message: e.message,
             keys: []
           }));
+        } else if(e.message === 'Cannot convert undefined or null to object'){
+          res.end(JSON.stringify({
+            message: e.message,
+            keys: []
+          }));
         } else {
           res.statusCode = 500;
           res.end(JSON.stringify({
