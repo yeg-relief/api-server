@@ -12,17 +12,15 @@
     "unit-test": "./node_modules/mocha/bin/mocha --harmony-async-await app/es/seed.js 'test/unit'"
   },
   "dependencies": {
-    "babel-eslint": "6",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "elasticsearch": "^12.1.0",
-    "elasticsearch-sanitize": "^2.0.0",
     "finalhandler": "^0.5.1",
     "mocha": "^3.1.2",
     "node-uuid": "^1.4.7",
     "router": "^1.1.4",
-    "rxjs": "^5.0.0-rc.3"
+    "rxjs": "5.0.3"
   },
   "devDependencies": {}
 }
