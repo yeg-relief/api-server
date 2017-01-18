@@ -55,7 +55,6 @@ function addScreener(client) {
                 res.end(JSON.stringify({
                     message: error.message
                 }));
-                next();
             });
     };
 }

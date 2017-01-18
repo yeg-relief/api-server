@@ -27,9 +27,6 @@ function verify(masterScreener) {
   if (masterScreener.meta.screener.version === undefined || typeof masterScreener.meta.screener.version !== 'number'){
     throw new Error('masterScreener.meta.screener.version is invalid');
   }
-  if (masterScreener.meta.screener.created === undefined || typeof masterScreener.meta.screener.created !== 'number'){
-    throw new Error('masterScreener.meta.screener.created is invalid');
-  }
   verifyQuestions(masterScreener.questions);
 }
 
