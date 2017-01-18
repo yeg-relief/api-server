@@ -13,6 +13,7 @@ export class Guid {
     }
   }
   
+  // investigate a regex for guid.v4()
   static isGuid(guid: any) {
     return typeof guid === 'string';
   }

@@ -14,7 +14,7 @@ export class UserProgram extends Program implements IUserProgram {
     this.title = program.title;
     this.details = program.details;
     this.externalLink = program.externalLink;
-    this.tags = [...program.tags];
+    this.tags = program.tags;
   }
 
   static isUserFacingProgram(program: any): program is UserProgram {

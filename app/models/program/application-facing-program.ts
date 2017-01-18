@@ -19,7 +19,7 @@ export class ApplicationProgram extends UserProgram implements IApplicationProgr
       details: program.details,
       externalLink: program.externalLink,
       created: program.created,
-      tags: [...program.tags]
+      tags: program.tags
     }
     
     const application: IApplicationProgram = (<any>Object).assign({}, user,  {
