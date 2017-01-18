@@ -48,3 +48,7 @@ jspm_packages
 
 # username/password combo
 app/secret.js
+
+.vscode/
+
+build/
