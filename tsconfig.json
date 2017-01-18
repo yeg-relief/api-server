@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+        "experimentalDecorators": true,
+		"sourceMap": false,
+		"outDir": "build",
+		"types": [
+          "node"
+        ]
+	},
+    "include": [
+        "app/**/*"
+    ],
+	"exclude": [
+		"node_modules",
+        "test",
+		"typings",
+		"build"
+	]
+}
