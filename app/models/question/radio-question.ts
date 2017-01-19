@@ -1,5 +1,5 @@
 import { Question } from './question';
-import { IRadioQuestion, INumberRadio, IBooleanRadio, INumberOption, IQuestion } from '../../interfaces';
+import { IRadioQuestion, INumberRadio, IBooleanRadio, INumberOption, IQuestion, IExpandableQuestion } from '../../interfaces';
 import { NumberOption, BooleanOption } from '../question-option';
 
 class RadioQuestion extends Question implements IRadioQuestion {
@@ -42,8 +42,13 @@ export class BooleanRadioQuestion extends RadioQuestion implements IBooleanRadio
     this.options = BooleanOption.createFromArray(q.options);
   }
 
+  protected notExpandable() {
+    const castedQuestion = <IExpandableQuestion>(<IQuestion>this);
+    return !(castedQuestion.expandable);
+  }
+
   protected validateBooleanQuestion(): boolean {
-    const validOptions = (options: BooleanOption[]) => {
+    const validOptions = (options: BooleanOption[]): boolean => {
       let truePresent = options.find(option => option.value === true);
       let falsePresent = options.find(option => option.value === false);
       if (truePresent === undefined || falsePresent === undefined){
@@ -56,6 +61,6 @@ export class BooleanRadioQuestion extends RadioQuestion implements IBooleanRadio
   }
 
   validate(): boolean {
-    return this.validateBooleanQuestion();
+    return this.validateBooleanQuestion() && this.notExpandable();
   }
 }

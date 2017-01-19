@@ -1,7 +1,9 @@
 import { IQuestionOption, INumberOption, IBooleanOption } from './question-option';
-import { NumberRadioQuestion,  NumberInputQuestion, BooleanRadioQuestion } from '../models';
+import { NumberRadioQuestion,  NumberInputQuestion, BooleanRadioQuestion, ExpandableQuestion } from '../models';
 
-export type ConcreteQuestion = ( (NumberRadioQuestion | NumberInputQuestion) | BooleanRadioQuestion);
+export type ConcreteQuestion = ( (NumberRadioQuestion | NumberInputQuestion) | BooleanRadioQuestion | ExpandableQuestion);
+export type InterfaceQuestion = (IBooleanRadio | IExpandableQuestion | INumberRadio | INumberInput);
+
 
 export interface IQuestion {
   label: string;

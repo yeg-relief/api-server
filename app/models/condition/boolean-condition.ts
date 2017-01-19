@@ -1,4 +1,4 @@
-import { IBooleanCondition } from '../../interfaces';
+import { IBooleanCondition, ICondition } from '../../interfaces';
 import { ProgramCondition } from './program-condition';
 
 export class BooleanCondition extends ProgramCondition implements IBooleanCondition {
@@ -9,7 +9,7 @@ export class BooleanCondition extends ProgramCondition implements IBooleanCondit
     this.value = condition.value;
   }
 
-  static isBooleanCondition(condition: any): condition is BooleanCondition {
+  validate(): boolean{
     return ProgramCondition.isProgramCondition(condition) && typeof (<IBooleanCondition>condition).value === 'boolean';
   }
 }

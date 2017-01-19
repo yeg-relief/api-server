@@ -1,6 +1,14 @@
-import { IExpandableQuestion, INumberRadio, IBooleanRadio, INumberInput, ConcreteQuestion, IQuestion } from '../../interfaces';
-import { NumberInputQuestion } from './input-question'
-import { NumberRadioQuestion, BooleanRadioQuestion } from './radio-question';
+import { 
+  IExpandableQuestion, INumberRadio, 
+  IBooleanRadio, INumberInput, 
+  ConcreteQuestion, IQuestion 
+} from '../../interfaces';
+
+import { 
+  Question, validateFn, 
+  QuestionFactory, NumberRadioQuestion, 
+  BooleanRadioQuestion, NumberInputQuestion
+} from './index';
 
 export class ExpandableQuestion extends BooleanRadioQuestion implements IExpandableQuestion {
   expandable: boolean;
@@ -10,20 +18,21 @@ export class ExpandableQuestion extends BooleanRadioQuestion implements IExpanda
     super(question);
     const q = <IExpandableQuestion>question;
     this.expandable = q.expandable;
-    this.conditonalQuestions = this.constructConditionals(q.conditonalQuestions);
+    this.conditonalQuestions = QuestionFactory.createFromArray(q.conditonalQuestions);
   }
 
-  private 
-  constructConditionals(question: ConcreteQuestion[]): ConcreteQuestion[]
-  {
-    return 
-  }
 
   validate(): boolean {
-    for(let i = 0; i < this.conditonalQuestions.length; i++){
-      
+    for (let i = 0; i < this.conditonalQuestions.length; i++) {
+      const question = this.conditonalQuestions[i];
+      if(!validateFn(question)){
+        return false;
+      }
+      if((<ExpandableQuestion>question).expandable === true || (<ExpandableQuestion>question).conditonalQuestions !== undefined){
+        return false;
+      }
     }
 
-    return this.validateBooleanQuestion() && this.expandable === true; 
+    return this.validateBooleanQuestion() && this.expandable === true;
   }
 }
