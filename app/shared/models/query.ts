@@ -1,6 +1,6 @@
 import { IProgramQuery, IBooleanCondition, INumberCondition, IValidateable } from '../interfaces';
 import { BooleanCondition, NumberCondition, ProgramCondition } from './condition';
-import { Guid } from './guid';
+import { ProgramMetaData } from './program';
 import { ConditionFactory } from '../factories';
 
 export class ProgramQuery implements IProgramQuery, IValidateable {
@@ -11,7 +11,7 @@ export class ProgramQuery implements IProgramQuery, IValidateable {
   constructor(query: IProgramQuery) {
     this.guid = query.guid;
     this.id = query.id
-    this.conditions = ConditionFactory.createFromArray(query.conditions);
+    this.conditions = (new ConditionFactory()).createFromArray(query.conditions);
   }
 
   static isProgramQuery(query: any): query is ProgramQuery {
@@ -24,7 +24,8 @@ export class ProgramQuery implements IProgramQuery, IValidateable {
 }
 
 function validateFunction(query: ProgramQuery): boolean {
-  const validateProperties = () => Guid.isGuid(query.guid) && typeof query.id === 'string' && Array.isArray(query.conditions) && query.conditions.length === 0;
+  const validateProperties = () => typeof query.guid === 'string' && query.guid !== 'new' && typeof query.id === 'string' 
+                                          && Array.isArray(query.conditions) && query.conditions.length === 0;
 
   const validateConditions = () => {
     for (let i = 0; i < query.conditions.length; i++) {

@@ -1,10 +1,10 @@
-import { BooleanCondition, NumberCondition, ProgramCondition } from '../models';
-import { ICondition, Factory, BaseInterface } from '../interfaces';
+import { BooleanCondition, NumberCondition } from '../models';
+import { Factory } from '../interfaces';
 import { tryValidation } from '../validation';
-import { ConcreteCondition, ConcreteObject } from '../types';
+import { ConcreteCondition, BaseInterface } from '../types';
 
 export class ConditionFactory implements Factory {
-  CreateFromData(baseInterface: BaseInterface): ConcreteObject {
+  createFromObject(baseInterface: BaseInterface): ConcreteCondition {
     let concreteCondition: ConcreteCondition;
     
     concreteCondition = new BooleanCondition(<BooleanCondition>baseInterface);
@@ -20,8 +20,8 @@ export class ConditionFactory implements Factory {
     return undefined;
   }
 
-  CreateFromArray(baseInterfaceArray: BaseInterface[]): ConcreteObject[] {
-    const concreteConditions: ConcreteObject[] = baseInterfaceArray.map(cond => this.CreateFromData(cond));
+  createFromArray(baseInterfaceArray: BaseInterface[]): ConcreteCondition[] {
+    const concreteConditions: ConcreteCondition[] = baseInterfaceArray.map(cond => this.createFromObject(cond));
     const undefinedCondition = concreteConditions.find(cond => cond === undefined);
     const allConditionsDefined: boolean = undefinedCondition !== undefined;
     

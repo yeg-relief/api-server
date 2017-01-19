@@ -1,17 +1,15 @@
-import { IMasterScreener, IValidateable } from '../interfaces';
+import { IValidateable } from '../interfaces';
 import { QuestionFactory } from '../factories';
-import { InterfaceQuestion, ConcreteQuestion } from '../types';
+import { MasterScreener, InterfaceQuestion, ConcreteQuestion } from '../types';
 
-export class MasterScreener implements IMasterScreener, IValidateable {
-  version: number;
-  created: number;
-  questions: InterfaceQuestion[];
+export class MasterScreenerBase implements IValidateable {
+  screener: MasterScreener
 
 
-  constructor(screener: IMasterScreener) {
-    this.version = screener.version;
-    this.created = screener.created;
-    this.questions = QuestionFactory.createFromArray(screener.questions);
+  constructor(screener: MasterScreener) {
+    this.screener.version = screener.version;
+    this.screener.created = screener.created;
+    this.screener.questions = (new QuestionFactory()).createFromArray(screener.questions);
     
   }
 
@@ -21,7 +19,7 @@ export class MasterScreener implements IMasterScreener, IValidateable {
   }
 
   validate(): boolean {
-    return validateFunction(this);
+    return validateFunction(this.screener);
   }
 }
 

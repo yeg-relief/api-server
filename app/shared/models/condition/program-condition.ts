@@ -1,8 +1,9 @@
-import { ICondition, IKey, IValidateable } from '../../interfaces';
-import { Key } from '../key';
+import { ICondition, IValidateable } from '../../interfaces';
+import { Key } from '../../types';
+import { isKey } from '../../validation';
 
 export class ProgramCondition implements ICondition, IValidateable {
-  key: IKey;
+  key: Key;
 
   constructor(condition: ICondition) {
     this.key.name = condition.key.name;
@@ -19,5 +20,5 @@ export class ProgramCondition implements ICondition, IValidateable {
 }
 
 function validationFunction(condition: ProgramCondition): boolean {
-  return Key.isKey(condition.key);
+  return isKey(condition.key);
 }

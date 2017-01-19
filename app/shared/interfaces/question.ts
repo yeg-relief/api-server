@@ -7,11 +7,8 @@ export interface IQuestion {
   key: string;
 }
 
-export interface IInputQuestion extends IQuestion {
+export interface INumberInput extends IQuestion {
   controlType: 'input';
-}
-
-export interface INumberInput extends IInputQuestion {
   value: number;
 }
 

@@ -1,13 +1,15 @@
-import { IInputQuestion, INumberInput, IQuestion } from '../../../interfaces';
-import { InputQuestion } from './input-question';
+import { INumberInput, IQuestion } from '../../../interfaces';
+import { Question } from '../index';
 
-export class NumberInputQuestion extends InputQuestion implements INumberInput {
+export class NumberInputQuestion extends Question implements INumberInput {
   value: number;
+  controlType: 'input';
 
   constructor(question: IQuestion) {
     super(question);
     const q = <INumberInput>question;
     this.value = q.value;
+    this.controlType = 'input';
   }
 
   static isNumberInput(question: any): question is NumberInputQuestion {
@@ -20,5 +22,7 @@ export class NumberInputQuestion extends InputQuestion implements INumberInput {
 }
 
 function validateFunction(question: NumberInputQuestion): boolean {
-  return typeof question.value === 'number' && question.value >= 0 && InputQuestion.isInputQuestion(question);
+
+  return question.controlType === 'input' && typeof question.value === 'number' 
+          && question.value >= 0 && Question.isQuestion(question);
 }

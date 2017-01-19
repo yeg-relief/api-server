@@ -3,30 +3,30 @@ import {
   NumberInputQuestion, NumberRadioQuestion,
   ExpandableQuestion 
 } from '../models';
-import { IQuestion } from '../interfaces';
+import { Factory } from '../interfaces';
 import { tryValidation } from '../validation';
-import { ConcreteQuestion } from '../types';
+import { ConcreteQuestion, BaseInterface } from '../types';
 
 
-export class QuestionFactory {
-  static CreateFromData(question: IQuestion): ConcreteQuestion {
+export class QuestionFactory implements Factory {
+  createFromObject(baseInterface: BaseInterface): ConcreteQuestion {
     let concreteQuestion: ConcreteQuestion;
-    concreteQuestion = new BooleanRadioQuestion(question);
+    concreteQuestion = new BooleanRadioQuestion(<BooleanRadioQuestion>baseInterface);
     if (tryValidation(concreteQuestion)) {
       return concreteQuestion;
     }
 
-    concreteQuestion = new NumberRadioQuestion(question);
+    concreteQuestion = new NumberRadioQuestion(<NumberRadioQuestion>baseInterface);
     if (tryValidation(concreteQuestion)) {
       return concreteQuestion;
     }
 
-    concreteQuestion = new NumberInputQuestion(question);
+    concreteQuestion = new NumberInputQuestion(<NumberInputQuestion>baseInterface);
     if (tryValidation(concreteQuestion)) {
       return concreteQuestion;
     }
 
-    concreteQuestion = new ExpandableQuestion(question);
+    concreteQuestion = new ExpandableQuestion(<ExpandableQuestion>baseInterface);
     if (tryValidation(concreteQuestion)) {
       return concreteQuestion;
     }
@@ -34,8 +34,8 @@ export class QuestionFactory {
     return undefined;
   }
 
-  static CreateFromArray(questions: IQuestion[]): ConcreteQuestion[] {
-    const concreteQuestions: ConcreteQuestion[] = questions.map(question => QuestionFactory.CreateFromData(question));
+  createFromArray(baseInterfaceArray: BaseInterface[]): ConcreteQuestion[] {
+    const concreteQuestions: ConcreteQuestion[] = baseInterfaceArray.map(question => this.createFromObject(question));
     const undefinedQuestion = concreteQuestions.find(q => q === undefined);
     const allQuestionsDefined: boolean = undefinedQuestion !== undefined;
 

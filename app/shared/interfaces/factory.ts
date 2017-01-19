@@ -1,9 +1,6 @@
-import { ConcreteObject } from '../types';
-import { IQuestion, IQuestionOption, IProgram, ICondition } from './index';
-
-export type BaseInterface = (IQuestion | IQuestionOption | IProgram | ICondition);
+import { ConcreteObject, BaseInterface } from '../types';
 
 export interface Factory {
-  CreateFromData(baseInterface: BaseInterface): ConcreteObject;
-  CreateFromArray(baseInterfaceArray: BaseInterface[]): ConcreteObject[];
+  createFromArray(baseInterfaceArray: BaseInterface[]): ConcreteObject[];
+  createFromObject(baseInterface: BaseInterface): ConcreteObject;
 }

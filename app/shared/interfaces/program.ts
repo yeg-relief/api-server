@@ -1,18 +1,15 @@
-import { IProgramQuery } from './program-query';
+import { IProgramQuery, IValidateable } from './index';
 import { Tag } from '../types';
 
-export interface IProgram {
+export interface IUserProgram {
   guid: string;
   created: number;
-}
-
-export interface IUserProgram extends IProgram{
   title: string;
   details: string;
   externalLink?: string;
   tags?: Tag[];
 }
 
-export interface IApplicationProgram extends IUserProgram{
+export interface IApplicationProgram extends IUserProgram {
   queries: IProgramQuery[];
 }
