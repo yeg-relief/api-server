@@ -1,8 +1,8 @@
 import * as uuid from 'node-uuid';
-import { IUserProgram } from '../../interfaces';
+import { UserProgram } from '../../types';
 
 export class ProgramMetaData {
-  static setProgramGuid(program: IUserProgram): IUserProgram {
+  static setProgramGuid(program: UserProgram): UserProgram {
     if (ProgramMetaData.hasValidMetaData(program)) {
       return program;
     } else if (program.guid === 'new') {
@@ -12,21 +12,21 @@ export class ProgramMetaData {
     return program;
   }
 
-  static setCreationDate(program: IUserProgram): IUserProgram {
+  static setCreationDate(program: UserProgram): UserProgram {
     program.created = Date.now();
     return program;
   }
 
-  static hasValidGuid(program: IUserProgram): boolean {
+  static hasValidGuid(program: UserProgram): boolean {
     return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(program.guid)
   }
 
-  static hasValidCreationTime(program: IUserProgram): boolean {
+  static hasValidCreationTime(program: UserProgram): boolean {
     const minEpochTime = 1484764677;
     return typeof program.created === 'number' && program.created > minEpochTime;
   }
 
-  static hasValidMetaData(program: IUserProgram): boolean {
+  static hasValidMetaData(program: UserProgram): boolean {
     return ProgramMetaData.hasValidGuid(program) && ProgramMetaData.hasValidCreationTime(program);
   }
 }

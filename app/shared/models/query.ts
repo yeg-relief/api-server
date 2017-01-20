@@ -1,17 +1,13 @@
-import { IProgramQuery, IBooleanCondition, INumberCondition, IValidateable } from '../interfaces';
-import { BooleanCondition, NumberCondition, ProgramCondition } from './condition';
+import { IValidateable } from '../interfaces';
 import { ProgramMetaData } from './program';
-import { ConditionFactory } from '../factories';
+import { ProgramQuery } from '../types';
+import { AbstractBooleanCondition, AbstractNumberCondition} from './condition';
 
-export class ProgramQuery implements IProgramQuery, IValidateable {
-  guid: string;
-  id: string;
-  conditions: (IBooleanCondition | INumberCondition)[];
+export abstract class AbstractProgramQuery implements IValidateable {
+  query: ProgramQuery;
 
-  constructor(query: IProgramQuery) {
-    this.guid = query.guid;
-    this.id = query.id
-    this.conditions = (new ConditionFactory()).createFromArray(query.conditions);
+  constructor(query: any) {
+    this.query = {...query};
   }
 
   static isProgramQuery(query: any): query is ProgramQuery {
@@ -19,7 +15,7 @@ export class ProgramQuery implements IProgramQuery, IValidateable {
   }
 
   validate(): boolean {
-    return validateFunction(this);
+    return validateFunction(this.query);
   }
 }
 
@@ -30,7 +26,7 @@ function validateFunction(query: ProgramQuery): boolean {
   const validateConditions = () => {
     for (let i = 0; i < query.conditions.length; i++) {
       const condition = query.conditions[i];
-      if (!(BooleanCondition.isBooleanCondition(condition) || NumberCondition.isNumberCondition(condition))) {
+      if (!(AbstractBooleanCondition.isBooleanCondition(condition) || AbstractNumberCondition.isNumberCondition(condition))) {
         return false;
       }
     }

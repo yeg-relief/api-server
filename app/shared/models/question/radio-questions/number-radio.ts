@@ -1,25 +1,24 @@
-import { RadioQuestion } from './radio';
-import { INumberRadio, IQuestion } from '../../../interfaces';
-import { NumberOption } from '../../question-option';
+import { IValidateable } from '../../../interfaces';
+import { NumberRadio } from '../../../types';
+import { isKey } from '../../../validation';
 
-export class NumberRadioQuestion extends RadioQuestion implements INumberRadio {
-  options: NumberOption[];
+export abstract class AbstractNumberRadio implements IValidateable {
+  question: NumberRadio;
 
-  constructor(question: IQuestion){
-    super(question);
-    const q = <INumberRadio>question;
-    this.options = NumberOption.createFromArray(q.options);
+  protected constructor(question: any){
+    this.question = {...question};
   }
 
-  static isNumberRadioQuestion(question: any): question is NumberRadioQuestion {
+  static isNumberRadioQuestion(question: any): question is NumberRadio {
     return validationFunction(question);
   }
 
   validate(){
-    return validationFunction(this);
+    return validationFunction(this.question);
   }
 }
 
-function validationFunction(question: NumberRadioQuestion): boolean {
-  return RadioQuestion.isRadioQuestion(question) && Array.isArray(question.options) && question.options.length > 0;
+function validationFunction(question: NumberRadio): boolean {
+  return isKey(question.key) && typeof question.label === 'string' 
+        && Array.isArray(question.options) && question.options.length > 0 && question.controlType === 'radio';
 }

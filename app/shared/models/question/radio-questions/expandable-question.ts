@@ -1,18 +1,13 @@
-import {IExpandableQuestion, IQuestion } from '../../../interfaces';
-import { BooleanRadioQuestion } from '../index';
-import { ConcreteQuestion } from '../../../types';
-import { QuestionFactory } from '../../../factories';
+import { IValidateable } from '../../../interfaces';
+import { ExpandableQuestion } from '../../../types';
+import { AbstractBooleanRadio, AbstractNumberInput, AbstractNumberRadio } from '../index';
+import { isKey } from '../../../validation';
 
-export class ExpandableQuestion extends BooleanRadioQuestion implements IExpandableQuestion {
-  expandable: boolean;
-  conditonalQuestions: ConcreteQuestion[];
+export abstract class AbstractExpandableQuestion implements IValidateable {
+  question: ExpandableQuestion;
 
-  constructor(question: IQuestion) {
-    super(question);
-    const q = <IExpandableQuestion>question;
-    this.expandable = q.expandable;
-    // will throw error if any question can not be created
-    this.conditonalQuestions = QuestionFactory.createFromArray(q.conditonalQuestions);
+  protected constructor(question: any) {
+    this.question = {...question};
   }
 
   static isExpandableQuestion(question: any): question is ExpandableQuestion {
@@ -20,21 +15,37 @@ export class ExpandableQuestion extends BooleanRadioQuestion implements IExpanda
   }
 
   validate(): boolean {
-    return validationFunction(this);
+    return validationFunction(this.question);
   }
 }
 
+// target for refactoring
 function validationFunction(question: ExpandableQuestion): boolean {
   for (let i = 0; i < question.conditonalQuestions.length; i++) {
     const nestedQuestion = question.conditonalQuestions[i];
-    if (!nestedQuestion.validate()) {
+    
+    if (nestedQuestion instanceof AbstractExpandableQuestion) {
       return false;
     }
-    // only one layer of nesting allowed
-    if ((<ExpandableQuestion>nestedQuestion).expandable === true || Array.isArray((<ExpandableQuestion>nestedQuestion).conditonalQuestions)) {
-      return false;
+
+    if (nestedQuestion instanceof AbstractNumberRadio) {
+      if (!AbstractNumberRadio.isNumberRadioQuestion(nestedQuestion)){
+        return false;
+      }
+    }
+
+    if (nestedQuestion instanceof AbstractNumberInput) {
+      if (!AbstractNumberInput.isNumberInput(nestedQuestion)){
+        return false;
+      }
+    }
+
+    if (nestedQuestion instanceof AbstractBooleanRadio) {
+      if (!AbstractBooleanRadio.isBooleanRadio(nestedQuestion)){
+        return false;
+      }
     }
   }
 
-  return BooleanRadioQuestion.isBooleanRadioQuestion(question) && typeof this.expandable === 'boolean' && this.expandable === true;
+  return question.expandable === true && AbstractBooleanRadio.isBooleanRadio(question);
 }

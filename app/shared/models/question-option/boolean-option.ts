@@ -1,13 +1,11 @@
-import { IBooleanOption } from '../../interfaces';
-import { QuestionOption } from './question-option';
+import { IValidateable } from '../../interfaces';
+import { BooleanOption } from '../../types';
 
-export class BooleanOption extends QuestionOption implements IBooleanOption {
-  display: string;
-  value: boolean;
+export abstract class AbstractBooleanOption implements IValidateable {
+  booleanOption: BooleanOption;
 
-  constructor(option: IBooleanOption) {
-    super(option);
-    this.value = option.value;
+  constructor(option: any) {
+    this.booleanOption = {...option};
   }
 
   static isBooleanOption(option: any): option is BooleanOption {
@@ -15,10 +13,10 @@ export class BooleanOption extends QuestionOption implements IBooleanOption {
   }
 
   validate(): boolean {
-    return validationFunction(this);
+    return validationFunction(this.booleanOption);
   }
 }
 
 function validationFunction(option: BooleanOption): boolean {
-  return typeof option.value === 'boolean' && QuestionOption.isQuestionOption(option);
+  return typeof option.value === 'boolean' && typeof option.display === 'string' && option.display.length > 0;
 }

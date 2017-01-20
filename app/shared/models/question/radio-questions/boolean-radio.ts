@@ -1,31 +1,28 @@
-import { IBooleanRadio, IExpandableQuestion, IQuestion } from '../../../interfaces';
-import { RadioQuestion } from './radio';
-import { BooleanOption } from '../../question-option';
+import { IValidateable } from '../../../interfaces';
+import { BooleanRadio, ExpandableQuestion, BooleanOption } from '../../../types';
+import { isKey } from '../../../validation';
 
-export class BooleanRadioQuestion extends RadioQuestion implements IBooleanRadio {
-  options: BooleanOption[];
+export abstract class AbstractBooleanRadio implements IValidateable {
+  question: BooleanRadio;
 
-  constructor(question: IQuestion) {
-    super(question);
-    const q = <IBooleanRadio>question;
-    this.options = BooleanOption.createFromArray(q.options);
+  protected constructor(question: any) {
+    this.question = {...question};
   }
 
-  static isBooleanRadioQuestion(question: any): question is BooleanRadioQuestion {
+  static isBooleanRadio(question: any): question is BooleanRadio {
     return validationFunction(question) && notExpandable(question);
   }
 
   validate(): boolean {
-    return validationFunction(this) && notExpandable(this);
+    return validationFunction(this.question) && notExpandable(this.question);
   }
 }
 
-function notExpandable(question: BooleanRadioQuestion): boolean {
-  const castedQuestion = <IExpandableQuestion>(<IQuestion>question);
-  return castedQuestion.expandable === undefined;
+function notExpandable(question: BooleanRadio): boolean {
+  return (<ExpandableQuestion>question).expandable === undefined;
 }
 
-function validationFunction(question: BooleanRadioQuestion): boolean {
+function validationFunction(question: BooleanRadio): boolean {
   const validOptions = (options: BooleanOption[]): boolean => {
     if (!Array.isArray(options) || options.length !== 2 ) {
       return false;
@@ -38,5 +35,6 @@ function validationFunction(question: BooleanRadioQuestion): boolean {
     return true;
   }
 
-  return RadioQuestion.isRadioQuestion(question) && validOptions(question.options);
+  return  isKey(question.key) && validOptions(question.options) 
+          && typeof question.label === 'string' && question.controlType === 'radio';
 }

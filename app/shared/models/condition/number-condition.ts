@@ -1,13 +1,14 @@
-import { INumberCondition } from '../../interfaces';
-import { ProgramCondition } from './program-condition';
+import { IValidateable } from '../../interfaces';
+import { NumberCondition } from '../../types';
+import { isKey } from '../../validation';
 
-export class NumberCondition extends ProgramCondition implements INumberCondition {
-  value: number;
-  qualifier: 'lessThan' | 'lessThanOrEqual' | 'equal' | 'greaterThanOrEqual' | 'greaterThan';
+export abstract class AbstractNumberCondition implements IValidateable{
+  numberCondition: NumberCondition;
 
-  constructor(condition: INumberCondition) {
-    super(condition);
-    this.value = condition.value;
+  protected constructor(condition: any) {
+    this.numberCondition.qualifier = condition.qualifier;
+    this.numberCondition.value = condition.value;
+    this.numberCondition.key = (<any>Object).assign({}, condition.key);
   }
 
   static isNumberCondition(condition: any): condition is NumberCondition {
@@ -15,7 +16,7 @@ export class NumberCondition extends ProgramCondition implements INumberConditio
   }
 
   validate(): boolean {
-    return validationFunction(this);
+    return validationFunction(this.numberCondition);
   }
 }
 
@@ -38,5 +39,5 @@ function validationFunction(condition: NumberCondition): boolean {
     return validQualifier;
   }
 
-  return ProgramCondition.isProgramCondition(condition) && typeof condition.value === 'number' && validQualifier(condition.qualifier);
+  return isKey(condition.key) && typeof condition.value === 'number' && validQualifier(condition.qualifier);
 }

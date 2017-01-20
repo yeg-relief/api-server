@@ -1,12 +1,12 @@
-import { IApplicationProgram, IUserProgram, IProgramQuery } from '../../interfaces';
-import { UserProgram } from './user-facing-program';
-import { ProgramQuery } from '../query';
+import { IValidateable } from '../../interfaces';
+import { UserProgram, ProgramQuery, ApplicationProgram } from '../../types';
+import { AbstractUserProgram } from './index';
 
-export class ApplicationProgram extends UserProgram implements IApplicationProgram  {
-  queries: IProgramQuery[];
+export abstract class AbstractApplicationProgram implements IValidateable  {
+  applicationProgram: ApplicationProgram;
   
-  constructor(program: IApplicationProgram){
-    super(program);
+  protected constructor(program: any){
+    this.applicationProgram = {...program};
   }
 
   static isApplicationFacingProgram(program: any): program is ApplicationProgram {    
@@ -14,29 +14,25 @@ export class ApplicationProgram extends UserProgram implements IApplicationProgr
   }
 
   validate(): boolean {
-    return validationFunction(this);
+    return validationFunction(this.applicationProgram);
   }
 }
 
-function validationFunction(program: IApplicationProgram): boolean {
-  const user: IUserProgram = {
-      guid: program.guid,
-      title: program.title,
-      details: program.details,
-      externalLink: program.externalLink,
-      created: program.created,
-      tags: program.tags
+function validationFunction(program: ApplicationProgram): boolean {
+  const user: UserProgram = {
+      guid: program.user.guid,
+      title: program.user.title,
+      details: program.user.details,
+      externalLink: program.user.externalLink,
+      created: program.user.created,
+      tags: program.user.tags
     }
     
-    const application: IApplicationProgram = (<any>Object).assign({}, user,  {
-      queries: [...program.queries]
-    });
-
-    for(let i = 0; i < application.queries.length; i++) {
-      if (!ProgramQuery.isProgramQuery(application.queries[i])) {
+    for(let i = 0; i < program.queries.length; i++) {
+      if (!ProgramQuery.isProgramQuery(program.queries[i])) {
         return false;
       }
     }
 
-    return UserProgram.isUserFacingProgram(user);
+    return AbstractUserProgram.isUserFacingProgram(user);
 }

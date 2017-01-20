@@ -1,5 +1,9 @@
+import { BooleanOption, NumberOption } from './index';
+import { AbstractNumberInput, AbstractNumberRadio, AbstractBooleanRadio } from '../models';
 
 export type Question = ( NumberInput | BooleanRadio | NumberRadio | ExpandableQuestion );
+export type ConditionalQuestion = ( NumberInput | BooleanRadio | NumberRadio );
+
 
 export type NumberInput = {
   label: string;
@@ -28,5 +32,5 @@ export type ExpandableQuestion = {
   key: string;
   controlType: 'radio';
   options: BooleanOption[];
-  conditonalQuestions: Question[];
+  conditonalQuestions: ConditionalQuestion[];
 }

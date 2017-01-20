@@ -1,12 +1,13 @@
-import { IBooleanCondition } from '../../interfaces';
-import { ProgramCondition } from './program-condition';
+import { IValidateable } from '../../interfaces';
+import { BooleanCondition } from '../../types';
+import { isKey } from '../../validation';
 
-export class BooleanCondition extends ProgramCondition implements IBooleanCondition {
-  value: boolean;
+export abstract class AbstractBooleanCondition implements IValidateable {
+  booleanCondition: BooleanCondition;
 
-  constructor(condition: BooleanCondition) {
-    super(condition);
-    this.value = condition.value;
+  protected constructor(condition: any) {
+    this.booleanCondition.key = {...condition.key};
+    this.booleanCondition.value = condition.value;
   }
 
   static isBooleanCondition(condition: any): condition is BooleanCondition {
@@ -14,10 +15,10 @@ export class BooleanCondition extends ProgramCondition implements IBooleanCondit
   }
 
   validate(): boolean{
-    return validationFunction(this);
+    return validationFunction(this.booleanCondition);
   }
 }
 
 function validationFunction(condition: BooleanCondition): boolean {
-  return ProgramCondition.isProgramCondition(condition) && typeof condition.value === 'boolean';
+  return isKey(condition.key) && typeof condition.value === 'boolean';
 }

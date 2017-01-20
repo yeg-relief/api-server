@@ -1,28 +1,25 @@
-import { INumberInput, IQuestion } from '../../../interfaces';
-import { Question } from '../index';
+import { IValidateable } from '../../../interfaces';
+import { NumberInput } from '../../../types';
+import { isKey } from '../../../validation';
 
-export class NumberInputQuestion extends Question implements INumberInput {
-  value: number;
-  controlType: 'input';
+export abstract class AbstractNumberInput implements IValidateable {
+  question: NumberInput;
 
-  constructor(question: IQuestion) {
-    super(question);
-    const q = <INumberInput>question;
-    this.value = q.value;
-    this.controlType = 'input';
+  protected constructor(question: any) {
+    this.question = {...question};
   }
 
-  static isNumberInput(question: any): question is NumberInputQuestion {
+  static isNumberInput(question: any): question is AbstractNumberInput {
     return validateFunction(question);
   }
 
   validate(): boolean {
-    return validateFunction(this);
+    return validateFunction(this.question);
   }
 }
 
-function validateFunction(question: NumberInputQuestion): boolean {
+function validateFunction(question: NumberInput): boolean {
 
   return question.controlType === 'input' && typeof question.value === 'number' 
-          && question.value >= 0 && Question.isQuestion(question);
+          && question.value >= 0 && isKey(question.key) && typeof question.label === 'string';
 }

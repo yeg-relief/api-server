@@ -1,22 +1,12 @@
-import { IUserProgram } from '../../interfaces';
+import { IValidateable } from '../../interfaces';
 import { ProgramMetaData } from './index';
-import { Tag } from '../../types';
+import { Tag, UserProgram } from '../../types';
 
-export class UserProgram implements IUserProgram {
-  title: string;
-  details: string;
-  externalLink: string;
-  tags: Tag[];
-  guid: string;
-  created: number;
+export abstract class AbstractUserProgram implements IValidateable {
+  userProgram: UserProgram;
 
-  constructor(program: IUserProgram) {
-    this.guid = program.guid;
-    this.created = program.created;
-    this.title = program.title;
-    this.details = program.details;
-    this.externalLink = program.externalLink;
-    this.tags = program.tags;
+  constructor(program: any) {
+    this.userProgram = {...program};
   }
 
   static isUserFacingProgram(program: any): program is UserProgram {
@@ -24,10 +14,10 @@ export class UserProgram implements IUserProgram {
   }
 
   validate(): boolean {
-    return validationFunction(this);
+    return validationFunction(this.userProgram);
   }
 }
 
-function validationFunction(program: IUserProgram): boolean {
+function validationFunction(program: UserProgram): boolean {
   return typeof program.title === 'string' && typeof program.details === 'string' && ProgramMetaData.hasValidMetaData(program);
 }
