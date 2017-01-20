@@ -1,7 +1,7 @@
-import { ConcreteQuestion } from './index';
+import { Question } from './index';
 
 export type MasterScreener = {
   version: number;
   created: number;
-  questions: ConcreteQuestion[];
+  questions: Question[];
 }
