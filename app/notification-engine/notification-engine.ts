@@ -22,9 +22,10 @@ const percolateParams: Elasticsearch.SearchParams = data => {
   }
 }
 
+const TIMEOUT = 5000;
 
 export class NotificationEngine {
-  private programCache: any;
+  private programCache: ProgramCache;
   private client: Elasticsearch.Client;
 
   constructor(client: Elasticsearch.Client, cache: ProgramCache) {
@@ -34,7 +35,7 @@ export class NotificationEngine {
 
 
   getQueries(programId: string): Rx.Observable<ProgramQuery[]> {
-    const getAllPromise = this.client.search<any>({
+    const getAllPromise = this.client.search<ProgramQuery>({
       index: 'master_screener',
       body: {
         query: {
@@ -43,26 +44,22 @@ export class NotificationEngine {
       }
     })
 
-    return Rx.Observable.fromPromise(getAllPromise)
-      .filter(res => res.hits.total > 0)
-      .map(res => res.hits.hits)
-      .switchMap(x => x)
+    return Rx.Observable.fromPromise<Elasticsearch.SearchResponse<ProgramQuery>>(getAllPromise)
+      .switchMap(res => Rx.Observable.from(res.hits.hits))
+      .reduce( (sources, hit) => [hit._source, ...sources], [] )
       .reduce( (queries: ProgramQuery[], source) => [QueryConverter.EsToQuery(source), ...queries], [])
-      .timeout(10000)
+      .timeout(TIMEOUT)
   }
 
-  percolate(data: any): Rx.Observable<UserProgram[]> {
+  percolate(data: any): Rx.Observable<string[]> {
     const promise = this.client.search<string[]>(percolateParams);
     const observable = Rx.Observable.fromPromise((promise));
 
     return observable
-      .retry(3)
-      .filter(response => response.hits.hits.length > 0)
-      .map(resp => resp.hits.hits)
+      .switchMap(res => Rx.Observable.from(res.hits.hits))
       .reduce((accum, hit: any) => [...hit._source.meta], [])
-      .map((guids: string[]) => this.programCache.get(guids))
-      .reduce((userPrograms: UserProgram[], applicationProgram: ApplicationProgram) => [applicationProgram.user, ...userPrograms], [])
-      .timeout(10000);
+      .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
+      .timeout(TIMEOUT);
   }
 
   registerQueries(programQueries: ProgramQuery[], guid: string) {
@@ -87,7 +84,7 @@ export class NotificationEngine {
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
       .switchMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
-      .timeout(10000)
+      .timeout(TIMEOUT)
   }
 
 }

@@ -6,10 +6,10 @@
 		"sourceMap": false,
 		"outDir": "build",
 		"types": [
-          "node",
+		  "chai",
 		  "elasticsearch",
-		  "express",
-		  "request"
+		  "mocha",
+		  "node"
         ]
 	},
     "include": [

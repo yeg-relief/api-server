@@ -1,12 +1,13 @@
 import { IValidateable } from '../../interfaces';
 import { UserProgram, ProgramQuery, ApplicationProgram } from '../../types';
-import { AbstractUserProgram } from './index';
+import { AbstractUserProgram, AbstractProgramQuery, ProgramMetaData } from '../index';
 
 export abstract class AbstractApplicationProgram implements IValidateable  {
   applicationProgram: ApplicationProgram;
   
   protected constructor(program: any){
     this.applicationProgram = {...program};
+
   }
 
   static isApplicationFacingProgram(program: any): program is ApplicationProgram {    
@@ -29,7 +30,7 @@ function validationFunction(program: ApplicationProgram): boolean {
     }
     
     for(let i = 0; i < program.queries.length; i++) {
-      if (!ProgramQuery.isProgramQuery(program.queries[i])) {
+      if (!AbstractProgramQuery.isProgramQuery(program.queries[i])) {
         return false;
       }
     }

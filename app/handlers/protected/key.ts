@@ -24,6 +24,9 @@ export class KeyHandler {
     return (req, res, next) => {
       this.setupResponse(res);
       const key = new KeyRecord(this.client, req.body.key);
+      if (key.key === undefined) {
+        KeyHandler.handleError(res, new Error('key is undefined'));
+      }
       key.save()
         .then(update => res.end(JSON.stringify({ update: update })))
         .catch(error => KeyHandler.handleError(res, error));

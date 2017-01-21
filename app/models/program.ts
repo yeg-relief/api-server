@@ -1,4 +1,4 @@
-import { AbstractUserProgram, UserProgram, AbstractApplicationProgram, ApplicationProgram } from '../shared';
+import { AbstractUserProgram, UserProgram, AbstractApplicationProgram, ApplicationProgram, ProgramMetaData } from '../shared';
 import { Record } from '../interfaces';
 import { NotificationEngine } from '../notification-engine/notification-engine';
 import * as Rx from 'rxjs/Rx';
@@ -156,5 +156,17 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
       })
       .retry(2)
       .timeout(10000)
+  }
+
+  setMetaData() {
+    if (!ProgramMetaData.hasValidGuid(this.applicationProgram.user)){
+      ProgramMetaData.setProgramGuid(this.applicationProgram.user);
+    }
+    ProgramMetaData.setCreationDate(this.applicationProgram.user);
+    
+    const programGUID = this.applicationProgram.user.guid;
+    for(let i = 0; i < this.applicationProgram.queries.length; i++) {
+      this.applicationProgram.queries[i].guid = programGUID;
+    }
   }
 }

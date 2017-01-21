@@ -26,13 +26,20 @@ export class KeyRecord implements Record {
     if (this.properties === undefined) {
       return Promise.reject(`invalid key: key.name: ${this.key.name}, key.type: ${this.key.type}`);
     }
+
     const properties = this.properties;
-    this.client.indices.putMapping({
+    return this.client.indices.putMapping({
       index: 'master_screener',
       type: 'queries',
       body: {
         properties
       }
+    })
+    .then(response => {
+      if (response.acknowledged){
+        return Promise.resolve(response.acknowledged);
+      }
+      return Promise.reject(response.acknowledged);
     })
   }
 
@@ -41,12 +48,15 @@ export class KeyRecord implements Record {
       index: 'master_screener',
       type: 'queries'
     })
-    .then(mapping => {
-      const keys = Object.keys(mapping).map(hashKey => {
-        return { name: hashKey, type: mapping[hashKey]}
-      })
-      return Promise.resolve(keys);
-    });
+      .then(mapping => {
+        const properties = mapping.master_screener.mappings.queries.properties;
+        const keys = Object.keys(properties)
+          .filter(hashKey => hashKey !== 'query' && hashKey !== 'meta')
+          .map(hashKey => {
+            return { name: hashKey, type: properties[hashKey]['type'] }
+          })
+        return Promise.resolve(keys);
+      });
   }
 
   private keyToProperties() {

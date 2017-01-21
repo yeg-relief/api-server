@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/elasticsearch": "^5.0.12",
+    "@types/node": "^7.0.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
@@ -24,5 +25,8 @@
     "rxjs": "5.0.3",
     "typescript": "^2.1.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.38"
+  }
 }
