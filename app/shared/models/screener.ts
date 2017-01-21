@@ -1,9 +1,9 @@
 import { IValidateable } from '../interfaces';
-import { MasterScreener } from '../types';
+import { Screener } from '../types';
 import { AbstractBooleanRadio, AbstractExpandableQuestion, AbstractNumberInput, AbstractNumberRadio } from './question';
 
-export class AbstractMasterScreener implements IValidateable {
-  screener: MasterScreener
+export class AbstractScreener implements IValidateable {
+  screener: Screener
 
 
   constructor(screener: any) {
@@ -11,8 +11,8 @@ export class AbstractMasterScreener implements IValidateable {
   }
 
 
-  static isMasterScreener(masterScreener: any): masterScreener is MasterScreener {
-    return validateFunction(masterScreener);
+  static isScreener(screener: any): screener is Screener {
+    return validateFunction(screener);
   }
 
   validate(): boolean {
@@ -28,7 +28,7 @@ function validCreationDate(creation: number): boolean {
 }
 
 // target for refactoring
-function validateFunction(screener: MasterScreener): boolean {
+function validateFunction(screener: Screener): boolean {
   if (!validCreationDate(screener.created) || !(typeof screener.version === 'number' && screener.version >= 0)) {
     return false;
   }

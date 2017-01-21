@@ -1,6 +1,6 @@
 import { Question } from './index';
 
-export type MasterScreener = {
+export type Screener = {
   version: number;
   created: number;
   questions: Question[];

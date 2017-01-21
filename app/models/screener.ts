@@ -1,16 +1,19 @@
-import { AbstractMasterScreener, MasterScreener } from '../shared';
+import { AbstractScreener, Screener } from '../shared';
 import { Record } from '../interfaces';
 
-export class ScreenerRecord extends AbstractMasterScreener implements Record {
+export class ScreenerRecord extends AbstractScreener implements Record {
   client: Elasticsearch.Client;
   index = 'questions';
   type = 'screener';
 
-  constructor(screener: MasterScreener, client: Elasticsearch.Client) {
+  constructor(screener: Screener, client: Elasticsearch.Client) {
     super(screener);
+    console.log(screener);
+    // commenting out validation for test/exploration
+    /*
     if (!this.validate()) {
-      throw new Error('invalid screener parameter for MasterScreenerRecord');
-    }
+      throw new Error('invalid screener parameter for ScreenerRecord');
+    }*/
     this.client = client;
   }
 
@@ -25,11 +28,11 @@ export class ScreenerRecord extends AbstractMasterScreener implements Record {
     return this.client.create(params);
   }
 
-  getScreener(): MasterScreener {
+  getScreener(): Screener {
     return this.validate() ? this.screener : undefined;
   }
 
-  static getVersion(id: number, client: Elasticsearch.Client): Promise<MasterScreener> {
+  static getVersion(id: number, client: Elasticsearch.Client): Promise<Screener> {
     if (id !== Number.parseInt(id.toString(), 10)) {
       return Promise.reject(`id: ${id} is an invalid screener id`);
     }
@@ -40,7 +43,7 @@ export class ScreenerRecord extends AbstractMasterScreener implements Record {
       type: 'screener'
     }
 
-    return client.get<MasterScreener>(params)
+    return client.get<Screener>(params)
       .then(response => response._source)
       .then(resp => {
         if (resp === undefined) {
@@ -52,11 +55,13 @@ export class ScreenerRecord extends AbstractMasterScreener implements Record {
   }
 
   serialize(): string {
-    return this.validate() ? JSON.stringify(this.screener) : undefined;
+    // commenting out validation for test/exploration 
+    //return this.validate() ? JSON.stringify(this.screener) : undefined;
+    return JSON.stringify(this.screener);  
   }
 
 
-  private getAll(): Promise<MasterScreener[]> {
+  private getAll(): Promise<Screener[]> {
     const params: Elasticsearch.SearchParams = {
       index: this.index,
       type: this.type,

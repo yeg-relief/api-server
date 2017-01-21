@@ -1,3 +1,3 @@
-import { MasterScreener, Question, QuestionOption, Condition, ProgramQuery } from './index';
+import { Screener, Question, QuestionOption, Condition, ProgramQuery } from './index';
 
-export type BaseObject = ( MasterScreener | Question | QuestionOption | Condition | ProgramQuery );
+export type BaseObject = ( Screener | Question | QuestionOption | Condition | ProgramQuery );
