@@ -6,7 +6,10 @@
 		"sourceMap": false,
 		"outDir": "build",
 		"types": [
-          "node"
+          "node",
+		  "elasticsearch",
+		  "express",
+		  "request"
         ]
 	},
     "include": [

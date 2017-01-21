@@ -2,7 +2,7 @@ import { IValidateable } from '../interfaces';
 import { MasterScreener } from '../types';
 import { AbstractBooleanRadio, AbstractExpandableQuestion, AbstractNumberInput, AbstractNumberRadio } from './question';
 
-export class MasterScreenerBase implements IValidateable {
+export class AbstractMasterScreener implements IValidateable {
   screener: MasterScreener
 
 

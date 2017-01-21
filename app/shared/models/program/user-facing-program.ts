@@ -3,7 +3,7 @@ import { ProgramMetaData } from './index';
 import { Tag, UserProgram } from '../../types';
 
 export abstract class AbstractUserProgram implements IValidateable {
-  userProgram: UserProgram;
+  protected userProgram: UserProgram;
 
   constructor(program: any) {
     this.userProgram = {...program};
