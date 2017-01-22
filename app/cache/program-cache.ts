@@ -1,4 +1,5 @@
 import { UserProgramRecord } from '../models';
+import { UserProgram } from '../shared';
 import * as Rx from 'rxjs/Rx';
 
 type Action = {
@@ -35,6 +36,7 @@ export class ProgramCache {
             // if more than 100 programs cached do nothing 
             // TODO: alert that not all programs cached and cache as many as possible
             if (internalCache.keys.length + programs.length < 100) {
+              
               programs.forEach(program => internalCache.set(program.getUserProgram().guid, program.serialize()))
             }
             return internalCache;
@@ -45,10 +47,12 @@ export class ProgramCache {
           }
 
         }
-      })
-      .multicast(new Rx.ReplaySubject(1)).refCount();
+      }, new Map<string, string>())
+      .multicast(new Rx.ReplaySubject(1)).refCount()
+    this.cache.subscribe();
     
     // inject seed into cache
+    const programs = cacheSeed.map(record => record.getUserProgram())
     this.updatePrograms(cacheSeed);
   }
 
@@ -84,6 +88,20 @@ export class ProgramCache {
       type: 'ADD_PROGRAMS',
       payload: programRecords
     });
-    return this.getPrograms(programRecords.map(record => record.getUserProgram().guid))
+  }
+
+  getAllSerializedPrograms(){
+    return Rx.Observable.from(this.cache)
+      .map( (internalCache: Map<string, string>) => {
+        const values = internalCache.values();
+        let itter = values.next();
+        const programs = []; 
+        while(!itter.done){
+          programs.push(itter.value);
+          itter = values.next();
+        }
+        return programs;
+      })
+
   }
 }

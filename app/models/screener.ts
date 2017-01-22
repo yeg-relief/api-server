@@ -8,7 +8,6 @@ export class ScreenerRecord extends AbstractScreener implements Record {
 
   constructor(screener: Screener, client: Elasticsearch.Client) {
     super(screener);
-    console.log(screener);
     // commenting out validation for test/exploration
     /*
     if (!this.validate()) {

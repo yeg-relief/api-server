@@ -8,10 +8,12 @@ import * as Cache from './cache';
 export class MyRouter {
   public router;
   private screenerCache: Cache.ScreenerCache;
+  private programCache: Cache.ProgramCache;
   private client: Elasticsearch.Client
 
   private keyHandler: Handlers.KeyHandler;
   private userScreenerHandler: Handlers.UserScreener;
+  private userProgramHandler: Handlers.UserProgram;
 
   private routes: RouteDeclaration[];
 
@@ -20,15 +22,19 @@ export class MyRouter {
 
   constructor(
     client: Elasticsearch.Client,
-    screenerCache: Cache.ScreenerCache
+    screenerCache: Cache.ScreenerCache,
+    programCache: Cache.ProgramCache
   ) {
     this.client = client;
     this.screenerCache = screenerCache;
+    this.programCache = programCache;
     this.router = Router();
     this.router.use(bodyParser.json())
 
     this.keyHandler = new Handlers.KeyHandler(this.client);
-    this.userScreenerHandler = new Handlers.UserScreener(this.client, this.screenerCache);
+    this.userScreenerHandler = new Handlers.UserScreener(this.screenerCache);
+    this.userProgramHandler =  new Handlers.UserProgram(this.programCache);
+
 
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
@@ -58,8 +64,10 @@ export class MyRouter {
       /*************************** API ************************/
 
       // screener => this is for getting the screener questions
-      { Prefix: API, Path: '/screener/', Verb: GET, Handler: this.userScreenerHandler.getScreener() }
+      { Prefix: API, Path: '/screener/', Verb: GET, Handler: this.userScreenerHandler.getScreener() },
 
+      // programs => getting user facing programs -- no query details
+      { Prefix: API, Path: '/programs/', Verb: GET, Handler: this.userProgramHandler.getAllPrograms() }
     ]
   }
 

@@ -10,15 +10,18 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
     type: 'user_facing',
     id: undefined
   }
+  userProgram: UserProgram;
 
-  constructor(program: UserProgram, client: Elasticsearch.Client) {
-    super(program);
+  constructor(program: any, client: Elasticsearch.Client) {
+    
+    super(program.doc.value);
+    this.userProgram = { ...program.doc.value };
     this.client = client;
     this.params.id = program.guid;
   }
 
   getUserProgram(): UserProgram {
-    return super.userProgram;
+    return this.userProgram;
   }
 
   save(): Promise<Elasticsearch.CreateDocumentResponse> {
@@ -52,26 +55,21 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
   }
 
   static getAll(client: Elasticsearch.Client): Promise<UserProgram[]> {
-    const getAllPrograms = {
-      match_all: {}
-    };
 
     return client.search({
       index: 'programs', 
       type: 'user_facing', 
-      body: {
-        getAllPrograms
-      }
+      body: { query: { match_all: {} } } 
     })
     .then( (searchResult: Elasticsearch.SearchResponse<UserProgram>)  => searchResult.hits.hits)
     .then( hits => hits.reduce( (userPrograms, hit) => [hit._source, ...userPrograms], []) )
   }
 
   serialize(): string {
-    if (this.validate()) {
+    //if (this.validate()) {
       return JSON.stringify(this.userProgram)
-    }
-    return undefined;
+    //}
+    //return undefined;
   }
 
 }
