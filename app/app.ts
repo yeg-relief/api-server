@@ -2,6 +2,7 @@ import { Client } from 'elasticsearch'
 import { Router } from 'router';
 import { MyRouter } from './router';
 import * as Caches from './cache';
+import { NotificationEngine } from './notification-engine';
 import * as http from 'http';
 import * as finalhandler from 'finalhandler';
 import * as Rx from 'rxjs/Rx';
@@ -11,8 +12,7 @@ import { Screener } from './shared';
 const config: Elasticsearch.ConfigOptions = { host: 'localhost:9200' }
 const client: Elasticsearch.Client = new Client(config);
 
-let screenerCache: Caches.ScreenerCache;
-let programCache: Caches.ProgramCache;
+let server: http.Server;
 
 function startScreenerCache(client: Elasticsearch.Client) {
 
@@ -37,26 +37,37 @@ function startScreenerCache(client: Elasticsearch.Client) {
 
 function startProgramCache(client: Elasticsearch.Client) {
   return Rx.Observable.fromPromise(UserProgramRecord.getAll(client))
-    .do(() => console.log('here 1'))
     .map(programs => programs.map(program => new UserProgramRecord(program, client)))
-    .do((thing) => console.log('here 3'))
     .map((programs: UserProgramRecord[]) => new Caches.ProgramCache(programs))
     .toPromise();
 }
 
+function startNotificationEngine(client: Elasticsearch.Client, programCache: Caches.ProgramCache) {
+  return Rx.Observable.of(new NotificationEngine(client, programCache)).toPromise();
+}
 
-let server;
+
+
 
 
 startScreenerCache(client)
   .then( screenerCache => Promise.all([Promise.resolve(screenerCache), startProgramCache(client)]))
-  .then( ([screenerCache, programCache]) => Promise.resolve(new MyRouter(client, screenerCache, programCache)))
+  .then( ([screenerCache, programCache]) => Promise.resolve(Promise.all([
+      Promise.resolve(screenerCache),
+      Promise.resolve(programCache),
+      Promise.resolve(startNotificationEngine(client, programCache))
+    ])
+  ))
+  .then( ([screenerCache, programCache, notificationEnggine]) => {
+    return Promise.resolve(new MyRouter(client, screenerCache, programCache, notificationEnggine))
+  })
   .then( myRouter => {
     server = http.createServer( (req, res) => {
       return myRouter.router(req, res, finalhandler(req, res))
     })
   })
   .then( _ => server.listen(3000))
+  .then(() => console.log('server started on port 3000'))
   .catch( error => {
     console.error(error.message);
     process.exit(0);

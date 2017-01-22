@@ -11,10 +11,15 @@ export class UserScreener {
 
   getScreener(): RouteHandler {
     return (req, res, next) => {
+      const start = Date.now();
       this.setupResponse(res);
-      this.cache.get().toPromise()
-        .then(serializedScreener => res.end(JSON.stringify({ response: serializedScreener})))
-        .catch(error => KeyHandler.handleError(res, error));
+      this.cache.get()
+        .take(1)
+        .subscribe(
+          cachedScreener => res.end(JSON.stringify({ response: cachedScreener.questions})),
+          error => KeyHandler.handleError(res, error),
+          () => console.log(Date.now() - start)
+        )
     }
   }
 

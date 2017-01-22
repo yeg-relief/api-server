@@ -7,7 +7,7 @@ type Action = {
   payload: (UserProgramRecord | UserProgramRecord[] | string);
 }
 
-type InternalCache = Map<string, string>
+type InternalCache = Map<string, UserProgram>
 
 type ActionTypes = 'DELETE_PROGRAM' | 'ADD_PROGRAMS';
 
@@ -37,7 +37,7 @@ export class ProgramCache {
             // TODO: alert that not all programs cached and cache as many as possible
             if (internalCache.keys.length + programs.length < 100) {
               
-              programs.forEach(program => internalCache.set(program.getUserProgram().guid, program.serialize()))
+              programs.forEach(program => internalCache.set(program.getUserProgram().guid, program.getUserProgram()))
             }
             return internalCache;
           }
@@ -47,7 +47,7 @@ export class ProgramCache {
           }
 
         }
-      }, new Map<string, string>())
+      }, new Map<string, UserProgram>())
       .multicast(new Rx.ReplaySubject(1)).refCount()
     this.cache.subscribe();
     
@@ -92,7 +92,8 @@ export class ProgramCache {
 
   getAllSerializedPrograms(){
     return Rx.Observable.from(this.cache)
-      .map( (internalCache: Map<string, string>) => {
+      .do(cache => console.log(cache))
+      .map( (internalCache: Map<string, UserProgram>) => {
         const values = internalCache.values();
         let itter = values.next();
         const programs = []; 
@@ -102,6 +103,8 @@ export class ProgramCache {
         }
         return programs;
       })
+      .do(thing => console.log(thing))
+      .do(() => console.log('_______________________'))
 
   }
 }

@@ -1,22 +1,25 @@
 import { ScreenerRecord } from '../models';
+import { Screener } from '../shared';
 import * as Rx from 'rxjs/Rx';
 
 const TIMEOUT_VALUE = 100;
 
 export class ScreenerCache {
-  private cache: Rx.ReplaySubject<string>;
+  private cache: Rx.ReplaySubject<Screener>;
 
   constructor(cacheSeed: ScreenerRecord) {
-    this.cache = new Rx.ReplaySubject<string>(1);
-    this.cache.next(cacheSeed.serialize());
+    this.cache = new Rx.ReplaySubject<Screener>(1);
+    this.cache.next(cacheSeed.getScreener());
   }
 
-  get(): Rx.Observable<string> {
-    return this.cache.asObservable().take(1).timeout(TIMEOUT_VALUE);
+  get(): Rx.Observable<Screener> {
+    return this.cache
+      .asObservable().take(1)
+      .timeout(TIMEOUT_VALUE);
   }
 
-  update(screener: ScreenerRecord): Rx.Observable<string> {
-    this.cache.next(screener.serialize());
+  update(screener: ScreenerRecord): Rx.Observable<Screener> {
+    this.cache.next(screener.getScreener());
     return this.get();
   }
 }

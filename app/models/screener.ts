@@ -5,7 +5,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
   client: Elasticsearch.Client;
   index = 'questions';
   type = 'screener';
-
+  screener: Screener;
   constructor(screener: Screener, client: Elasticsearch.Client) {
     super(screener);
     // commenting out validation for test/exploration
@@ -14,6 +14,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       throw new Error('invalid screener parameter for ScreenerRecord');
     }*/
     this.client = client;
+    this.screener = screener;
   }
 
   save(): Promise<Elasticsearch.CreateDocumentResponse> {
@@ -28,7 +29,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
   }
 
   getScreener(): Screener {
-    return this.validate() ? this.screener : undefined;
+    return this.screener;
   }
 
   static getVersion(id: number, client: Elasticsearch.Client): Promise<Screener> {

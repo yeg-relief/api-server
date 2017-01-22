@@ -4,7 +4,8 @@ import { UserProgram, ApplicationProgram, ProgramQuery, Condition, NumberConditi
 import { ScreenerRecord, ApplicationProgramRecord } from '../models';
 import { ProgramCache } from '../cache';
 
-const percolateParams: Elasticsearch.SearchParams = data => {
+const percolateParams = (data): Elasticsearch.SearchParams => {
+  console.log(data);
   return {
     index: 'master_screener',
     body: {
@@ -12,7 +13,7 @@ const percolateParams: Elasticsearch.SearchParams = data => {
         percolate: {
           field: 'query',
           document_type: 'queries',
-          document: data
+          document: { data }
         }
       },
       _source: {
@@ -52,8 +53,10 @@ export class NotificationEngine {
   }
 
   percolate(data: any): Rx.Observable<string[]> {
-    const promise = this.client.search<string[]>(percolateParams);
+    const promise = this.client.search<string[]>(percolateParams(data))
+
     const observable = Rx.Observable.fromPromise((promise));
+
 
     return observable
       .switchMap(res => Rx.Observable.from(res.hits.hits))

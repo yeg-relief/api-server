@@ -11,11 +11,14 @@ export class UserProgram {
   getAllPrograms() {
     return (req, res, next) => {
       this.setupResponse(res);
+      console.log('GET ALL PROGRAMS CALLED');
       this.programCache.getAllSerializedPrograms()
         .take(1)
+        .do(thing => console.log(thing))
         .subscribe({
           next: (programs) => res.end(JSON.stringify({programs: programs })),
-          complete: () => console.log('this is closed.')
+          error: error => KeyHandler.handleError(res, error),
+          complete: () => console.log('getAllPrograms is closed.')
         });
     }
   }

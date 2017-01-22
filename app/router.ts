@@ -3,17 +3,20 @@ import * as bodyParser from 'body-parser';
 import { Client } from 'elasticsearch';
 import * as Handlers from './handlers';
 import * as Cache from './cache';
+import { NotificationEngine } from './notification-engine';
 
 
 export class MyRouter {
   public router;
   private screenerCache: Cache.ScreenerCache;
   private programCache: Cache.ProgramCache;
+  private notifications: NotificationEngine;
   private client: Elasticsearch.Client
 
   private keyHandler: Handlers.KeyHandler;
   private userScreenerHandler: Handlers.UserScreener;
   private userProgramHandler: Handlers.UserProgram;
+  private notifcationHandler: Handlers.Notification;
 
   private routes: RouteDeclaration[];
 
@@ -23,18 +26,20 @@ export class MyRouter {
   constructor(
     client: Elasticsearch.Client,
     screenerCache: Cache.ScreenerCache,
-    programCache: Cache.ProgramCache
+    programCache: Cache.ProgramCache,
+    notifications: NotificationEngine
   ) {
     this.client = client;
     this.screenerCache = screenerCache;
     this.programCache = programCache;
+    this.notifications = notifications;
     this.router = Router();
     this.router.use(bodyParser.json())
 
     this.keyHandler = new Handlers.KeyHandler(this.client);
     this.userScreenerHandler = new Handlers.UserScreener(this.screenerCache);
     this.userProgramHandler =  new Handlers.UserProgram(this.programCache);
-
+    this.notifcationHandler = new Handlers.Notification(this.notifications);
 
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
@@ -67,7 +72,10 @@ export class MyRouter {
       { Prefix: API, Path: '/screener/', Verb: GET, Handler: this.userScreenerHandler.getScreener() },
 
       // programs => getting user facing programs -- no query details
-      { Prefix: API, Path: '/programs/', Verb: GET, Handler: this.userProgramHandler.getAllPrograms() }
+      { Prefix: API, Path: '/programs/', Verb: GET, Handler: this.userProgramHandler.getAllPrograms() },
+
+      // notifications => submit data and recieve program notifications (UserProgram)
+      { Prefix: API, Path: '/notification/', Verb: POST, Handler: this.notifcationHandler.notify()}
     ]
   }
 
