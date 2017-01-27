@@ -1,4 +1,3 @@
-
 import { ScreenerCache } from '../../cache';
 import { RouteHandler } from '../../router';
 import { KeyHandler } from '../index';
@@ -18,7 +17,7 @@ export class UserScreener {
         .subscribe(
           cachedScreener => res.end(JSON.stringify({ response: cachedScreener.questions})),
           error => KeyHandler.handleError(res, error),
-          () => console.log(Date.now() - start)
+          () => console.log(`[API_GET_SCREENER] resolve time: ${Date.now() - start}`)
         )
     }
   }

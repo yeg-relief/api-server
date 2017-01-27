@@ -2,7 +2,7 @@ import { ScreenerRecord } from '../models';
 import { Screener } from '../shared';
 import * as Rx from 'rxjs/Rx';
 
-const TIMEOUT_VALUE = 100;
+const TIMEOUT_VALUE = 5000;
 
 export class ScreenerCache {
   private cache: Rx.ReplaySubject<Screener>;

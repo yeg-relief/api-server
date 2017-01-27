@@ -64,11 +64,11 @@ export class ProgramCache {
       Rx.Observable.of(ids)
     )
       .map(([internalCache, ids]) => {
-        return ids.reduce((serializedPrograms, id) => {
+        return ids.reduce((programs, id) => {
           if (internalCache.has(id)) {
-            serializedPrograms.push(internalCache.get(id));
+            programs.push(internalCache.get(id));
           }
-          return serializedPrograms;
+          return programs;
         }, [])
       })
       .timeout(TIMEOUT_VALUE);
@@ -91,8 +91,7 @@ export class ProgramCache {
   }
 
   getAllSerializedPrograms(){
-    return Rx.Observable.from(this.cache)
-      .do(cache => console.log(cache))
+    return this.cache
       .map( (internalCache: Map<string, UserProgram>) => {
         const values = internalCache.values();
         let itter = values.next();
@@ -103,8 +102,6 @@ export class ProgramCache {
         }
         return programs;
       })
-      .do(thing => console.log(thing))
-      .do(() => console.log('_______________________'))
 
   }
 }
