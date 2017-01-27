@@ -2,6 +2,7 @@ import { RouteHandler } from '../../router';
 import { Client } from 'elasticsearch';
 import { KeyRecord } from '../../models';
 import { Key } from '../../shared';
+import * as Rx from 'rxjs/Rx';
 
 export class KeyHandler {
   private client: Elasticsearch.Client;
@@ -13,9 +14,12 @@ export class KeyHandler {
   getAllKeys(): RouteHandler {
     return (req, res, next) => {
       this.setupResponse(res);
-      KeyRecord.getAll(this.client)
-        .then(keys => res.end(JSON.stringify({ keys: keys })))
-        .catch(error => KeyHandler.handleError(res, error));
+      Rx.Observable.fromPromise(KeyRecord.getAll(this.client))
+        .do( keys => console.log(keys) )
+        .subscribe(
+          keys => res.end(JSON.stringify({ keys: keys })),
+          error => KeyHandler.handleError(res, error)
+        )
     }
   }
 

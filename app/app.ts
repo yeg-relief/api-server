@@ -14,6 +14,12 @@ const client: Elasticsearch.Client = new Client(config);
 
 let server: http.Server;
 
+const blankScreener: Screener = {
+  created: 0,
+  questions: []
+}
+
+
 function startScreenerCache(client: Elasticsearch.Client) {
 
   const inner = client.search<Screener>({
@@ -23,11 +29,13 @@ function startScreenerCache(client: Elasticsearch.Client) {
   })
   .then(response => [...response.hits.hits])
   .then( hits => hits.map(h => h._source))
-  .then<Screener[]>( sources => {
-    const sorted = sources.sort((a, b) => a.version - b.version);
-    return Promise.resolve((<any>sorted[0]).doc);
+  .then<Screener>( sources => {
+
+    const sorted = sources.sort((a, b) => a.created - b.created);
+
+    return sorted[0] === undefined ? Promise.resolve(blankScreener) : Promise.resolve(sorted[0]);
   })
-  .then<Caches.ScreenerCache>( (screenerSeed: any) => {
+  .then<Caches.ScreenerCache>( (screenerSeed: Screener) => {
     const seed = new ScreenerRecord(screenerSeed, client);
     return Promise.resolve(new Caches.ScreenerCache(seed))
   })

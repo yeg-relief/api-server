@@ -20,5 +20,6 @@ export abstract class AbstractNumberRadio implements IValidateable {
 
 function validationFunction(question: NumberRadio): boolean {
   return isKey(question.key) && typeof question.label === 'string' 
-        && Array.isArray(question.options) && question.options.length > 0 && question.controlType === 'radio';
+        && Array.isArray(question.options) && question.options.length > 0 && question.controlType === 'NumberSelect'
+        && typeof question.index === 'number' && question.index > 0; 
 }

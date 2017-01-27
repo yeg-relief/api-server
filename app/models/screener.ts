@@ -1,5 +1,8 @@
 import { AbstractScreener, Screener } from '../shared';
 import { Record } from '../interfaces';
+import { Key, isKey } from '../shared';
+import * as guid from 'node-uuid';
+
 
 export class ScreenerRecord extends AbstractScreener implements Record {
   client: Elasticsearch.Client;
@@ -22,7 +25,6 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       body: this.screener,
       index: this.index,
       type: this.type,
-      id: this.screener.version.toString()
     }
 
     return this.client.create(params);
@@ -73,5 +75,47 @@ export class ScreenerRecord extends AbstractScreener implements Record {
     return this.client.search(params)
       .then( results => [...results.hits.hits])
       .then( hits => hits.reduce( (accum, hit) => accum = [hit._source, ...accum], []))
+  }
+
+  validateUpload(keys: Key[]): boolean {
+    for ( const question of this.screener.questions ) {
+      if ( this.screener.questions.filter(q => q.key === question.key).length > 1 ) {
+        throw new Error(`duplicate key with name ${question.key} found!`)
+      }
+    
+      if ( this.screener.questions.filter(q => q.index === question.index).length > 1 ) {
+        throw new Error(`duplicate entries for index ${question.index} found!`)
+      }
+
+      if (question.id.substring(0, 4) === 'temp') {
+        question.id = guid.v4();
+      }
+
+      const key = keys.find( k => k.name === question.key )
+
+      if (key.type === 'integer' && question.controlType === 'CheckBox') {
+        throw new Error(`key with id: ${question.id} is type integer with control CheckBox`);
+      }
+
+      if (key.type === 'boolean' && question.controlType !== 'CheckBox') {
+        throw new Error(`key with id: ${question.id} is type boolean without control CheckBox`);
+      }
+
+      if(question.label.length === 0) {
+        throw new Error(`key with id: ${question.id} has a label of length 0`);
+      }
+
+      if(question.controlType === 'NumberSelect' && Array.isArray(question.options) && question.options.length === 0) {
+        throw new Error(`key with id: ${question.id} is of ${question.controlType} and has 0 options.`);
+      } else if (question.controlType === 'NumberSelect' && !Array.isArray(question.options)) {
+        throw new Error(`key with id: ${question.id} is of ${question.controlType} and has invalid options`);
+      }
+
+      return true;
+    }
+
+
+
+    return;
   }
 }

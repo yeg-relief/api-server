@@ -8,6 +8,9 @@ export class AbstractScreener implements IValidateable {
 
   constructor(screener: any) {
     this.screener = {...screener};
+    if (typeof screener.created === 'number' && screener.created === 0) {
+      this.screener.created = Date.now();
+    }
   }
 
 
@@ -29,7 +32,7 @@ function validCreationDate(creation: number): boolean {
 
 // target for refactoring
 function validateFunction(screener: Screener): boolean {
-  if (!validCreationDate(screener.created) || !(typeof screener.version === 'number' && screener.version >= 0)) {
+  if (!validCreationDate(screener.created) ) {
     return false;
   }
   for (let i = 0; i < screener.questions.length; i++) {

@@ -41,7 +41,7 @@ export class MyRouter {
     this.userScreenerHandler = new Handlers.UserScreener(this.screenerCache);
     this.userProgramHandler =  new Handlers.UserProgram(this.programCache);
     this.notifcationHandler = new Handlers.Notification(this.notifications);
-    this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache);
+    this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache, this.client);
 
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();

@@ -5,31 +5,39 @@ export type ConditionalQuestion = ( NumberInput | BooleanRadio | NumberRadio );
 
 
 export type NumberInput = {
+  id: string;
   label: string;
   key: string;
-  controlType: 'input';
+  controlType: 'NumberInput';
   value: number;
+  index: number;
 }
 
 export type BooleanRadio = {
+  id: string;
   label: string;
   key: string;
-  controlType: 'radio';
+  controlType: 'CheckBox';
   options: BooleanOption[];
+  index: number;
 }
 
 export type NumberRadio = {
+  id: string;
   label: string;
   key: string;
-  controlType: 'radio';
+  controlType: 'NumberSelect';
   options: NumberOption[];
+  index: number;
 }
 
 export type ExpandableQuestion = {
+  id: string;
   expandable: boolean;
   label: string;
   key: string;
   controlType: 'radio';
   options: BooleanOption[];
   conditonalQuestions: ConditionalQuestion[];
+  index: number;
 }

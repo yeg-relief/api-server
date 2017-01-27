@@ -20,6 +20,6 @@ export abstract class AbstractNumberInput implements IValidateable {
 
 function validateFunction(question: NumberInput): boolean {
 
-  return question.controlType === 'input' && typeof question.value === 'number' 
+  return question.controlType === 'NumberInput' && typeof question.value === 'number' 
           && question.value >= 0 && isKey(question.key) && typeof question.label === 'string';
 }

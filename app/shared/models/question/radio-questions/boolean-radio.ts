@@ -19,7 +19,7 @@ export abstract class AbstractBooleanRadio implements IValidateable {
 }
 
 function notExpandable(question: BooleanRadio): boolean {
-  return (<ExpandableQuestion>question).expandable === undefined;
+  return (<any>question).expandable === undefined;
 }
 
 function validationFunction(question: BooleanRadio): boolean {
@@ -36,5 +36,6 @@ function validationFunction(question: BooleanRadio): boolean {
   }
 
   return  isKey(question.key) && validOptions(question.options) 
-          && typeof question.label === 'string' && question.controlType === 'radio';
+          && typeof question.label === 'string' && question.controlType === 'CheckBox'
+          && typeof question.index === 'number' && question.index > 0; 
 }
