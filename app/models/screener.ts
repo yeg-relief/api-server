@@ -85,10 +85,6 @@ export class ScreenerRecord extends AbstractScreener implements Record {
         throw new Error(`duplicate key with name ${question.key} found!`)
       }
     
-      if (question.id.substring(0, 4) === 'temp') {
-        question.id = guid.v4();
-      }
-
       const key = keys.find( k => k.name === question.key )
 
       if (key.type === 'integer' && question.controlType === 'CheckBox') {
