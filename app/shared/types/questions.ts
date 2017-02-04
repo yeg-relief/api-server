@@ -3,6 +3,7 @@ import { BooleanOption, NumberOption } from './index';
 export type Question = ( NumberInput | BooleanRadio | NumberRadio | ExpandableQuestion );
 export type ConditionalQuestion = ( NumberInput | BooleanRadio | NumberRadio );
 
+type id = string;
 
 export type NumberInput = {
   id: string;
@@ -38,6 +39,6 @@ export type ExpandableQuestion = {
   key: string;
   controlType: 'radio';
   options: BooleanOption[];
-  conditonalQuestions: ConditionalQuestion[];
+  conditonalQuestions: id[];
   index: number;
 }

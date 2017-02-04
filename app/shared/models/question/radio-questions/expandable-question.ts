@@ -21,31 +21,7 @@ export abstract class AbstractExpandableQuestion implements IValidateable {
 
 // target for refactoring
 function validationFunction(question: ExpandableQuestion): boolean {
-  for (let i = 0; i < question.conditonalQuestions.length; i++) {
-    const nestedQuestion = question.conditonalQuestions[i];
-    
-    if (nestedQuestion instanceof AbstractExpandableQuestion) {
-      return false;
-    }
 
-    if (nestedQuestion instanceof AbstractNumberRadio) {
-      if (!AbstractNumberRadio.isNumberRadioQuestion(nestedQuestion)){
-        return false;
-      }
-    }
-
-    if (nestedQuestion instanceof AbstractNumberInput) {
-      if (!AbstractNumberInput.isNumberInput(nestedQuestion)){
-        return false;
-      }
-    }
-
-    if (nestedQuestion instanceof AbstractBooleanRadio) {
-      if (!AbstractBooleanRadio.isBooleanRadio(nestedQuestion)){
-        return false;
-      }
-    }
-  }
-
-  return question.expandable === true && AbstractBooleanRadio.isBooleanRadio(question);
+  return question.expandable === true && AbstractBooleanRadio.isBooleanRadio(question) 
+         && Array.isArray(question.conditonalQuestions) && question.conditonalQuestions.length > 0;
 }

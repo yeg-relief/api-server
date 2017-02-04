@@ -16,10 +16,14 @@ export class KeyRecord implements Record {
 
   constructor(client: Elasticsearch.Client, key: Key) {
     this.client = client;
-    if (isKey(key)) {
-      this.key = { ...key };
-      this.keyToProperties()
+    this.key = { ...key };
+    // this is to deal with a version of the client application that uses 
+    // 'number' instead of 'integer'
+    if (key.type !== 'integer' && key.type !== 'boolean') {
+      this.key.type = 'integer';
     }
+    this.keyToProperties()
+
   }
 
   save(): Promise<any> {

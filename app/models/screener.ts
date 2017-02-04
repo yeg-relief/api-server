@@ -1,6 +1,6 @@
 import { AbstractScreener, Screener } from '../shared';
 import { Record } from '../interfaces';
-import { Key, isKey } from '../shared';
+import { Key, isKey, Question } from '../shared';
 import * as guid from 'node-uuid';
 
 
@@ -21,10 +21,12 @@ export class ScreenerRecord extends AbstractScreener implements Record {
   }
 
   save(): Promise<Elasticsearch.CreateDocumentResponse> {
+    this.screener.created = Date.now();
     const params: Elasticsearch.CreateDocumentParams = {
       body: this.screener,
       index: this.index,
       type: this.type,
+      id: guid.v4()
     }
 
     return this.client.create(params);
@@ -77,16 +79,12 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       .then( hits => hits.reduce( (accum, hit) => accum = [hit._source, ...accum], []))
   }
 
-  validateUpload(keys: Key[]): boolean {
-    for ( const question of this.screener.questions ) {
-      if ( this.screener.questions.filter(q => q.key === question.key).length > 1 ) {
+  private validateFunction(keys: Key[], questions: Question[]) {
+    for ( const question of questions ) {
+      if ( questions.filter(q => q.key === question.key).length > 1 ) {
         throw new Error(`duplicate key with name ${question.key} found!`)
       }
     
-      if ( this.screener.questions.filter(q => q.index === question.index).length > 1 ) {
-        throw new Error(`duplicate entries for index ${question.index} found!`)
-      }
-
       if (question.id.substring(0, 4) === 'temp') {
         question.id = guid.v4();
       }
@@ -110,12 +108,12 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       } else if (question.controlType === 'NumberSelect' && !Array.isArray(question.options)) {
         throw new Error(`key with id: ${question.id} is of ${question.controlType} and has invalid options`);
       }
-
-      return true;
     }
+  }
 
-
-
-    return;
+  validateUpload(keys: Key[]): boolean {
+    this.validateFunction(keys, this.screener.questions);
+    this.validateFunction(keys, this.screener.conditionalQuestions);
+    return true;
   }
 }

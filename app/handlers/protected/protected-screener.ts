@@ -3,7 +3,6 @@ import { RouteHandler } from '../../router';
 import { KeyHandler } from '../index';
 import { ScreenerRecord, KeyRecord } from '../../models';
 import { Screener } from '../../shared';
-import 'rxjs/add/operator/toPromise';
 import * as Rx from 'rxjs/Rx'
 
 export class AdminScreener {
@@ -11,7 +10,6 @@ export class AdminScreener {
 
   getScreener(): RouteHandler {
     return (req, res, next) => {
-      const start = Date.now();
       this.setupResponse(res);
       let screener;
       this.cache.get()
@@ -19,10 +17,10 @@ export class AdminScreener {
         .do( liftedScreener => screener = liftedScreener )
         .switchMap( _ =>  Rx.Observable.fromPromise(KeyRecord.getAll(this.client)))
         .map( keys => (<any>Object).assign({}, screener, { keys: keys}) )
+        .do( thing => console.log(thing) )
         .subscribe(
           cachedScreener => res.end(JSON.stringify({ response: cachedScreener })),
           error => KeyHandler.handleError(res, error),
-          () => console.log(`[PROTECTED_GET_SCREENER] resolve time: ${Date.now() - start}`)
         )
     }
   }
@@ -34,24 +32,22 @@ export class AdminScreener {
       console.log(req.body.screener);
       const screener = <Screener>req.body.screener;
       const record = new ScreenerRecord(screener, this.client);
-      
+      let keys = []
+
+      console.log(` IN SAVE SCREENER `);
+
       Rx.Observable.fromPromise(KeyRecord.getAll(this.client))
         .take(1)
-        .map( keys => [record.validateUpload(keys), keys] )
-        .do( ([valid, keys]) => console.log(keys))
-        .filter( ([valid, keys]) => valid === true)
-        .switchMap( ([valid, keys]) => Rx.Observable.of([record.save(), keys]) )
-        .filter( ([response, keys]) => response === true )
-        .switchMap( ([_, keys]) => Rx.Observable.of([this.cache.update(record), keys]) )
-        .map( ([cachedScreener, keys]) => (<any>Object).assign({}, cachedScreener, { keys: keys }) )
+        .filter( keys => record.validateUpload(keys) )
+        .do( (liftedKeys) => keys = liftedKeys )
+        .switchMap( _ => Rx.Observable.fromPromise(record.save()) )
+        .filter( response => response.created === true )
+        .switchMap( _ => this.cache.update(record) )
+        .map( cachedScreener => (<any>Object).assign({}, cachedScreener, { keys: keys }) )
+        .timeout(10000)
         .subscribe(
-          newlyUpdated => {
-            console.log(newlyUpdated)
-
-            res.end(JSON.stringify({ response: newlyUpdated })) 
-          },
+          newlyUpdated => res.end(JSON.stringify({ response: newlyUpdated })),
           error => KeyHandler.handleError(res, error),
-          () => console.log(`[PROTECTED_POST_SCREENER] resolve time: ${Date.now() - start}`)
         )
     }
   }

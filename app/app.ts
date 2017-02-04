@@ -16,7 +16,8 @@ let server: http.Server;
 
 const blankScreener: Screener = {
   created: 0,
-  questions: []
+  questions: [],
+  conditionalQuestions: []
 }
 
 

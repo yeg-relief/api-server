@@ -27,10 +27,14 @@ export class KeyHandler {
   saveKey(): RouteHandler {
     return (req, res, next) => {
       this.setupResponse(res);
-      const key = new KeyRecord(this.client, req.body.key);
-      if (key.key === undefined) {
+      if (req.body.key === undefined) {
         KeyHandler.handleError(res, new Error('key is undefined'));
       }
+
+
+      const key = new KeyRecord(this.client, req.body.key);
+      console.log(key);
+
       key.save()
         .then(update => res.end(JSON.stringify({ update: update })))
         .catch(error => KeyHandler.handleError(res, error));
