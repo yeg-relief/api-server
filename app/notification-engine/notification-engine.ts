@@ -92,7 +92,6 @@ export class NotificationEngine {
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
       .switchMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
-      .timeout(TIMEOUT)
   }
 
 }
