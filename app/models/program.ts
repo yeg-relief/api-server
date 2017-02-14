@@ -161,8 +161,9 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   setMetaData() {
     if (this.applicationProgram.user.guid === 'new'){
       ProgramMetaData.setProgramGuid(this.applicationProgram.user);
-      
+
       const programGUID = this.applicationProgram.user.guid;
+      this.userProgram.getUserProgram().guid = programGUID;
       console.log(programGUID)
       for(let i = 0; i < this.applicationProgram.queries.length; i++) {
         this.applicationProgram.queries[i].guid = programGUID;

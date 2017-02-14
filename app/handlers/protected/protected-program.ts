@@ -3,6 +3,7 @@ import { RouteHandler } from '../../router';
 import { ApplicationProgramRecord, UserProgramRecord } from '../../models';
 import { NotificationEngine } from '../../notification-engine';
 import { KeyHandler } from '../index';
+import * as uuid from 'node-uuid';
 
 export class AdminProgram {
   constructor(private client: Elasticsearch.Client, private notifications: NotificationEngine){}
