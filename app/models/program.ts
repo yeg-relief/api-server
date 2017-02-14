@@ -14,8 +14,8 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
 
   constructor(program: any, client: Elasticsearch.Client) {
     
-    super(program.doc.value);
-    this.userProgram = { ...program.doc.value };
+    super(program);
+    this.userProgram = { ...program };
     this.client = client;
     this.params.id = program.guid;
   }
@@ -76,13 +76,13 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
 
 export class ApplicationProgramRecord extends AbstractApplicationProgram implements Record {
   client: Elasticsearch.Client;
-  private notifications: NotificationEngine;
   private userProgram: UserProgramRecord;
 
-  constructor(program: ApplicationProgram, client: Elasticsearch.Client) {
+  constructor(program: ApplicationProgram, client: Elasticsearch.Client, private notifications: NotificationEngine) {
     super(program);
     this.userProgram = new UserProgramRecord(program.user, client);
     this.client = client;
+    this.setMetaData();
   }
 
   getUserProgram(): UserProgram {
@@ -90,10 +90,6 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   }
 
   save(): Promise<any> {
-    if (!this.validate()) {
-      return Promise.reject('invalid program')
-    }
-
     return Rx.Observable.fromPromise(this.userProgram.save())
       .switchMap(() => this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid))
       .timeout(10000)
@@ -101,9 +97,6 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   }
 
   create() {
-    if (!this.validate()) {
-      return Rx.Observable.throw(Rx.Observable.of('invalid program'));
-    }
     const registerQueries = this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid);
 
     return registerQueries
@@ -143,17 +136,24 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   static getAll(client: Elasticsearch.Client, notifications: NotificationEngine) {
     const allUserPrograms = Rx.Observable.fromPromise(UserProgramRecord.getAll(client));
 
-    allUserPrograms
+    return allUserPrograms
+      .do(_ => console.log('in getAll ApplicationRecord\n-------------------------\n'))
+      .do( _ => console.log(_))
+      .take(1)
+      .filter(programs => programs.length > 0)
       .switchMap(x => x)
       .concat((userProgram) => notifications.getQueries(userProgram.guid))
       .map( ([userProgram, programQueries]) => {
         return {
-          user: {...userProgram},
+          user: [...userProgram],
           queries: [...programQueries]
         }
       })
+      .do(_ => console.log('\n----------------------- \n'))
       .retry(2)
       .timeout(10000)
+      .toArray()
+      .catch(_ => Rx.Observable.of([]))
   }
 
   setMetaData() {
