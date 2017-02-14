@@ -97,8 +97,12 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   }
 
   create() {
+    console.log('APPLICATION PROGRAM CREATE CALLED')
+    console.log('\n-------------------------\n')
+    console.log(this.applicationProgram)
     const registerQueries = this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid);
-
+    console.log(registerQueries)
+    console.log('\n-------------------------\n');
     return registerQueries
       .switchMap(() => this.userProgram.save())
       .timeout(10000)
