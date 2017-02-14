@@ -138,14 +138,16 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
 
     return allUserPrograms
       .do(_ => console.log('in getAll ApplicationRecord\n-------------------------\n'))
-      .do( _ => console.log(_))
       .take(1)
-      .filter(programs => programs.length > 0)
       .switchMap(x => x)
+      
       .concat((userProgram) => notifications.getQueries(userProgram.guid))
+      .do( _ => console.log(_))
       .map( ([userProgram, programQueries]) => {
+        console.log(userProgram)
+        console.log(programQueries)
         return {
-          user: [...userProgram],
+          user: {...userProgram},
           queries: [...programQueries]
         }
       })

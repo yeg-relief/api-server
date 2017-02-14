@@ -18,7 +18,7 @@ export class ProgramMetaData {
   }
 
   static hasValidGuid(program: UserProgram): boolean {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(program.guid)
+    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(program.guid) && program.guid !== 'new';
   }
 
   static hasValidCreationTime(program: UserProgram): boolean {
