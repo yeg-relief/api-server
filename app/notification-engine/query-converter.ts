@@ -93,7 +93,7 @@ export function EsToQuery(programApplication) {
   console.log('*****************************')
 
   return programApplication.reduce((accum, program) => {
-    return [{ id: program.meta.program_guid, conditions: [...transformToConditions(program.searchQuery.bool.must)]}, ...accum];
+    return [{ guid: program.meta.program_guid, id: program.meta.id, conditions: [...transformToConditions(program.searchQuery.bool.must)]}, ...accum];
   }, [])
 }
 

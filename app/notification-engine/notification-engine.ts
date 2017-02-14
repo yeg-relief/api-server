@@ -80,11 +80,12 @@ export class NotificationEngine {
         return Rx.Observable.from(this.client.create({
           index: 'master_screener',
           type: 'query',
-          id: appQuery.guid,
+          id: appQuery.id,
           body: {
             searchQuery,
             meta: {
-              program_guid: appQuery.guid
+              program_guid: appQuery.guid,
+              id: appQuery.id
             }
           }
         }))

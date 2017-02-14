@@ -37,7 +37,6 @@ export class AdminProgram {
         queries: data.application
       }, this.client, this.notifications);
       console.log('\n--------------------------------------\n');
-      console.log(record.validate());
       record.create()
         .subscribe(
           resp => res.end(JSON.stringify(resp)),
