@@ -88,8 +88,12 @@ function parseBooleanCondition(condition) {
 
 
 export function EsToQuery(programApplication) {
+  console.log('*****************************')
+  console.log(programApplication)
+  console.log('*****************************')
+
   return programApplication.reduce((accum, program) => {
-    return [{ id: program.id, conditions: [...transformToConditions(program.query.bool.must)]}, ...accum];
+    return [{ id: program.meta.program_guid, conditions: [...transformToConditions(program.searchQuery.bool.must)]}, ...accum];
   }, [])
 }
 

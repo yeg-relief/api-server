@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs/Rx'
 import { RouteHandler } from '../../router';
-import { ApplicationProgramRecord } from '../../models';
+import { ApplicationProgramRecord, UserProgramRecord } from '../../models';
 import { NotificationEngine } from '../../notification-engine';
 import { KeyHandler } from '../index';
 
@@ -10,15 +10,20 @@ export class AdminProgram {
   getAll(): RouteHandler {
     return (req, res, next) => {
       this.setupResponse(res);
-      ApplicationProgramRecord.getAll(this.client, this.notifications)
-        .do( _ => console.log('\n-------------------------\n'))
-        .do(_ => console.log('sending this over network'))
-        .do(_ => console.log(_))
-        .do(_ => console.log('\n-------------------------\n'))
-        .subscribe(
-          resp => res.end(JSON.stringify(resp)),
-          error => KeyHandler.handleError(res, error),
-        )
+      const userPrograms = Rx.Observable.fromPromise(UserProgramRecord.getAll(this.client));
+
+      Rx.Observable.zip(
+        userPrograms,
+        ApplicationProgramRecord.getAll(this.client, this.notifications)
+      )
+      .do( _ => console.log('\n-------------------------\n'))
+      .do(_ => console.log('sending this over network'))
+      .do(_ => console.log(_))
+      .do(_ => console.log('\n-------------------------\n'))
+      .subscribe(
+        resp => res.end(JSON.stringify({ programs: resp[0], queries: resp[1]})),
+        error => KeyHandler.handleError(res, error)
+      )
     }
   }
 

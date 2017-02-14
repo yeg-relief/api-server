@@ -47,9 +47,13 @@ export class NotificationEngine {
 
     return Rx.Observable.fromPromise<Elasticsearch.SearchResponse<ProgramQuery>>(getAllPromise)
       .switchMap(res => Rx.Observable.from(res.hits.hits))
+      .do(thing => console.log(thing))
       .reduce( (sources, hit) => [hit._source, ...sources], [] )
+      .do(thing => console.log(thing))
       .reduce( (queries: ProgramQuery[], source) => [QueryConverter.EsToQuery(source), ...queries], [])
-      .timeout(TIMEOUT)
+      .switchMap(x => x[0])
+      .do(thing => console.log(thing))
+      //.timeout(TIMEOUT)
   }
 
   percolate(data: any): Rx.Observable<string[]> {

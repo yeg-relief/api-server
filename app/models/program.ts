@@ -144,17 +144,8 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
       .do(_ => console.log('in getAll ApplicationRecord\n-------------------------\n'))
       .take(1)
       .switchMap(x => x)
-      
-      .concat((userProgram) => notifications.getQueries(userProgram.guid))
+      .switchMap(userProgram => notifications.getQueries(userProgram.guid))
       .do( _ => console.log(_))
-      .map( ([userProgram, programQueries]) => {
-        console.log(userProgram)
-        console.log(programQueries)
-        return {
-          user: {...userProgram},
-          queries: [...programQueries]
-        }
-      })
       .do(_ => console.log('\n----------------------- \n'))
       .retry(2)
       .toArray()
@@ -176,7 +167,8 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
       }
     }
     ProgramMetaData.setCreationDate(this.applicationProgram.user);
-    
+    console.log('in set meta data');
+    console.log(this.applicationProgram);
     
   }
 }
