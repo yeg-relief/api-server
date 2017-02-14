@@ -157,9 +157,12 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
       })
       .do(_ => console.log('\n----------------------- \n'))
       .retry(2)
-      .timeout(10000)
       .toArray()
-      .catch(_ => Rx.Observable.of([]))
+      .catch(_ => {
+        console.log('caught error')
+        console.log(_)
+        return Rx.Observable.of([])
+      })
   }
 
   setMetaData() {

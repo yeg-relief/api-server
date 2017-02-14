@@ -23,7 +23,7 @@ const percolateParams = (data): Elasticsearch.SearchParams => {
   }
 }
 
-const TIMEOUT = 5000;
+const TIMEOUT = 100000;
 
 export class NotificationEngine {
   private programCache: ProgramCache;
