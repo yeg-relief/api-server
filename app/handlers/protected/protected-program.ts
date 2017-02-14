@@ -33,12 +33,11 @@ export class AdminProgram {
       }, this.client, this.notifications);
       console.log('\n--------------------------------------\n');
       console.log(record.validate());
-      record.save()
-        .then(resp => res.end(JSON.stringify(resp)))
-        .catch(error => {
-          console.error(error);
-          KeyHandler.handleError(res, error) 
-        });
+      record.create()
+        .subscribe(
+          resp => res.end(JSON.stringify(resp)),
+          error => KeyHandler.handleError(res, error)
+        )
     }
   }
 
