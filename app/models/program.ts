@@ -83,6 +83,8 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     this.userProgram = new UserProgramRecord(program.user, client);
     this.client = client;
     this.setMetaData();
+    console.log(this.userProgram)
+    console.log(this.applicationProgram)
   }
 
   getUserProgram(): UserProgram {

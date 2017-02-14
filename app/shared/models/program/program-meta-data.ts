@@ -6,7 +6,8 @@ export class ProgramMetaData {
     if (ProgramMetaData.hasValidMetaData(program)) {
       return program;
     } else if (program.guid === 'new') {
-      return program.guid = uuid.v4();
+      program.guid = uuid.v4();
+      return program;
     }
     program.guid = undefined;
     return program;
