@@ -52,18 +52,21 @@ export class NotificationEngine {
 
   percolate(data: any): Rx.Observable<string[]> {
     console.log('NotificationEngine.percolate called');
-    console.log(data);
     const promise = this.client.search<string[]>(percolateParams(data))
-
     const observable = Rx.Observable.fromPromise((promise));
 
 
     return observable
-      .do(_ => console.log(_) )
-      .switchMap(res => Rx.Observable.from(res.hits.hits))
-      .do(_ => console.log(_) )
-      .reduce((accum, hit: any) => [...hit._source.meta], [])
+      .do(_ => console.log(_))
+      .switchMap(res => Rx.Observable.of(res.hits.hits))
+      .switchMap( x => x)
+      .reduce((accum, hit: any) => {
+        console.log(hit)
+        return [hit._source.meta.program_guid, ...accum];
+      }, [])
+      .do(_ => console.log(_))
       .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
+      .do(_ => console.log(_))
   }
 
   registerQueries(programQueries: ProgramQuery[], guid: string) {
@@ -74,19 +77,19 @@ export class NotificationEngine {
       queries
     )
       .switchMap(([searchQuery, appQuery]) => {
-        const body = (<any>Object).assign({}, searchQuery)
+        const query = (<any>Object).assign({}, searchQuery)
         const meta = {
           program_guid: appQuery.guid,
           id: appQuery.id
         }
-        body.meta = meta;
 
         return Rx.Observable.from(this.client.create({
           index: 'master_screener',
           type: 'queries',
           id: appQuery.id,
           body: {
-            query: body
+            query: query,
+            meta: meta
           }
         }))
       })
@@ -103,19 +106,19 @@ export class NotificationEngine {
       queries
     )
     .switchMap(([searchQuery, appQuery]) => {
-        const body = (<any>Object).assign({}, searchQuery)
+        const query = (<any>Object).assign({}, searchQuery)
         const meta = {
           program_guid: appQuery.guid,
           id: appQuery.id
         }
-        body.meta = meta;
 
         return Rx.Observable.from(this.client.index({
           index: 'master_screener',
           type: 'queries',
           id: appQuery.id,
           body: {
-            query: body
+            query: query,
+            meta: meta
           }
         }))
       })
