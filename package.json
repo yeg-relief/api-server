@@ -6,8 +6,8 @@
   "author": "Steven Myers",
   "license": "MIT",
   "scripts": {
-    "start": "node --harmony-async-await app/index.js",
-    "seed": "node --harmony-async-await app/es/seed.js",
+    "start": "ts-node app/app.ts",
+    "seed": "node --harmony-async-await app/seed.js",
     "integration-test": "./node_modules/mocha/bin/mocha 'test/integration'",
     "unit-test": "./node_modules/mocha/bin/mocha --harmony-async-await app/es/seed.js 'test/unit'"
   },
