@@ -85,7 +85,9 @@ export class NotificationEngine {
           index: 'master_screener',
           type: 'queries',
           id: appQuery.id,
-          body
+          body: {
+            query: body
+          }
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
@@ -112,7 +114,9 @@ export class NotificationEngine {
           index: 'master_screener',
           type: 'queries',
           id: appQuery.id,
-          body
+          body: {
+            query: body
+          }
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])

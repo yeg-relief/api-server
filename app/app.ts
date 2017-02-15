@@ -9,7 +9,7 @@ import * as Rx from 'rxjs/Rx';
 import { ScreenerRecord, UserProgramRecord } from './models';
 import { Screener } from './shared';
 
-const config: Elasticsearch.ConfigOptions = { host: 'localhost:9200' }
+const config: Elasticsearch.ConfigOptions = { host: 'localhost:9200', log: 'trace' }
 const client: Elasticsearch.Client = new Client(config);
 
 let server: http.Server;
