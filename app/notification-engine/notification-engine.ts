@@ -129,7 +129,14 @@ export class NotificationEngine {
       const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined );
       const deleted = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
       const missing = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
-       return [
+      
+      console.log('-------------------')
+      console.log(present)
+      console.log(deleted)
+      console.log(missing)
+      console.log('-------------------')
+
+      return [
         present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ), 
         missing.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ),
         deleted.map( (q: any) => q.id)
@@ -150,7 +157,7 @@ export class NotificationEngine {
       .map(id => {
         return this.client.delete({
           index: 'master_screener',
-          type: 'query',
+          type: 'queries',
           id: id
         })
       })
