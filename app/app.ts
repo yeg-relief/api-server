@@ -32,7 +32,7 @@ function startScreenerCache(client: Elasticsearch.Client) {
   .then( hits => hits.map(h => h._source))
   .then<Screener>( sources => {
 
-    const sorted = sources.sort((a, b) => a.created - b.created);
+    const sorted = sources.sort((a, b) => b.created - a.created);
 
     return sorted[0] === undefined ? Promise.resolve(blankScreener) : Promise.resolve(sorted[0]);
   })

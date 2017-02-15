@@ -57,16 +57,10 @@ export class NotificationEngine {
 
 
     return observable
-      .do(_ => console.log(_))
       .switchMap(res => Rx.Observable.of(res.hits.hits))
       .switchMap( x => x)
-      .reduce((accum, hit: any) => {
-        console.log(hit)
-        return [hit._source.meta.program_guid, ...accum];
-      }, [])
-      .do(_ => console.log(_))
+      .reduce((accum, hit: any) => [hit._source.meta.program_guid, ...accum], [])
       .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
-      .do(_ => console.log(_))
   }
 
   registerQueries(programQueries: ProgramQuery[], guid: string) {
