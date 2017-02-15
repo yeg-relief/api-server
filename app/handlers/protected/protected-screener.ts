@@ -17,7 +17,6 @@ export class AdminScreener {
         .do( liftedScreener => screener = liftedScreener )
         .switchMap( _ =>  Rx.Observable.fromPromise(KeyRecord.getAll(this.client)))
         .map( keys => (<any>Object).assign({}, screener, { keys: keys}) )
-        .do( thing => console.log(thing) )
         .subscribe(
           cachedScreener => res.end(JSON.stringify({ response: cachedScreener })),
           error => KeyHandler.handleError(res, error),
@@ -29,12 +28,9 @@ export class AdminScreener {
     return (req, res, next) => {
       const start = Date.now();
       this.setupResponse(res);
-      console.log(req.body.screener);
       const screener = <Screener>req.body.screener;
       const record = new ScreenerRecord(screener, this.client);
       let keys = []
-
-      console.log(` IN SAVE SCREENER `);
 
       Rx.Observable.fromPromise(KeyRecord.getAll(this.client))
         .take(1)

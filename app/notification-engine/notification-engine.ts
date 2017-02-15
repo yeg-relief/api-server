@@ -11,8 +11,8 @@ const percolateParams = (data): Elasticsearch.SearchParams => {
       query: {
         percolate: {
           field: 'query',
-          document_type: 'queries',
-          document: { data }
+          document_type: 'query',
+          document:  data 
         }
       },
       _source: {
@@ -51,13 +51,17 @@ export class NotificationEngine {
   }
 
   percolate(data: any): Rx.Observable<string[]> {
+    console.log('NotificationEngine.percolate called');
+    console.log(data);
     const promise = this.client.search<string[]>(percolateParams(data))
 
     const observable = Rx.Observable.fromPromise((promise));
 
 
     return observable
+      .do(_ => console.log(_) )
       .switchMap(res => Rx.Observable.from(res.hits.hits))
+      .do(_ => console.log(_) )
       .reduce((accum, hit: any) => [...hit._source.meta], [])
       .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
   }

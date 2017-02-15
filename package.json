@@ -12,7 +12,6 @@
     "unit-test": "./node_modules/mocha/bin/mocha --harmony-async-await app/es/seed.js 'test/unit'"
   },
   "dependencies": {
-    "@types/elasticsearch": "^5.0.12",
     "@types/node": "^7.0.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
