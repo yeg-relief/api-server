@@ -6,12 +6,13 @@
   "author": "Steven Myers",
   "license": "MIT",
   "scripts": {
-    "start": "node --harmony-async-await app/index.js",
-    "seed": "node --harmony-async-await app/es/seed.js",
+    "start": "ts-node app/app.ts",
+    "seed": "node --harmony-async-await app/seed.js",
     "integration-test": "./node_modules/mocha/bin/mocha 'test/integration'",
     "unit-test": "./node_modules/mocha/bin/mocha --harmony-async-await app/es/seed.js 'test/unit'"
   },
   "dependencies": {
+    "@types/node": "^7.0.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
@@ -20,7 +21,11 @@
     "mocha": "^3.1.2",
     "node-uuid": "^1.4.7",
     "router": "^1.1.4",
-    "rxjs": "5.0.3"
+    "rxjs": "5.0.3",
+    "typescript": "^2.1.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.38"
+  }
 }

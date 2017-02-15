@@ -2,9 +2,9 @@ curl -H "Content-Type: application/json" -XPOST -d '[ {" name": "age", "type": "
 
 curl -XGET 'localhost:3000/api/keys/' | python -m json.tool
 
-curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"age","type":"number"}]}'   'localhost:3000/api/keys/' | python -m json.tool
+curl -H "Content-Type: application/json" -XPOST -d '{ "key": {"name":"age","type":"integer"} }'   'localhost:3000/protected/key/' | python -m json.tool
 
-curl -H "Content-Type: application/json" -XPOST -d '{"keys":[{"name":"income","type":"number"}]}'   'localhost:3000/api/keys/' | python -m json.tool
+curl -H "Content-Type: application/json" -XPOST -d '{ "key": {name":"income","type":"integer"} }'   'localhost:3000/protected/key/' | python -m json.tool
 
 curl -XPUT 'localhost:9200/master_screener/queries/1?refresh&pretty' -d'
 {

@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+        "experimentalDecorators": true,
+		"sourceMap": false,
+		"outDir": "build",
+		"types": [
+		  "chai",
+		  "mocha",
+		  "node"
+        ]
+	},
+    "include": [
+        "app/**/*"
+    ],
+	"exclude": [
+		"node_modules",
+        "test",
+		"typings",
+		"build"
+	]
+}
