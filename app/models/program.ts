@@ -81,6 +81,16 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
     //return undefined;
   }
 
+  static delete(client: Elasticsearch.Client, guid) {
+    const promise = client.delete({
+      index: 'programs',
+      type: 'user_facing',
+      id: guid
+    })
+    
+    return Rx.Observable.fromPromise(promise);
+  }
+
 }
 
 export class ApplicationProgramRecord extends AbstractApplicationProgram implements Record {
@@ -139,6 +149,10 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
       }
     })
     .timeout(10000);
+  }
+
+  static delete(client: Elasticsearch.Client, guid) {
+    return UserProgramRecord.delete(client, guid);
   }
 
   static getAll(client: Elasticsearch.Client, notifications: NotificationEngine) {

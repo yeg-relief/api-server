@@ -15,7 +15,6 @@ export class KeyHandler {
     return (req, res, next) => {
       this.setupResponse(res);
       Rx.Observable.fromPromise(KeyRecord.getAll(this.client))
-        .do( keys => console.log(keys) )
         .subscribe(
           keys => res.end(JSON.stringify({ keys: keys })),
           error => KeyHandler.handleError(res, error)
@@ -30,11 +29,7 @@ export class KeyHandler {
       if (req.body.key === undefined) {
         KeyHandler.handleError(res, new Error('key is undefined'));
       }
-
-
       const key = new KeyRecord(this.client, req.body.key);
-      console.log(key);
-
       key.save()
         .then(update => res.end(JSON.stringify({ update: update })))
         .catch(error => KeyHandler.handleError(res, error));

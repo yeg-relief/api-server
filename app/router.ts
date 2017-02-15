@@ -43,7 +43,7 @@ export class MyRouter {
     this.userProgramHandler =  new Handlers.UserProgram(this.programCache);
     this.notifcationHandler = new Handlers.Notification(this.notifications);
     this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache, this.client);
-    this.adminProgramHandler = new Handlers.AdminProgram(this.client, this.notifications);
+    this.adminProgramHandler = new Handlers.AdminProgram(this.client, this.notifications, this.programCache);
 
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
@@ -74,6 +74,7 @@ export class MyRouter {
       { Prefix: PROTECTED, Path: '/program/', Verb: GET, Handler: this.adminProgramHandler.getAll() },
       { Prefix: PROTECTED, Path: '/program/', Verb: POST, Handler: this.adminProgramHandler.create() },
       { Prefix: PROTECTED, Path: '/program/', Verb: PUT, Handler: this.adminProgramHandler.update() },
+      { Prefix: PROTECTED, Path: '/program/:guid', Verb: DELETE, Handler: this.adminProgramHandler.delete() },
       // screener => this is for acessing the notificaion engine and returning programs
 
 

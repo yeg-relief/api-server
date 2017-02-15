@@ -22,8 +22,6 @@ const percolateParams = (data): Elasticsearch.SearchParams => {
   }
 }
 
-const TIMEOUT = 100000;
-
 export class NotificationEngine {
   private programCache: ProgramCache;
   private client: Elasticsearch.Client;
@@ -34,7 +32,7 @@ export class NotificationEngine {
   }
 
 
-  getQueries(programId: string): Rx.Observable<ProgramQuery[]> {
+  getQueries(programId: string) {
     const getAllPromise = this.client.search<ProgramQuery>({
       index: 'master_screener',
       body: {
@@ -62,7 +60,6 @@ export class NotificationEngine {
       .switchMap(res => Rx.Observable.from(res.hits.hits))
       .reduce((accum, hit: any) => [...hit._source.meta], [])
       .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
-      .timeout(TIMEOUT);
   }
 
   registerQueries(programQueries: ProgramQuery[], guid: string) {
@@ -98,9 +95,6 @@ export class NotificationEngine {
       esSearchQueries,
       queries
     )
-    .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\nupdate query thing'))
-    .do(_ => console.log(_[0].bool.must))
-    .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\n'))
     .switchMap(([searchQuery, appQuery]) => {
         return Rx.Observable.from(this.client.index({
           index: 'master_screener',
@@ -117,34 +111,52 @@ export class NotificationEngine {
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
       .switchMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
-      .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\n end update query thing'))
-      .do(_ => console.log(_))
-      .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\n'))
-  
   }
 
   updateProgram(programQueries, guid) {
     return Rx.Observable.zip(
       this.getQueries(guid).toArray(),
-      Rx.Observable.from(programQueries).toArray() // toArray() shouldn't be needed...
+      Rx.Observable.from(programQueries).toArray()
     )
     .reduce( (accum, [registeredQueries, programQueries]) => {
-      const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined);
-      const missing = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined); 
-      const updates = present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) );
-      const creates = missing.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) );
-      return [updates, creates]
+      const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined );
+      const missing = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
+      const deleted = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
+      return [
+        present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ), 
+        missing.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ),
+        deleted.map( (q: any) => q.id)
+      ]
     }, [])
-    .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\nupdate program thing'))
-    .do(_ => console.log(_))
-    .do(_ => console.log('\n~~~~~~~~~~~~~~~~~~~\n'))
-    .switchMap( ([present, missing]) => {
-      return Rx.Observable.zip(
+    .switchMap( ([present, missing, deleted]) => {
+      return Rx.Observable.merge(
         this.updateQueries(present, guid),
-        this.registerQueries(missing, guid)
+        this.registerQueries(missing, guid),
+        this.deletePrograms(deleted)
       )
     })
-    .map( ([updated, created]) => [...updated, ...created])
+  }
+
+  private deletePrograms(guids: string[]) {
+    return Rx.Observable.of(guids)
+      .do(_ => console.log(_) )
+      .switchMap(x => x)
+      .map(id => {
+        return this.client.delete({
+          index: 'master_screener',
+          type: 'queries',
+          id: id
+        })
+      })
+      .do(_ => console.log(_))
+      .reduce( (accum, promise) => [promise, ...accum], [])
+      .switchMap( promises => Promise.all(promises) )
+  }
+
+  deleteProgram(guid: string) {
+    return this.getQueries(guid).toArray()
+      .map(programQueries => programQueries.reduce( (accum: any, query: any) => [query.id, ...accum], []) )
+      .switchMap( (ids: string[]) => this.deletePrograms(ids))
   }
 
 }
