@@ -12,7 +12,7 @@ const percolateParams = (data): Elasticsearch.SearchParams => {
         percolate: {
           field: 'query',
           document_type: 'query',
-          document:  data 
+          document:   data 
         }
       },
       _source: {
@@ -74,17 +74,18 @@ export class NotificationEngine {
       queries
     )
       .switchMap(([searchQuery, appQuery]) => {
+        const body = (<any>Object).assign({}, searchQuery)
+        const meta = {
+          program_guid: appQuery.guid,
+          id: appQuery.id
+        }
+        body.meta = meta;
+
         return Rx.Observable.from(this.client.create({
           index: 'master_screener',
           type: 'query',
           id: appQuery.id,
-          body: {
-            searchQuery,
-            meta: {
-              program_guid: appQuery.guid,
-              id: appQuery.id
-            }
-          }
+          body
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
@@ -100,17 +101,18 @@ export class NotificationEngine {
       queries
     )
     .switchMap(([searchQuery, appQuery]) => {
+        const body = (<any>Object).assign({}, searchQuery)
+        const meta = {
+          program_guid: appQuery.guid,
+          id: appQuery.id
+        }
+        body.meta = meta;
+
         return Rx.Observable.from(this.client.index({
           index: 'master_screener',
           type: 'query',
           id: appQuery.id,
-          body: {
-            searchQuery,
-            meta: {
-              program_guid: appQuery.guid,
-              id: appQuery.id
-            }
-          }
+          body
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
