@@ -109,8 +109,14 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   }
 
   save(): Promise<any> {
+    console.log('*** record.save called ****')
+
     return Rx.Observable.fromPromise(this.userProgram.save())
+      .do(_ => console.log('result from userProgram.save'))
+      .do( _ => console.log(_))
       .switchMap(() => this.notifications.updateProgram(this.applicationProgram.queries, this.applicationProgram.user.guid))
+      .do(_ => console.log('result from notifications.updateProgram'))
+      .do( _ => console.log(_))
       .timeout(10000)
       .toPromise()
   }
@@ -136,7 +142,7 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
         return Promise.resolve(resp)
       })
 
-    const applicationProgram = notifications.getQueries(id);
+    const applicationProgram = notifications.getQueries(id).toArray();
 
     return Rx.Observable.zip(
       Rx.Observable.fromPromise(userProgram),

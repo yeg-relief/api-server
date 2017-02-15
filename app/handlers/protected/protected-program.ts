@@ -49,6 +49,7 @@ export class AdminProgram {
   update(): RouteHandler {
     return (req, res, next) => {
       console.log('update program route called')
+      console.log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
       this.setupResponse(res);
       const data = req.body.data;
       const record = new ApplicationProgramRecord({
@@ -62,7 +63,8 @@ export class AdminProgram {
           error => {
             console.error(error)
             KeyHandler.handleError(res, error)
-          }
+          },
+          () => console.log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
         )
     }
   }

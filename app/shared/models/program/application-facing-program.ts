@@ -7,7 +7,7 @@ export abstract class AbstractApplicationProgram implements IValidateable  {
   
   protected constructor(program: any){
     this.applicationProgram = {...program};
-
+    this.applicationProgram.user.created = Date.now();
   }
 
   static isApplicationFacingProgram(program: any): program is ApplicationProgram {    

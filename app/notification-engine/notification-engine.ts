@@ -120,9 +120,9 @@ export class NotificationEngine {
     )
     .reduce( (accum, [registeredQueries, programQueries]) => {
       const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined );
-      const missing = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
-      const deleted = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
-      return [
+      const deleted = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
+      const missing = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
+       return [
         present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ), 
         missing.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ),
         deleted.map( (q: any) => q.id)
@@ -139,16 +139,14 @@ export class NotificationEngine {
 
   private deletePrograms(guids: string[]) {
     return Rx.Observable.of(guids)
-      .do(_ => console.log(_) )
       .switchMap(x => x)
       .map(id => {
         return this.client.delete({
           index: 'master_screener',
-          type: 'queries',
+          type: 'query',
           id: id
         })
       })
-      .do(_ => console.log(_))
       .reduce( (accum, promise) => [promise, ...accum], [])
       .switchMap( promises => Promise.all(promises) )
   }
