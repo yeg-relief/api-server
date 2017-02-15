@@ -17,10 +17,6 @@ export class AdminProgram {
         userPrograms,
         ApplicationProgramRecord.getAll(this.client, this.notifications)
       )
-      .do( _ => console.log('\n-------------------------\n'))
-      .do(_ => console.log('sending this over network'))
-      .do(_ => console.log(_))
-      .do(_ => console.log('\n-------------------------\n'))
       .subscribe(
         resp => res.end(JSON.stringify({ programs: resp[0], queries: resp[1]})),
         error => KeyHandler.handleError(res, error)
@@ -32,16 +28,36 @@ export class AdminProgram {
     return (req, res, next) => {
       this.setupResponse(res);
       const data = req.body.data;
-      console.log(data);
       const record = new ApplicationProgramRecord({
         user: data.user,
         queries: data.application
       }, this.client, this.notifications);
-      console.log('\n--------------------------------------\n');
       record.create()
         .subscribe(
           resp => res.end(JSON.stringify(resp)),
           error => KeyHandler.handleError(res, error)
+        )
+    }
+  }
+
+  update(): RouteHandler {
+    return (req, res, next) => {
+      console.log('update program route called')
+      this.setupResponse(res);
+      const data = req.body.data;
+      const record = new ApplicationProgramRecord({
+        user: data.user,
+        queries: data.application
+      }, this.client, this.notifications)
+      const obs = Rx.Observable.fromPromise(record.save())
+      obs
+        .do(thing => console.log(thing))
+        .subscribe( 
+          resp => res.end(JSON.stringify(resp)),
+          error => {
+            console.error(error)
+            KeyHandler.handleError(res, error)
+          }
         )
     }
   }

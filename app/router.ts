@@ -73,6 +73,7 @@ export class MyRouter {
       // programs 
       { Prefix: PROTECTED, Path: '/program/', Verb: GET, Handler: this.adminProgramHandler.getAll() },
       { Prefix: PROTECTED, Path: '/program/', Verb: POST, Handler: this.adminProgramHandler.create() },
+      { Prefix: PROTECTED, Path: '/program/', Verb: PUT, Handler: this.adminProgramHandler.update() },
       // screener => this is for acessing the notificaion engine and returning programs
 
 

@@ -24,7 +24,16 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
     return this.userProgram;
   }
 
-  save(): Promise<Elasticsearch.CreateDocumentResponse> {
+  save() {
+    return this.client.index({
+      index: this.params.index,
+      type: this.params.type,
+      id: this.userProgram.guid,
+      body: this.userProgram
+    })
+  }
+
+  create(): Promise<Elasticsearch.CreateDocumentResponse> {
     return this.client.create({
       index: this.params.index,
       type: this.params.type,
@@ -35,7 +44,7 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
         if (response.created) {
           return Promise.resolve(response)
         }
-        return Promise.reject(`program with ${this.userProgram.guid}: [failed save]`)
+        return Promise.reject(`program with ${this.userProgram.guid}: [failed create]`)
       })
   }
 
@@ -83,8 +92,6 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     this.userProgram = new UserProgramRecord(program.user, client);
     this.client = client;
     this.setMetaData();
-    console.log(this.userProgram)
-    console.log(this.applicationProgram)
   }
 
   getUserProgram(): UserProgram {
@@ -93,20 +100,15 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
 
   save(): Promise<any> {
     return Rx.Observable.fromPromise(this.userProgram.save())
-      .switchMap(() => this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid))
+      .switchMap(() => this.notifications.updateProgram(this.applicationProgram.queries, this.applicationProgram.user.guid))
       .timeout(10000)
       .toPromise()
   }
 
   create() {
-    console.log('APPLICATION PROGRAM CREATE CALLED')
-    console.log('\n-------------------------\n')
-    console.log(this.applicationProgram)
     const registerQueries = this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid);
-    console.log(registerQueries)
-    console.log('\n-------------------------\n');
     return registerQueries
-      .switchMap(() => this.userProgram.save())
+      .switchMap(() => this.userProgram.create())
       .timeout(10000)
   }
 
@@ -143,19 +145,12 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     const allUserPrograms = Rx.Observable.fromPromise(UserProgramRecord.getAll(client));
 
     return allUserPrograms
-      .do(_ => console.log('in getAll ApplicationRecord\n-------------------------\n'))
       .take(1)
       .switchMap(x => x)
       .switchMap(userProgram => notifications.getQueries(userProgram.guid))
-      .do( _ => console.log(_))
-      .do(_ => console.log('\n----------------------- \n'))
       .retry(2)
       .toArray()
-      .catch(_ => {
-        console.log('caught error')
-        console.log(_)
-        return Rx.Observable.of([])
-      })
+      .catch(_ => Rx.Observable.of([]))
   }
 
   setMetaData() {
@@ -164,14 +159,10 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
 
       const programGUID = this.applicationProgram.user.guid;
       this.userProgram.getUserProgram().guid = programGUID;
-      console.log(programGUID)
       for(let i = 0; i < this.applicationProgram.queries.length; i++) {
         this.applicationProgram.queries[i].guid = programGUID;
       }
     }
-    ProgramMetaData.setCreationDate(this.applicationProgram.user);
-    console.log('in set meta data');
-    console.log(this.applicationProgram);
-    
+    ProgramMetaData.setCreationDate(this.applicationProgram.user); 
   }
 }
