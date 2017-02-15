@@ -11,7 +11,7 @@ const percolateParams = (data): Elasticsearch.SearchParams => {
       query: {
         percolate: {
           field: 'query',
-          document_type: 'query',
+          document_type: 'queries',
           document:   data 
         }
       },
@@ -83,7 +83,7 @@ export class NotificationEngine {
 
         return Rx.Observable.from(this.client.create({
           index: 'master_screener',
-          type: 'query',
+          type: 'queries',
           id: appQuery.id,
           body
         }))
@@ -110,7 +110,7 @@ export class NotificationEngine {
 
         return Rx.Observable.from(this.client.index({
           index: 'master_screener',
-          type: 'query',
+          type: 'queries',
           id: appQuery.id,
           body
         }))
