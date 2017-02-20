@@ -60,6 +60,14 @@ export class NotificationEngine {
       .switchMap(res => Rx.Observable.of(res.hits.hits))
       .switchMap( x => x)
       .reduce((accum, hit: any) => [hit._source.meta.program_guid, ...accum], [])
+      .reduce( (guids: any[], ids: string[]) => {
+        for(const id of ids) {
+          if (guids.find(guid => guid === id) === undefined){
+            guids.push(id);
+          }
+        }
+        return guids;
+      }, new Array<string>())
       .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
   }
 
