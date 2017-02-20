@@ -8,8 +8,6 @@
   "scripts": {
     "start": "ts-node app/app.ts",
     "seed": "node --harmony-async-await app/seed.js",
-    "integration-test": "./node_modules/mocha/bin/mocha 'test/integration'",
-    "unit-test": "./node_modules/mocha/bin/mocha --harmony-async-await app/es/seed.js 'test/unit'"
   },
   "dependencies": {
     "@types/node": "^7.0.0",
