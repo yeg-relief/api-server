@@ -12,6 +12,7 @@ type InternalCache = Map<string, UserProgram>
 type ActionTypes = 'DELETE_PROGRAM' | 'ADD_PROGRAMS';
 
 const TIMEOUT_VALUE = 10000;
+const MAX_CACHE_SIZE = 1000;
 
 export class ProgramCache {
   private cache: Rx.Observable<InternalCache>;
@@ -33,9 +34,8 @@ export class ProgramCache {
 
           case 'ADD_PROGRAMS': {
             const programs = <UserProgramRecord[]>action.payload;
-            // if more than 100 programs cached do nothing 
             // TODO: alert that not all programs cached and cache as many as possible
-            if (internalCache.keys.length + programs.length < 100) {
+            if (internalCache.keys.length + programs.length < MAX_CACHE_SIZE) {
               
               programs.forEach(program => internalCache.set(program.getUserProgram().guid, program.getUserProgram()))
             }
