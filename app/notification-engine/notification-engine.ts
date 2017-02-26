@@ -51,7 +51,6 @@ export class NotificationEngine {
   }
 
   percolate(data: any): Rx.Observable<string[]> {
-    console.log('NotificationEngine.percolate called');
     const promise = this.client.search<string[]>(percolateParams(data))
     const observable = Rx.Observable.fromPromise((promise));
 
@@ -74,11 +73,13 @@ export class NotificationEngine {
   registerQueries(programQueries: ProgramQuery[], guid: string) {
     const esSearchQueries = Rx.Observable.from(programQueries.map(query => QueryConverter.queryToES(query)));
     const queries = Rx.Observable.from(programQueries);
+
+
     return Rx.Observable.zip(
       esSearchQueries,
       queries
     )
-      .switchMap(([searchQuery, appQuery]) => {
+      .flatMap(([searchQuery, appQuery]) => {
         const query = (<any>Object).assign({}, searchQuery)
         const meta = {
           program_guid: appQuery.guid,
@@ -96,7 +97,7 @@ export class NotificationEngine {
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
-      .switchMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
+      .flatMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
   }
 
 
@@ -107,7 +108,7 @@ export class NotificationEngine {
       esSearchQueries,
       queries
     )
-    .switchMap(([searchQuery, appQuery]) => {
+    .flatMap(([searchQuery, appQuery]) => {
         const query = (<any>Object).assign({}, searchQuery)
         const meta = {
           program_guid: appQuery.guid,
@@ -125,7 +126,7 @@ export class NotificationEngine {
         }))
       })
       .reduce((allQueries, query) => [query, ...allQueries], [])
-      .switchMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
+      .flatMap(queryArry => Rx.Observable.fromPromise(Promise.all(queryArry)))
   }
 
   updateProgram(programQueries, guid) {
@@ -150,7 +151,7 @@ export class NotificationEngine {
         deleted.map( (q: any) => q.id)
       ]
     }, [])
-    .switchMap( ([present, missing, deleted]) => {
+    .flatMap( ([present, missing, deleted]) => {
       return Rx.Observable.merge(
         this.updateQueries(present, guid),
         this.registerQueries(missing, guid),
@@ -170,13 +171,13 @@ export class NotificationEngine {
         })
       })
       .reduce( (accum, promise) => [promise, ...accum], [])
-      .switchMap( promises => Promise.all(promises) )
+      .flatMap( promises => Promise.all(promises) )
   }
 
   deleteProgram(guid: string) {
     return this.getQueries(guid).toArray()
       .map(programQueries => programQueries.reduce( (accum: any, query: any) => [query.id, ...accum], []) )
-      .switchMap( (ids: string[]) => this.deletePrograms(ids))
+      .flatMap( (ids: string[]) => this.deletePrograms(ids))
   }
 
 }

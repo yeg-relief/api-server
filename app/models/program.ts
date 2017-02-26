@@ -167,7 +167,7 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     return allUserPrograms
       .take(1)
       .switchMap(x => x)
-      .switchMap(userProgram => notifications.getQueries(userProgram.guid))
+      .flatMap(userProgram => notifications.getQueries(userProgram.guid))
       .retry(2)
       .toArray()
       .catch(_ => Rx.Observable.of([]))
