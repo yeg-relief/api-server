@@ -28,7 +28,7 @@ export class AdminScreener {
     return (req, res, next) => {
       const start = Date.now();
       this.setupResponse(res);
-      const screener = <Screener>req.body.screener;
+      const screener = <Screener>req.body;
       const record = new ScreenerRecord(screener, this.client);
       let keys = []
 
