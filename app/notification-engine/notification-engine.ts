@@ -43,11 +43,11 @@ export class NotificationEngine {
     })
 
     return Rx.Observable.fromPromise<Elasticsearch.SearchResponse<ProgramQuery>>(getAllPromise)
-      .switchMap(res => Rx.Observable.from(res.hits.hits))
+      .flatMap(res => Rx.Observable.from(res.hits.hits))
       .filter( (res: any) => res._source.meta.program_guid === programId )
       .reduce( (sources, hit) => [hit._source, ...sources], [] )
       .reduce( (queries: ProgramQuery[], source) => [QueryConverter.EsToQuery(source), ...queries], [])
-      .switchMap(x => x[0])
+      .flatMap(x => x[0])
   }
 
   percolate(data: any): Rx.Observable<string[]> {
@@ -56,8 +56,8 @@ export class NotificationEngine {
 
 
     return observable
-      .switchMap(res => Rx.Observable.of(res.hits.hits))
-      .switchMap( x => x)
+      .flatMap(res => Rx.Observable.of(res.hits.hits))
+      .flatMap( x => x)
       .reduce((accum, hit: any) => [hit._source.meta.program_guid, ...accum], [])
       .reduce( (guids: any[], ids: string[]) => {
         for(const id of ids) {
@@ -67,7 +67,7 @@ export class NotificationEngine {
         }
         return guids;
       }, new Array<string>())
-      .switchMap((guids: string[]) => this.programCache.getPrograms(guids))
+      .flatMap((guids: string[]) => this.programCache.getPrograms(guids))
   }
 
   registerQueries(programQueries: ProgramQuery[], guid: string) {
@@ -138,13 +138,7 @@ export class NotificationEngine {
       const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined );
       const deleted = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
       const missing = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
-      
-      console.log('-------------------')
-      console.log(present)
-      console.log(deleted)
-      console.log(missing)
-      console.log('-------------------')
-
+ 
       return [
         present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ), 
         missing.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ),
@@ -162,7 +156,7 @@ export class NotificationEngine {
 
   private deletePrograms(guids: string[]) {
     return Rx.Observable.of(guids)
-      .switchMap(x => x)
+      .flatMap(x => x)
       .map(id => {
         return this.client.delete({
           index: 'master_screener',

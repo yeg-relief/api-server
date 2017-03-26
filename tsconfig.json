@@ -5,11 +5,7 @@
         "experimentalDecorators": true,
 		"sourceMap": false,
 		"outDir": "build",
-		"types": [
-		  "chai",
-		  "mocha",
-		  "node"
-        ]
+		"types": [ "node" ]
 	},
     "include": [
         "app/**/*"
