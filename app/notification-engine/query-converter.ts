@@ -20,6 +20,14 @@ export function queryToES(query: ProgramQuery) {
         const numberCondition = parseNumberCondition(condition);
         return [numberCondition, ...accum];
       }
+      case 'number': {
+        if ((<NumberCondition>condition).qualifier === undefined) {
+          throw new Error('condition type number with qualifier undefined');
+        }
+        const numberCondition = parseNumberCondition(condition);
+        return [numberCondition, ...accum];
+      }
+
       case 'boolean': {
         const boolCondition = parseBooleanCondition(condition);
         return [boolCondition, ...accum];
@@ -121,7 +129,7 @@ function transformToConditions(mustQueries) {
     const {keyName, keyType} = extractKey(query);
     condition.key.name = keyName;
     condition.key.type = keyType;
-    if (condition.key.type === 'number') {
+    if (condition.key.type === 'number' || condition.key.type === 'integer') {
       condition.qualifier = qualifier(condition.key.name, condition.key.type, query);
     } else {
       condition.qualifier = undefined;

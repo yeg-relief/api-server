@@ -148,7 +148,7 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
         queries: [...programQueries]
       }
     })
-    .timeout(10000);
+    .timeout(10000)
   }
 
   static delete(client: Elasticsearch.Client, guid) {
