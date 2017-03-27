@@ -71,7 +71,6 @@ export class ProgramCache {
           return programs;
         }, [])
       })
-      .timeout(TIMEOUT_VALUE);
   }
 
   deleteProgram(id: string): Rx.Observable<boolean> {
@@ -80,7 +79,7 @@ export class ProgramCache {
       payload: id
     });
 
-    return this.cache.take(1).map(internalCache => internalCache.has(id)).map(val => val === false).timeout(TIMEOUT_VALUE);
+    return this.cache.take(1).map(internalCache => internalCache.has(id)).map(val => val === false);
   }
 
   updatePrograms(programRecords: UserProgramRecord[]) {

@@ -15,7 +15,7 @@ export class AdminScreener {
       this.cache.get()
         .take(1)
         .do( liftedScreener => screener = liftedScreener )
-        .switchMap( _ =>  Rx.Observable.fromPromise(KeyRecord.getAll(this.client)))
+        .flatMap( _ =>  Rx.Observable.fromPromise(KeyRecord.getAll(this.client)))
         .map( keys => (<any>Object).assign({}, screener, { keys: keys}) )
         .subscribe(
           cachedScreener => res.end(JSON.stringify({ response: cachedScreener })),
@@ -36,11 +36,10 @@ export class AdminScreener {
         .take(1)
         .filter( keys => record.validateUpload(keys) )
         .do( (liftedKeys) => keys = liftedKeys )
-        .switchMap( _ => Rx.Observable.fromPromise(record.save()) )
+        .flatMap( _ => Rx.Observable.fromPromise(record.save()) )
         .filter( response => response.created === true )
-        .switchMap( _ => this.cache.update(record) )
+        .flatMap( _ => this.cache.update(record) )
         .map( cachedScreener => (<any>Object).assign({}, cachedScreener, { keys: keys }) )
-        .timeout(10000)
         .subscribe(
           newlyUpdated => res.end(JSON.stringify({ response: newlyUpdated })),
           error => KeyHandler.handleError(res, error),
