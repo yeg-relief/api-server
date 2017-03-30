@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node app/app.ts",
-    "seed": "node --harmony-async-await app/seed.js" 
+    "seed": "node --harmony-async-await app/seed.js"
   },
   "dependencies": {
     "@types/node": "^7.0.0",
@@ -23,7 +23,7 @@
     "typescript": "^2.1.5"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/mocha": "^2.2.38"
+    "@types/tape": "^4.2.29",
+    "tape": "^4.6.3"
   }
 }

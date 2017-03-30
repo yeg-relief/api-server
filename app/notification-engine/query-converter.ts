@@ -1,6 +1,6 @@
 import { ProgramQuery, NumberCondition, Condition } from '../shared'
 
-export function queryToES(query: ProgramQuery) {
+export function queryToES(query: ProgramQuery): any {
   const convertedQuery = {
     bool: {
       must: []
@@ -88,14 +88,14 @@ function parseQualifiedNumberCondition(condition) {
   }
 }
 
-function parseBooleanCondition(condition) {
+export function parseBooleanCondition(condition) {
   const obj = { term: {} };
   obj.term[condition.key.name] = condition.value;
   return obj;
 }
 
 
-export function EsToQuery(programApplication) {
+export function EsToQuery(programApplication): ProgramQuery[] {
   return programApplication.reduce((accum, program) => {
     return [{ guid: program.meta.program_guid, id: program.meta.id, conditions: [...transformToConditions(program.query.bool.must)]}, ...accum];
   }, [])
