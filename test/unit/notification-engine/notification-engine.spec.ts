@@ -178,7 +178,6 @@ test('NotificationEngine#deleteProgram', t => {
 
     notification.deleteProgram('fake-guid-1')
         .subscribe(actual => {
-            console.log(actual)
             t.deepEqual(actual, expected);
             t.end();
         });

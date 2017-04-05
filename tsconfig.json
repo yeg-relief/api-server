@@ -10,11 +10,9 @@
 	},
     "include": [
         "app/**/*",
-		"test/unit/notification-engine/notification-engine.spec.ts"
+		"test/unit/**/*"
     ],
 	"exclude": [
-		"node_modules",
-		"typings",
-		"build"
+		"node_modules"
 	]
 }

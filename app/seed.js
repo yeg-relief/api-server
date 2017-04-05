@@ -21,7 +21,7 @@ const programMapping = {
   title: { type: 'string'},
   externalLink: { type: 'string'},
   tags: { type: 'keyword'},
-  created: { type: 'date' }
+  created: { type: 'date' },
 };
 
 function deleteIndex(elasticClient, indexName) {

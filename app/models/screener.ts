@@ -87,8 +87,8 @@ export class ScreenerRecord extends AbstractScreener implements Record {
     
       const key = keys.find( k => k.name === question.key )
 
-      if (key.type === 'integer' && question.controlType === 'CheckBox') {
-        throw new Error(`key with id: ${question.id} is type integer with control CheckBox`);
+      if (key.type !== 'boolean' && question.controlType === 'CheckBox') {
+        throw new Error(`key with id: ${question.id} is type ${key.type} with control CheckBox`);
       }
 
       if (key.type === 'boolean' && question.controlType !== 'CheckBox') {

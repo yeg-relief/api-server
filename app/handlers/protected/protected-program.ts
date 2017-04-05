@@ -18,19 +18,28 @@ export class AdminProgram {
       this.setupResponse(res);
       const userPrograms = Rx.Observable.fromPromise(UserProgramRecord.getAll(this.client));
 
-      Rx.Observable.zip(
-        userPrograms,
-        ApplicationProgramRecord.getAll(this.client, this.notifications)
-      )
-      .subscribe(
-        resp => res.end(JSON.stringify({ programs: resp[0], queries: resp[1]})),
-        error => KeyHandler.handleError(res, error)
-      )
+      ApplicationProgramRecord.getAll(this.client, this.notifications)
+        // it's application in the client and queries in the server... *doh!*
+        .flatMap(x => x)
+        .map( program => {
+          return {
+            guid: program.guid,
+            user: program.user,
+            application: [...program.queries]
+          }
+        })
+        .toArray()
+        .subscribe(
+          resp => res.end(JSON.stringify(resp)),
+          error => KeyHandler.handleError(res, error)
+        )
     }
   }
 
   create(): RouteHandler {
     return (req, res, next) => {
+      console.log('create called!')
+
       this.setupResponse(res);
       const data = req.body.data;
       const record = new ApplicationProgramRecord({
@@ -48,8 +57,13 @@ export class AdminProgram {
 
   update(): RouteHandler {
     return (req, res, next) => {
+      console.log('update called')
       this.setupResponse(res);
       const data = req.body.data;
+      for(const k in data) {
+        console.log(k);
+        console.log(data[k]);
+      }
       const record = new ApplicationProgramRecord({
         user: data.user,
         queries: data.application

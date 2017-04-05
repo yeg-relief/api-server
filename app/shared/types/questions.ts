@@ -10,7 +10,7 @@ export type NumberInput = {
   label: string;
   key: string;
   controlType: 'NumberInput';
-  value: number;
+  value?: number;
   index: number;
 }
 
@@ -37,7 +37,7 @@ export type ExpandableQuestion = {
   expandable: boolean;
   label: string;
   key: string;
-  controlType: 'radio';
+  controlType: 'CheckBox';
   options: BooleanOption[];
   conditonalQuestions: id[];
   index: number;
