@@ -5,15 +5,14 @@
         "experimentalDecorators": true,
 		"sourceMap": false,
 		"outDir": "build",
-		"types": [ "node" ]
+		"types": [ "node", "tape" ],
+		"strictNullChecks": false
 	},
     "include": [
-        "app/**/*"
+        "app/**/*",
+		"test/unit/**/*"
     ],
 	"exclude": [
-		"node_modules",
-        "test",
-		"typings",
-		"build"
+		"node_modules"
 	]
 }

@@ -3,6 +3,7 @@ import * as QueryConverter from './index';
 import { UserProgram, ApplicationProgram, ProgramQuery, Condition, NumberCondition, BooleanCondition } from '../shared';
 import { ScreenerRecord, ApplicationProgramRecord } from '../models';
 import { ProgramCache } from '../cache';
+import { Client } from 'elasticsearch'
 
 const percolateParams = (data): Elasticsearch.SearchParams => {
   return {
@@ -32,7 +33,7 @@ export class NotificationEngine {
   }
 
 
-  getQueries(programId: string) {
+  getQueries(programId: string): Rx.Observable<ProgramQuery[]> {
     const getAllPromise = this.client.search<ProgramQuery>({
       index: 'master_screener',
       body: {
@@ -70,7 +71,7 @@ export class NotificationEngine {
       .flatMap((guids: string[]) => this.programCache.getPrograms(guids))
   }
 
-  registerQueries(programQueries: ProgramQuery[], guid: string) {
+  registerQueries(programQueries: ProgramQuery[], guid: string): Rx.Observable<Elasticsearch.CreateDocumentResponse[]> {
     if (programQueries.length === 0 ) return Rx.Observable.of([]);
 
 
@@ -114,17 +115,11 @@ export class NotificationEngine {
       queries
     )
     .flatMap(([searchQuery, appQuery]) => {
-        console.log('\n``````````\n')
-        console.log(searchQuery)
-        console.log(appQuery)
         const query = (<any>Object).assign({}, searchQuery)
         const meta = {
           program_guid: appQuery.guid,
           id: appQuery.id
         }
-
-        console.log(query)
-        console.log('\n``````````````\n')
 
         return Rx.Observable.from(this.client.index({
           index: 'master_screener',
@@ -147,40 +142,10 @@ export class NotificationEngine {
       this.getQueries(guid).toArray(),
       Rx.Observable.of(programQueries)
     )
-    .do( _ => console.log('UPDATE PROGRAM OBSERVABLE EXECUTED'))
-    /*
-    .do( _ => console.log('---------------------'))
-    .do( ([registerQueries, programQueries]) => {
-      console.log('\n REGISTERED QUERIES \n')
-      for(const query of registerQueries) {
-        for(const cond of (<any>query).conditions) {
-          logObject(cond);
-        }
-      }
-
-      console.log('\n PROGRAM QUERIES \n')
-      for(const query of programQueries) {
-        for(const cond of (<any>query).conditions) {
-          logObject(cond);
-        }
-      }
-    })
-    
-    */
-    .do( _ => console.log('---------------------'))
     .reduce( (accum, [registeredQueries, programQueries]) => {
       const present = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) !== undefined );
       const deleted = registeredQueries.filter( (query: any) => programQueries.find( (pq: any) => pq.id === query.id) === undefined ); 
       const missing = programQueries.filter( (query: any) => registeredQueries.find( (rq: any) => rq.id === query.id) === undefined );
- 
-      console.log('\nPRESENT\n')
-      present.forEach(q => logObject((<any>q).conditions))
-
-      console.log('\nDELETED\n')
-      deleted.forEach(q => logObject((<any>q).conditions))
-
-      console.log('\nMISSING\n')
-      missing.forEach(q => logObject((<any>q).conditions))
 
       return [
         present.map( (q: any) => programQueries.find( (pq: any) => q.id === pq.id) ), 
@@ -188,25 +153,13 @@ export class NotificationEngine {
         deleted.map( (q: any) => q.id)
       ]
     }, [])
-    .do( ([present, missing, deleted]) => {
-      console.log('\nPRESENT queries\n')
-      console.log(present)
-
-      console.log('\nDELETED IDs\n')
-      console.log(deleted)
-
-      console.log('\nMISSING queries\n')
-      console.log(missing)
-    })
-    .do( _ => console.log('---------------------'))
     .flatMap( ([present, missing, deleted]) => {
-      return Rx.Observable.concat(
+      return Rx.Observable.merge(
         this.updateQueries(present, guid),
         this.registerQueries(missing, guid),
         this.deletePrograms(deleted)
-      )
+      ).reduce( (accum, update) => [...accum, update], [])
     })
-    .timeout(20000)
     
   }
 
@@ -230,13 +183,5 @@ export class NotificationEngine {
     return this.getQueries(guid).toArray()
       .map(programQueries => programQueries.reduce( (accum: any, query: any) => [query.id, ...accum], []) )
       .flatMap( (ids: string[]) => this.deletePrograms(ids))
-  }
-}
-
-function logObject(obj: Object) {
-  for(const key in obj) {
-    console.log(`logging: ${key}`)
-    console.log(obj[key]);
-    console.log('~~~~~~~~~~~~~~~')
   }
 }

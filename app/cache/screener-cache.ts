@@ -13,9 +13,7 @@ export class ScreenerCache {
   }
 
   get(): Rx.Observable<Screener> {
-    return this.cache
-      .asObservable().take(1)
-      .timeout(TIMEOUT_VALUE);
+    return this.cache.asObservable().take(1)
   }
 
   update(screener: ScreenerRecord): Rx.Observable<Screener> {

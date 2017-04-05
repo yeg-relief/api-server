@@ -48,16 +48,16 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
       })
   }
 
-  find(id: string): Promise<UserProgram> {
-    return this.client.get<UserProgram>({
-      index: this.params.index,
-      type: this.params.type,
-      id: id
+  static get(id: string, client: Elasticsearch.Client): Promise<UserProgram> {
+    return client.get<UserProgram>({
+      index: 'programs',
+      type: 'user_facing',
+      id
     })
       .then(response => response._source)
       .then(resp => {
         if (resp === undefined) {
-          return Promise.reject(`unable to get _source for program with id: ${this.params.id}`)
+          return Promise.reject(`unable to get _source for program with id: ${id}`)
         }
         return Promise.resolve(resp)
       })
@@ -75,10 +75,7 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
   }
 
   serialize(): string {
-    //if (this.validate()) {
-      return JSON.stringify(this.userProgram)
-    //}
-    //return undefined;
+    return JSON.stringify(this.userProgram)
   }
 
   static delete(client: Elasticsearch.Client, guid) {
@@ -105,21 +102,18 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
   }
 
   getUserProgram(): UserProgram {
-    return super.applicationProgram.user;
+    return this.applicationProgram.user;
   }
 
   save(): Promise<any> {
     return Rx.Observable.fromPromise(this.userProgram.save())
       .flatMap(() => this.notifications.updateProgram(this.applicationProgram.queries, this.applicationProgram.user.guid))
-      .timeout(10000)
       .toPromise()
   }
 
   create() {
     const registerQueries = this.notifications.registerQueries(this.applicationProgram.queries, this.applicationProgram.user.guid);
-    return registerQueries
-      .flatMap(() => this.userProgram.create())
-      .timeout(10000)
+    return registerQueries.flatMap(() => this.userProgram.create())
   }
 
   static find(id: string, client: Elasticsearch.Client, notifications: NotificationEngine) {
@@ -147,12 +141,15 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
         user: {...userProgram},
         queries: [...programQueries]
       }
-    })
-    .timeout(10000)
+    });
   }
 
-  static delete(client: Elasticsearch.Client, guid) {
-    return UserProgramRecord.delete(client, guid);
+  // untested and unused ??
+  static delete(client: Elasticsearch.Client, notifications: NotificationEngine, guid) {
+    return Rx.Observable.zip(
+      UserProgramRecord.delete(client, guid),
+      notifications.deleteProgram(guid)
+    );
   }
 
   static getAll(client: Elasticsearch.Client, notifications: NotificationEngine) {
@@ -161,8 +158,20 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     return allUserPrograms
       .take(1)
       .flatMap(x => x)
-      .flatMap(userProgram => notifications.getQueries(userProgram.guid))
-      .retry(2)
+      .flatMap(userProgram => {
+        return Rx.Observable.forkJoin(
+          Rx.Observable.of(userProgram.guid),
+          notifications.getQueries(userProgram.guid).toArray(),
+          Rx.Observable.of(userProgram)
+        )
+      })
+      .map( ([guid, queries, user]) => {
+        return {
+          guid: guid,
+          user: user,
+          queries: queries
+        }
+      })
       .toArray()
       .catch(_ => Rx.Observable.of([]))
   }

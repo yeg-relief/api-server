@@ -40,7 +40,7 @@ export class KeyRecord implements Record {
       }
     })
     .then(response => {
-      if (response.acknowledged){
+      if (response.acknowledged !== undefined){
         return Promise.resolve(response.acknowledged);
       }
       return Promise.reject(response.acknowledged);

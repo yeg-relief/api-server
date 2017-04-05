@@ -1,4 +1,4 @@
 export type Key = {
-  name: 'string',
+  name: string,
   type: 'integer' | 'boolean' | 'number'; 
 }

@@ -33,7 +33,8 @@ export class ProgramCache {
           }
 
           case 'ADD_PROGRAMS': {
-            const programs = <UserProgramRecord[]>action.payload;
+            const programs = <UserProgramRecord[]>action.payload  !== undefined && Array.isArray(action.payload) ? 
+              action.payload : [];
             // TODO: alert that not all programs cached and cache as many as possible
             if (internalCache.keys.length + programs.length < MAX_CACHE_SIZE) {
               
