@@ -67,8 +67,8 @@ startScreenerCache(client)
       Promise.resolve(startNotificationEngine(client, programCache))
     ])
   ))
-  .then( ([screenerCache, programCache, notificationEnggine]) => {
-    return Promise.resolve(new MyRouter(client, screenerCache, programCache, notificationEnggine))
+  .then( ([screenerCache, programCache, notificationEngine]) => {
+    return Promise.resolve(new MyRouter(client, screenerCache, programCache, notificationEngine))
   })
   .then( myRouter => {
     server = http.createServer( (req, res) => {
