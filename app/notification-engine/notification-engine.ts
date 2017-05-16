@@ -38,16 +38,21 @@ export class NotificationEngine {
 
 
   getQueries(programId: string): Rx.Observable<ProgramQuery[]> {
+    console.log(`GET QUERIES CALLED: ${programId}`);
+
     const getAllPromise = this.client.search<ProgramQuery>({
       index: 'master_screener',
       type: 'queries',
       size: PAGE_SIZE,
       body: {
-        "bool": {
-          "must" : [
-            { "match": {"meta.program_guid" : programId} }
-          ]
+        "query": {
+          "bool": {
+            "must" : [
+                { "match": {"meta.program_guid" : programId} }
+            ]
+          }
         }
+        
       }
     })
 
@@ -57,6 +62,10 @@ export class NotificationEngine {
       .reduce( (sources, hit) => [hit._source, ...sources], [] )
       .reduce( (queries: ProgramQuery[], source) => [QueryConverter.EsToQuery(source), ...queries], [])
       .flatMap(x => x[0])
+      .catch( err => {
+        console.error(err)
+        return Rx.Observable.throw(err);
+      })
   }
 
   percolate(data: any): Rx.Observable<string[]> {
