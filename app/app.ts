@@ -9,6 +9,8 @@ import * as Rx from 'rxjs/Rx';
 import { ScreenerRecord, UserProgramRecord } from './models';
 import { Screener } from './shared';
 
+
+const PAGE_SIZE = 200;
 const config: Elasticsearch.ConfigOptions = { host: 'localhost:9200' }
 const client: Elasticsearch.Client = new Client(config);
 
@@ -26,6 +28,7 @@ function startScreenerCache(client: Elasticsearch.Client) {
   const inner = client.search<Screener>({
     index: 'questions',
     type: 'screener',
+    size: PAGE_SIZE,
     body: { query: { match_all: {} } } 
   })
   .then(response => [...response.hits.hits])

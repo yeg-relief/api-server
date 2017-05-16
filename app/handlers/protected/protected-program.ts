@@ -16,8 +16,6 @@ export class AdminProgram {
   getAll(): RouteHandler {
     return (req, res, next) => {
       this.setupResponse(res);
-      const userPrograms = Rx.Observable.fromPromise(UserProgramRecord.getAll(this.client));
-
       ApplicationProgramRecord.getAll(this.client, this.notifications)
         // it's application in the client and queries in the server... *doh!*
         .flatMap(x => x)

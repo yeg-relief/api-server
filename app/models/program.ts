@@ -3,6 +3,8 @@ import { Record } from '../interfaces';
 import { NotificationEngine } from '../notification-engine/notification-engine';
 import * as Rx from 'rxjs/Rx';
 
+const PAGE_SIZE = 200;
+
 export class UserProgramRecord extends AbstractUserProgram implements Record {
   client: Elasticsearch.Client;
   params = {
@@ -67,7 +69,8 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
 
     return client.search({
       index: 'programs', 
-      type: 'user_facing', 
+      type: 'user_facing',
+      size: PAGE_SIZE, 
       body: { query: { match_all: {} } } 
     })
     .then( (searchResult: Elasticsearch.SearchResponse<UserProgram>)  => searchResult.hits.hits)
@@ -138,7 +141,7 @@ export class ApplicationProgramRecord extends AbstractApplicationProgram impleme
     )
     .map( ([userProgram, programQueries]) => {
       return {
-        user: {...userProgram},
+        user: (<any>Object).assign(userProgram),
         queries: [...programQueries]
       }
     });

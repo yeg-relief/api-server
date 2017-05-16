@@ -3,6 +3,7 @@ import { Record } from '../interfaces';
 import { Key, isKey, Question } from '../shared';
 import * as guid from 'node-uuid';
 
+const PAGE_SIZE = 200;
 
 export class ScreenerRecord extends AbstractScreener implements Record {
   client: Elasticsearch.Client;
@@ -69,6 +70,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
     const params: Elasticsearch.SearchParams = {
       index: this.index,
       type: this.type,
+      size: PAGE_SIZE,
       body: {
         match_all: {}
       }

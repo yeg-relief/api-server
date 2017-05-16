@@ -5,9 +5,13 @@ import { ScreenerRecord, ApplicationProgramRecord } from '../models';
 import { ProgramCache } from '../cache';
 import { Client } from 'elasticsearch'
 
+
+const PAGE_SIZE = 200;
+
 const percolateParams = (data): Elasticsearch.SearchParams => {
   return {
     index: 'master_screener',
+    size: PAGE_SIZE,
     body: {
       query: {
         percolate: {
@@ -36,9 +40,13 @@ export class NotificationEngine {
   getQueries(programId: string): Rx.Observable<ProgramQuery[]> {
     const getAllPromise = this.client.search<ProgramQuery>({
       index: 'master_screener',
+      type: 'queries',
+      size: PAGE_SIZE,
       body: {
-        query: {
-          match_all: {}
+        "bool": {
+          "must" : [
+            { "match": {"meta.program_guid" : programId} }
+          ]
         }
       }
     })
