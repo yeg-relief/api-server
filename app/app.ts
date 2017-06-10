@@ -22,7 +22,6 @@ const blankScreener: Screener = {
   conditionalQuestions: []
 }
 
-
 function startScreenerCache(client: Elasticsearch.Client) {
 
   const inner = client.search<Screener>({
@@ -82,7 +81,7 @@ startScreenerCache(client)
   .then(() => console.log('server started on port 3000'))
   .catch( error => {
     console.error(error.message);
-    process.exit(0);
+    process.exit(1);
   })
 
 

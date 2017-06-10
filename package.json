@@ -6,7 +6,7 @@
   "author": "Steven Myers",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node app/app.ts",
+    "start": "nodemon",
     "seed": "node --harmony-async-await app/seed.js",
     "build": "tsc",
     "clean": "rm -rf build",
@@ -27,6 +27,8 @@
   },
   "devDependencies": {
     "@types/tape": "^4.2.29",
+    "gulp": "^3.9.1",
+    "nodemon": "^1.11.0",
     "tape": "^4.6.3"
   }
 }
