@@ -6,7 +6,7 @@
   "author": "Steven Myers",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon",
+    "start": "nodemon --watch app --delay 0.2s ts-node app/app.ts",
     "seed": "node --harmony-async-await app/seed.js",
     "build": "tsc",
     "clean": "rm -rf build",

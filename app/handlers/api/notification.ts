@@ -15,7 +15,7 @@ export class Notification {
       this.notifications.percolate(data)
         .take(1)
         .subscribe( 
-          notifications => res.end(JSON.stringify({ response: notifications })),
+          notifications => res.end(JSON.stringify({ response: notifications, msg: 'in a bottle' })),
           error => KeyHandler.handleError(res, error) ,
           () => console.log('notification complete') 
         )
