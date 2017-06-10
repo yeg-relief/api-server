@@ -9,7 +9,6 @@ import * as Rx from 'rxjs/Rx';
 import { ScreenerRecord, UserProgramRecord } from './models';
 import { Screener } from './shared';
 
-
 const PAGE_SIZE = 200;
 const config: Elasticsearch.ConfigOptions = { host: 'localhost:9200' }
 const client: Elasticsearch.Client = new Client(config);
