@@ -24,7 +24,7 @@
     "router": "^1.1.4",
     "rxjs": "5.0.3",
     "ts-node": "^3.0.6",
-    "typescript": "^2.1.5"
+    "typescript": "^2.3.4"
   },
   "devDependencies": {
     "@types/tape": "^4.2.29",
