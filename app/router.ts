@@ -19,7 +19,7 @@ export class MyRouter {
   private notifcationHandler: Handlers.Notification;
   private adminScreenerHandler: Handlers.AdminScreener;
   private adminProgramHandler: Handlers.AdminProgram;
-
+  private queryHandler: Handlers.AdminQuery;
   private routes: RouteDeclaration[];
 
 
@@ -44,6 +44,7 @@ export class MyRouter {
     this.notifcationHandler = new Handlers.Notification(this.notifications);
     this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache, this.client);
     this.adminProgramHandler = new Handlers.AdminProgram(this.client, this.notifications, this.programCache);
+    this.queryHandler = new Handlers.AdminQuery(this.client, this.notifications);
 
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
@@ -55,7 +56,7 @@ export class MyRouter {
       /************************* MISC *************************/
 
       // test if server alive
-      { Prefix: '', Path: '/ping', Verb: GET, Handler: pingHandler },
+      { Prefix: '', Path: '/ping/', Verb: GET, Handler: pingHandler },
 
       /************************ PROTECTED  ********************/
 
@@ -77,7 +78,7 @@ export class MyRouter {
       { Prefix: PROTECTED, Path: '/program/:guid', Verb: DELETE, Handler: this.adminProgramHandler.delete() },
       // screener => this is for acessing the notificaion engine and returning programs
 
-
+      { Prefix: PROTECTED, Path: '/query/', Verb: POST, Handler: this.queryHandler.createOrUpdate() },
 
       /*************************** API ************************/
 
