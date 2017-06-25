@@ -212,6 +212,16 @@ export class NotificationEngine {
     
   }
 
+  deleteQuery(id: string) {
+    return Rx.Observable.fromPromise(
+      this.client.delete({
+        index: 'master_screener',
+        type: 'queries',
+        id: id
+      })
+    );
+  }
+
   private deletePrograms(guids: string[]) {
     if (guids.length === 0) return Rx.Observable.of([]);
 

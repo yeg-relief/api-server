@@ -24,6 +24,18 @@ export class AdminQuery {
     }
   }
 
+  delete(): RouteHandler {
+    return (req, res, next) => {
+      this.setupResponse(res);
+      const query_id = req.params.id;
+      this.notifications.deleteQuery(query_id)
+          .subscribe(
+            resp => res.end(JSON.stringify(resp)),
+            error => KeyHandler.handleError(res, error)
+          )
+    }
+  }
+
   private setupResponse(res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');

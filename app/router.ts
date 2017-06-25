@@ -20,6 +20,7 @@ export class MyRouter {
   private adminScreenerHandler: Handlers.AdminScreener;
   private adminProgramHandler: Handlers.AdminProgram;
   private queryHandler: Handlers.AdminQuery;
+  private programDescriptionHandler: Handlers.ProgramDescriptionHandler;
   private routes: RouteDeclaration[];
 
 
@@ -45,7 +46,7 @@ export class MyRouter {
     this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache, this.client);
     this.adminProgramHandler = new Handlers.AdminProgram(this.client, this.notifications, this.programCache);
     this.queryHandler = new Handlers.AdminQuery(this.client, this.notifications);
-
+    this.programDescriptionHandler = new Handlers.ProgramDescriptionHandler(this.client);
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
   }
@@ -79,8 +80,12 @@ export class MyRouter {
       // screener => this is for acessing the notificaion engine and returning programs
 
       { Prefix: PROTECTED, Path: '/query/', Verb: POST, Handler: this.queryHandler.createOrUpdate() },
-
+      { Prefix: PROTECTED, Path: '/query/:id', Verb: DELETE, Handler: this.queryHandler.delete()},
       /*************************** API ************************/
+
+      { Prefix: PROTECTED, Path: '/program-description/', Verb: POST, Handler: this.programDescriptionHandler.create() },
+       { Prefix: PROTECTED, Path: '/program-description/', Verb: PUT, Handler: this.programDescriptionHandler.update() },
+
 
       // screener => this is for getting the screener questions
       { Prefix: API, Path: '/screener/', Verb: GET, Handler: this.userScreenerHandler.getScreener() },
