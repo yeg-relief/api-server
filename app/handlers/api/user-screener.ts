@@ -15,7 +15,10 @@ export class UserScreener {
       this.cache.get()
         .take(1)
         .subscribe(
-          cachedScreener => res.end(JSON.stringify({ questions: cachedScreener.questions, conditionalQuestions: cachedScreener.conditionalQuestions})),
+          cachedScreener => res.end(JSON.stringify({ 
+            questions: cachedScreener.questions, 
+            conditionalQuestions: cachedScreener.conditionalQuestions
+          })),
           error => KeyHandler.handleError(res, error),
           () => console.log(`[API_GET_SCREENER] resolve time: ${Date.now() - start}`)
         )

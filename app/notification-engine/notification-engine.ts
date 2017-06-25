@@ -88,6 +88,38 @@ export class NotificationEngine {
       .flatMap((guids: string[]) => this.programCache.getPrograms(guids))
   }
 
+  createOrUpdate(programQuery: ProgramQuery) {
+
+    const query = Rx.Observable.of(programQuery => QueryConverter.queryToES(programQuery));
+
+    const createStrategy = () => {
+      return this.registerQueries([programQuery], programQuery.guid);
+    }
+
+    const updateStrategy = () => {
+      return this.updateQueries([programQuery], programQuery.guid);
+    }
+
+    const implementStrategy = (input$: Rx.Observable<boolean>) => {
+      return input$.flatMap(exists => {
+        if (exists) 
+          return updateStrategy()
+
+        return createStrategy()
+      })
+    }
+
+    return query
+      .flatMap(query => {
+        return Rx.Observable.from(this.client.exists({
+          id: programQuery.id,
+          index: 'master_screener',
+          type: 'queries'
+        }))
+      })
+      .let(implementStrategy)
+  }
+
   registerQueries(programQueries: ProgramQuery[], guid: string): Rx.Observable<Elasticsearch.CreateDocumentResponse[]> {
     if (programQueries.length === 0 ) return Rx.Observable.of([]);
 
@@ -178,6 +210,16 @@ export class NotificationEngine {
       ).reduce( (accum, update) => [...accum, update], [])
     })
     
+  }
+
+  deleteQuery(id: string) {
+    return Rx.Observable.fromPromise(
+      this.client.delete({
+        index: 'master_screener',
+        type: 'queries',
+        id: id
+      })
+    );
   }
 
   private deletePrograms(guids: string[]) {
