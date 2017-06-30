@@ -3,13 +3,16 @@ import { Client } from 'elasticsearch';
 import { KeyRecord } from '../../models';
 import { Key } from '../../shared';
 import * as Rx from 'rxjs/Rx';
+import { ProgramCache } from '../../cache';
+import { UserProgramRecord } from '../../models';
 
 export class ProgramDescriptionHandler {
-  private client: Elasticsearch.Client;
 
-  constructor(client: Elasticsearch.Client) {
-    this.client = client;
-  }
+
+  constructor(
+    private client: Elasticsearch.Client,
+    private programCache: ProgramCache
+  ) {}
 
   private _createProgram(program){
     const p = JSON.parse(program);
@@ -63,8 +66,10 @@ export class ProgramDescriptionHandler {
       this.setupResponse(res);
       const program  = req.body.data;
       try {
-        const created = await this._createProgram(program)
-        console.log(created);
+        const created = await this._createProgram(program);
+        if (created) {
+          this.programCache.updatePrograms([new UserProgramRecord(JSON.parse(program), this.client)])
+        }
         res.end(JSON.stringify(created));
 
       } catch (e) {
@@ -86,7 +91,9 @@ export class ProgramDescriptionHandler {
       const program  = req.body.data;
       try {
         const created = await this._updateProgram(program)
-        console.log(created);
+        if (created) {
+          this.programCache.updatePrograms([new UserProgramRecord(JSON.parse(program), this.client)])
+        }
         res.end(JSON.stringify(created));
 
       } catch (e) {
