@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "seed": "node --harmony-async-await app/seed.js",
+    "seed": "node app/seed.js",
     "build": "tsc",
     "clean": "rm -rf build",
     "test": "tape build/test/**/*.js"
