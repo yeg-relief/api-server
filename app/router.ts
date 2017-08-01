@@ -1,6 +1,5 @@
 const Router = require('router');
 import * as bodyParser from 'body-parser';
-import { Client } from 'elasticsearch';
 import * as Handlers from './handlers';
 import * as Cache from './cache';
 import { NotificationEngine } from './notification-engine';
@@ -11,7 +10,7 @@ export class MyRouter {
   private screenerCache: Cache.ScreenerCache;
   private programCache: Cache.ProgramCache;
   private notifications: NotificationEngine;
-  private client: Elasticsearch.Client
+  private client: Elasticsearch.Client;
 
   private keyHandler: Handlers.KeyHandler;
   private userScreenerHandler: Handlers.UserScreener;
@@ -37,7 +36,7 @@ export class MyRouter {
     this.programCache = programCache;
     this.notifications = notifications;
     this.router = Router();
-    this.router.use(bodyParser.json())
+    this.router.use(bodyParser.json());
 
     this.keyHandler = new Handlers.KeyHandler(this.client);
     this.userScreenerHandler = new Handlers.UserScreener(this.screenerCache);
@@ -46,7 +45,7 @@ export class MyRouter {
     this.adminScreenerHandler = new Handlers.AdminScreener(this.screenerCache, this.client);
     this.adminProgramHandler = new Handlers.AdminProgram(this.client, this.notifications, this.programCache);
     this.queryHandler = new Handlers.AdminQuery(this.client, this.notifications);
-    this.programDescriptionHandler = new Handlers.ProgramDescriptionHandler(this.client);
+    this.programDescriptionHandler = new Handlers.ProgramDescriptionHandler(this.client, this.programCache);
     this.routes = this.parseRouteDeclarations();
     this.buildRoutes();
   }
@@ -104,30 +103,30 @@ export class MyRouter {
       const myPath = route.Prefix + route.Path;
       switch (route.Verb) {
         case GET: {
-          this.router.get(myPath, route.Handler)
+          this.router.get(myPath, route.Handler);
           break;
         }
 
         case PUT: {
-          this.router.put(myPath, route.Handler)
+          this.router.put(myPath, route.Handler);
           break;
         }
 
         case POST: {
-          this.router.post(myPath, route.Handler)
+          this.router.post(myPath, route.Handler);
           break;
         }
 
         case DELETE: {
-          this.router.delete(myPath, route.Handler)
+          this.router.delete(myPath, route.Handler);
           break;
         }
 
         default: {
-          throw new Error(`invalid route definition: ${route}`)
+          throw new Error(`invalid route definition: ${route}`);
         }
       }
-    }
+    };
 
     for (let i = 0; i < this.routes.length; i++) {
       applyRoute(this.routes[i]);
@@ -155,8 +154,8 @@ const API = '/api';
 const PROTECTED = '/protected';
 
 
-const pingHandler: RouteHandler = (req, res, next) => {
+const pingHandler: RouteHandler = (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ response: 'operational' }));
-}
+};
