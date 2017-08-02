@@ -1,8 +1,3 @@
-import { RouteHandler } from '../../router';
-import { Client } from 'elasticsearch';
-import { KeyRecord } from '../../models';
-import { Key } from '../../shared';
-import * as Rx from 'rxjs/Rx';
 import { ProgramCache } from '../../cache';
 import { UserProgramRecord } from '../../models';
 
@@ -22,7 +17,7 @@ export class ProgramDescriptionHandler {
       type: 'user_facing',
       id: p.guid,
       body: p
-    }
+    };
     return this.client.create(params)
     .then(response => {
       console.log(response);
@@ -45,7 +40,7 @@ export class ProgramDescriptionHandler {
       type: 'user_facing',
       id: p.guid,
       body: p
-    }
+    };
     return this.client.index(params)
     .then(response => {
       console.log(response);
@@ -62,7 +57,7 @@ export class ProgramDescriptionHandler {
 
 
   create() {
-    const bleh = async (req, res, next) => {
+    const bleh = async (req, res) => {
       this.setupResponse(res);
       const program  = req.body.data;
       try {
@@ -70,6 +65,7 @@ export class ProgramDescriptionHandler {
         if (created) {
           this.programCache.updatePrograms([new UserProgramRecord(JSON.parse(program), this.client)])
         }
+
         res.end(JSON.stringify(created));
 
       } catch (e) {
@@ -77,20 +73,20 @@ export class ProgramDescriptionHandler {
         res.statusCode = 500;
         res.end(JSON.stringify( e ));
 
-      } 
-    }
+      }
+    };
 
-    return (req, res, next) => {
-      bleh(req, res, next).then();
+    return (req, res) => {
+      bleh(req, res).then();
     }
   }
 
   update() {
-    const bleh = async (req, res, next) => {
+    const bleh = async (req, res) => {
       this.setupResponse(res);
       const program  = req.body.data;
       try {
-        const created = await this._updateProgram(program)
+        const created = await this._updateProgram(program);
         if (created) {
           this.programCache.updatePrograms([new UserProgramRecord(JSON.parse(program), this.client)])
         }
@@ -102,40 +98,12 @@ export class ProgramDescriptionHandler {
         res.end(JSON.stringify( e ));
 
       } 
-    }
+    };
 
-    return (req, res, next) => {
-      bleh(req, res, next).then();
+    return (req, res) => {
+      bleh(req, res).then();
     }
   }
-
-
-
-  static handleError(res, error) {
-
-    const sendError = () => {
-      res.statusCode = 500;
-      res.end(JSON.stringify({
-        message: error.message
-      }));
-    }
-
-    const sendEmpty = () => {
-      res.end(JSON.stringify({
-        message: error.message,
-        keys: []
-      }));
-    }
-
-    if (error.message === 'Cannot convert undefined or null to object') {
-      sendEmpty();
-    } else {
-      sendError();
-    }
-
-  }
-
-
 
   private setupResponse(res) {
     res.statusCode = 200;
