@@ -1,6 +1,6 @@
 import { AbstractScreener, Screener } from '../shared';
 import { Record } from '../interfaces';
-import { Key, isKey, Question } from '../shared';
+import { Key, Question } from '../shared';
 import * as guid from 'node-uuid';
 
 const PAGE_SIZE = 200;
@@ -28,7 +28,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       index: this.index,
       type: this.type,
       id: guid.v4()
-    }
+    };
 
     return this.client.create(params);
   }
@@ -46,7 +46,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       id: id.toString(),
       index: 'questions',
       type: 'screener'
-    }
+    };
 
     return client.get<Screener>(params)
       .then(response => response._source)
@@ -74,7 +74,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
       body: {
         match_all: {}
       }
-    }
+    };
 
     return this.client.search(params)
       .then( results => [...results.hits.hits])
@@ -89,11 +89,11 @@ export class ScreenerRecord extends AbstractScreener implements Record {
     
       const key = keys.find( k => k.name === question.key )
 
-      if (key.type !== 'boolean' && question.controlType === 'CheckBox') {
+      if (key.type !== 'boolean' && question.controlType === 'Toggle') {
         throw new Error(`key with id: ${question.id} is type ${key.type} with control CheckBox`);
       }
 
-      if (key.type === 'boolean' && question.controlType !== 'CheckBox') {
+      if (key.type === 'boolean' && question.controlType !== 'Toggle') {
         throw new Error(`key with id: ${question.id} is type boolean without control CheckBox`);
       }
 

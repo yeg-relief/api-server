@@ -1,7 +1,6 @@
 import { BooleanOption, NumberOption } from './index';
 
 export type Question = ( NumberInput | BooleanRadio | NumberRadio | ExpandableQuestion );
-export type ConditionalQuestion = ( NumberInput | BooleanRadio | NumberRadio );
 
 type id = string;
 
@@ -18,7 +17,7 @@ export type BooleanRadio = {
   id: string;
   label: string;
   key: string;
-  controlType: 'CheckBox';
+  controlType: 'Toggle';
   options: BooleanOption[];
   index: number;
 }
@@ -37,7 +36,7 @@ export type ExpandableQuestion = {
   expandable: boolean;
   label: string;
   key: string;
-  controlType: 'CheckBox';
+  controlType: 'Toggle';
   options: BooleanOption[];
   conditonalQuestions: id[];
   index: number;

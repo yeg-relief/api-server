@@ -9,7 +9,7 @@ export class AdminScreener {
   constructor(private cache: ScreenerCache, private client: Elasticsearch.Client){}
 
   getScreener(): RouteHandler {
-    return (req, res, next) => {
+    return (req, res) => {
       this.setupResponse(res);
       let screener;
       this.cache.get()
@@ -25,12 +25,16 @@ export class AdminScreener {
   }
 
   saveScreener(): RouteHandler {
-    return (req, res, next) => {
-      const start = Date.now();
+    return (req, res) => {
       this.setupResponse(res);
       const screener = <Screener>req.body;
       const record = new ScreenerRecord(screener, this.client);
-      let keys = []
+      let keys = [];
+
+      console.log('==================');
+      console.log(screener);
+      console.log(record);
+      console.log('==================');
 
       Rx.Observable.fromPromise(KeyRecord.getAll(this.client))
         .take(1)
