@@ -1,5 +1,5 @@
 import { IValidateable } from '../../../interfaces';
-import { BooleanRadio, ExpandableQuestion, BooleanOption } from '../../../types';
+import { BooleanRadio, BooleanOption } from '../../../types';
 import { isKey } from '../../../validation';
 
 export abstract class AbstractBooleanRadio implements IValidateable {
@@ -33,9 +33,9 @@ function validationFunction(question: BooleanRadio): boolean {
       return false;
     }
     return true;
-  }
+  };
 
   return  isKey(question.key) && validOptions(question.options) 
-          && typeof question.label === 'string' && question.controlType === 'CheckBox'
+          && typeof question.label === 'string' && question.controlType === 'Toggle'
           && typeof question.index === 'number' && question.index > 0; 
 }
