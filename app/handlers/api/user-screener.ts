@@ -1,7 +1,6 @@
 import { ScreenerCache } from '../../cache';
 import { RouteHandler } from '../../router';
 import { KeyHandler } from '../index';
-import 'rxjs/add/operator/toPromise';
 
 export class UserScreener {
   constructor(private cache: ScreenerCache){
@@ -9,8 +8,7 @@ export class UserScreener {
   }
 
   getScreener(): RouteHandler {
-    return (req, res, next) => {
-      const start = Date.now();
+    return (req, res) => {
       this.setupResponse(res);
       this.cache.get()
         .take(1)
@@ -19,8 +17,7 @@ export class UserScreener {
             questions: cachedScreener.questions, 
             conditionalQuestions: cachedScreener.conditionalQuestions
           })),
-          error => KeyHandler.handleError(res, error),
-          () => console.log(`[API_GET_SCREENER] resolve time: ${Date.now() - start}`)
+          error => KeyHandler.handleError(res, error)
         )
     }
   }

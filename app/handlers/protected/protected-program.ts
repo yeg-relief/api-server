@@ -4,7 +4,6 @@ import { ApplicationProgramRecord, UserProgramRecord } from '../../models';
 import { NotificationEngine } from '../../notification-engine';
 import { KeyHandler } from '../index';
 import { ProgramCache } from '../../cache';
-import * as uuid from 'node-uuid';
 
 export class AdminProgram {
   constructor(
@@ -36,7 +35,7 @@ export class AdminProgram {
 
   create(): RouteHandler {
     return (req, res, next) => {
-      console.log('create called!')
+      console.log('create called!');
 
       this.setupResponse(res);
       const data = req.body.data;
@@ -55,7 +54,7 @@ export class AdminProgram {
 
   update(): RouteHandler {
     return (req, res, next) => {
-      console.log('update called')
+      console.log('update called');
       this.setupResponse(res);
       const data = req.body.data;
       for(const k in data) {
@@ -65,13 +64,13 @@ export class AdminProgram {
       const record = new ApplicationProgramRecord({
         user: data.user,
         queries: data.application
-      }, this.client, this.notifications)
+      }, this.client, this.notifications);
       Rx.Observable.fromPromise(record.save())
         .do( _ => this.programCache.updatePrograms([new UserProgramRecord(data.user, this.client)]) )
         .subscribe( 
           resp => res.end(JSON.stringify(resp)),
           error => {
-            console.error(error)
+            console.error(error);
             KeyHandler.handleError(res, error)
           }
         )
@@ -90,7 +89,7 @@ export class AdminProgram {
       .subscribe(
         resp => res.end(JSON.stringify(resp)),
         error => {
-          console.error(error)
+          console.error(error);
           KeyHandler.handleError(res, error)
         }
       )
