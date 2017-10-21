@@ -11,7 +11,7 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
     index: 'programs',
     type: 'user_facing',
     id: undefined
-  }
+  };
   userProgram: UserProgram;
 
   constructor(program: any, client: Elasticsearch.Client) {
@@ -86,7 +86,7 @@ export class UserProgramRecord extends AbstractUserProgram implements Record {
       index: 'programs',
       type: 'user_facing',
       id: guid
-    })
+    });
     
     return Rx.Observable.fromPromise(promise);
   }
