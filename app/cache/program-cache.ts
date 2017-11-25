@@ -53,7 +53,7 @@ export class ProgramCache {
     this.cache.subscribe();
     
     // inject seed into cache
-    const programs = cacheSeed.map(record => record.getUserProgram())
+    const programs = cacheSeed.map(record => record.getUserProgram());
     this.updatePrograms(cacheSeed);
   }
 

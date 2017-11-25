@@ -3,9 +3,7 @@ import { RouteHandler } from '../../router';
 import { KeyHandler } from '../index';
 
 export class Notification {
-  constructor(  private notifications: NotificationEngine ){
-    this.notifications = notifications;
-  }
+  constructor(  private notifications: NotificationEngine ){}
 
   notify(): RouteHandler {
     return (req, res, next) => {

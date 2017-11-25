@@ -83,11 +83,12 @@ export class ScreenerRecord extends AbstractScreener implements Record {
 
     private validateFunction(keys: Key[], questions: Question[]) {
         for ( const question of questions ) {
-            if ( questions.filter(q => q.key === question.key).length > 1 ) {
+
+            if ( questions.filter(q => q.key === question.key).length > 1 && question.controlType !== 'Multiselect') {
                 throw new Error(`duplicate key with name ${question.key} found!`)
             }
-
-            const key = keys.find( k => k.name === question.key )
+            
+            const key = keys.find( k => k.name === question.key );
 
 
             if (question.controlType !== 'Multiselect') {
@@ -98,6 +99,7 @@ export class ScreenerRecord extends AbstractScreener implements Record {
                 if (key.type === 'boolean' && question.controlType !== 'Toggle') {
                     throw new Error(`key with id: ${question.id} is type boolean without control CheckBox`);
                 }
+
             }
 
             if(question.label.length === 0) {
