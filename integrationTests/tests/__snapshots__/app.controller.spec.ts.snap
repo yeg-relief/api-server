@@ -2,7 +2,13 @@
 
 exports[`/ GET should return 'hello world' 1`] = `"Hello World!"`;
 
-exports[`/protected  GET /program will return all programs and their queries 1`] = `
+exports[`/protected /login POST /login will return { created: true }, authentication is handled by reverse proxy 1`] = `
+Object {
+  "created": true,
+}
+`;
+
+exports[`/protected /program -- CRUD with program datastructures  GET /program will return all programs and their queries 1`] = `
 Array [
   "1iXreywnofiF2jKKknlbKRXAtX",
   "1lKYPN8nNaAMldGufGZNEwfjIK",
@@ -35,10 +41,10 @@ Array [
 ]
 `;
 
-exports[`/protected GET /program/:guid will return a single program and it's queries 1`] = `
+exports[`/protected /program -- CRUD with program datastructures GET /program/:guid will return a single program and it's queries 1`] = `
 Object {
   "guid": "hp5mupqcVY8ZMiKg7Q91Uoi4Wf",
-  "queries": Array [
+  "queryIDs": Array [
     "C8NZoL1Nf7VEgEC4VMFI9GlebN",
     "d5NswIlUvzxY0AJ1hGm4eKQtS4",
     "fMwdx1jiAZUt09ALDer98GardT",
@@ -87,43 +93,38 @@ For more information and to find the application follow the link below",
 }
 `;
 
-exports[`/protected POST /program/ was successfully created, GET /protected/program/7ad7fce0-0736-4e09-b1bb-0aa4b714e58b 1`] = `
+exports[`/protected /program -- CRUD with program datastructures POST /program will create a new program and the queries 1`] = `
 Object {
-  "application": Array [],
-  "guid": "7ad7fce0-0736-4e09-b1bb-0aa4b714e58b",
-  "user": Object {
-    "created": 0,
-    "description": "test POST /protected/program/",
-    "details": "test POST /protected/program/",
-    "externalLink": "test POST /protected/program/",
-    "guid": "7ad7fce0-0736-4e09-b1bb-0aa4b714e58b",
-    "tags": Array [
-      "test POST /protected/program/",
-    ],
-    "title": "test POST /protected/program/",
-  },
+  "created": true,
 }
 `;
 
-exports[`/protected POST /program/ was successfully created, GET /protected/program/7184fd29-7892-4469-a288-538b7b8f0769 1`] = `
+exports[`/protected /program -- CRUD with program datastructures PUT /program will update a program data 1`] = `
 Object {
-  "application": Array [],
-  "guid": "7184fd29-7892-4469-a288-538b7b8f0769",
-  "user": Object {
-    "created": 0,
-    "description": "test POST /protected/program/",
-    "details": "test POST /protected/program/",
-    "externalLink": "test POST /protected/program/",
-    "guid": "7184fd29-7892-4469-a288-538b7b8f0769",
-    "tags": Array [
-      "test POST /protected/program/",
-    ],
-    "title": "test POST /protected/program/",
-  },
+  "updated": true,
 }
 `;
 
-exports[`/protected POST /program/ will create a new program and the queries 1`] = `
+exports[`/protected /program-description/, can update a user facing program information can update an existing program 1`] = `
+Object {
+  "created": true,
+}
+`;
+
+exports[`/protected /query can delete, create or update queries can delete a query 1`] = `
+Object {
+  "deleted": true,
+  "found": true,
+}
+`;
+
+exports[`/protected /query can delete, create or update queries can post a new query 1`] = `
+Object {
+  "created": true,
+}
+`;
+
+exports[`/protected /query can delete, create or update queries can update an existing query 1`] = `
 Object {
   "created": true,
 }

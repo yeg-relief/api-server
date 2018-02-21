@@ -67,15 +67,15 @@ export class ClientService {
 
     delete(index: string, type: string, id?: string): Promise<any> {
         return this.client.delete({
-            index: index,
-            type: type,
+            index,
+            type,
             id: id || null,
         })
             .catch(err => {
                 console.log(err);
                 return err
             })
-            .then(() => ({ created: true}) )
+            .then(() => ({ deleted: true}) )
     }
 
     async findAll(baseParams): Promise<any[]> {

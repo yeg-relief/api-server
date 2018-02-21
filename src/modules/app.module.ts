@@ -5,6 +5,7 @@ import { QueryModule } from "./query"
 import { KeyModule } from "./key"
 import { NotificationModule } from "./notification";
 import { ProtectedModule } from "./protected"
+import { ApiModule } from "./api"
 
 @Module({
   modules: [
@@ -12,7 +13,8 @@ import { ProtectedModule } from "./protected"
       QueryModule,
       KeyModule,
       NotificationModule,
-      ProtectedModule
+      ProtectedModule,
+      ApiModule
   ],
   controllers: [AppController],
   components: [],

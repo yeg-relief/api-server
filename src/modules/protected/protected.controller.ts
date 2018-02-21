@@ -9,7 +9,6 @@ import "rxjs/add/observable/from"
 import "rxjs/add/observable/forkJoin"
 import "rxjs/add/operator/map"
 import "rxjs/add/observable/zip"
-import "rxjs/add/operator/do"
 import "rxjs/add/operator/mapTo"
 import "rxjs/add/operator/mergeMap"
 import "rxjs/add/operator/retry"
@@ -25,6 +24,7 @@ import { ConstantsReadonly } from "../constants.readonly"
 const fs = require('fs');
 const path = require('path');
 
+
 @Controller('protected')
 export class ProtectedController {
     private readonly constants = new ConstantsReadonly();
@@ -36,9 +36,7 @@ export class ProtectedController {
         private screenerService: ScreenerService
     ) {}
 
-    writeError(err) {
-        fs.writeFileSync(path.resolve(__dirname, "error.json"), JSON.stringify(err));
-    }
+
 
     @Get('/login/')
     loginAlwaysTrue(): Observable<{[key: string]: boolean}> {
@@ -148,15 +146,15 @@ export class ProtectedController {
         const guid = params.guid;
 
         return Observable.zip(
-            this.programService.deleteByGuid(guid).do(console.log),
-            this.queryService.deleteByGuid(guid).do(console.log)
+            this.programService.deleteByGuid(guid),
+            this.queryService.deleteByGuid(guid)
         )
     }
 
     @Delete('/query/:id')
     deleteQueryById(@Param() params): Observable<any> {
         return this.queryService.deleteById(params.id)
-            .map(res => res.created ? {found: true, deleted: true } : { found: null, deleted: false} )
+            .map(res => res.deleted ? {found: true, deleted: true } : { found: null, deleted: false} )
     }
 
     @Post('/query')
@@ -168,8 +166,11 @@ export class ProtectedController {
     }
 
     @Put('/program-description/')
-    updateUserFacingProgram(@Body() body): Promise<any> {
-        const dto: ProgramDto = body.data;
-        return this.programService.index(Object.assign({}, dto))
+    updateUserFacingProgram(@Body() data): Promise<any> {
+        return this.programService.index(data)
+    }
+
+    writeError(err) {
+        fs.writeFileSync(path.resolve(__dirname, "error.json"), JSON.stringify(err));
     }
 }

@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ProgramModule } from '../Program'
-import { QueryModule } from "../query";
 import { ApiController } from "./api.controller";
-import { KeyModule } from "../key";
-
+import { ScreenerModule } from "../screener";
+import { PercolateModule } from "../percolate/percolate.module";
 
 @Module({
     modules: [
         ProgramModule,
-        QueryModule,
-        KeyModule
+        ScreenerModule,
+        PercolateModule
     ],
     controllers: [ ApiController ],
     components: [ ApiController ],

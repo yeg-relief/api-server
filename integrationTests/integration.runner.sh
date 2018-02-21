@@ -13,6 +13,8 @@ ID=$(docker inspect --format="{{.Id}}" $DOCKER_NAME)
 
 ts-node seed/run.ts
 
+sleep $SLEEP_TIME
+
 if [ "$1" == "u" ]; then
     npm run integration-test-update
 else

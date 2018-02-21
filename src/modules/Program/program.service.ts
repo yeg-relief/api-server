@@ -23,30 +23,23 @@ export class ProgramService {
     }
 
     create(program: ProgramDto): Promise<any> {
-
-        return this.clientService.create(program, this.INDEX, this.TYPE, program.guid)
+        return this.clientService.create(program, this.INDEX, this.TYPE, program.guid);
     }
 
     findAll(): Observable<ProgramDto[]> {
-        return Observable.fromPromise( this.clientService.findAll(this.baseParams) )
-            .map(programs => programs.sort( (a, b) => a.title.localeCompare(b.title)))
+        return Observable.fromPromise( this.clientService.findAll(this.baseParams) );
     }
 
     index(program: ProgramDto): Promise<any> {
         return this.clientService.index(program, this.INDEX, this.TYPE, program.guid)
-            .then( resp => {
-                console.log(resp);
-                console.log(program);
-                return resp;
-            })
     }
 
     async getByGuid(guid: string): Promise<ProgramDto> {
-        return this.clientService.getById(this.baseParams, guid)
+        return this.clientService.getById(this.baseParams, guid);
     }
 
     async mGetByGuid(guids: string[]): Promise<ProgramDto[]> {
-        return this.clientService.mGetById(guids, this.INDEX, this.TYPE)
+        return this.clientService.mGetById(guids, this.INDEX, this.TYPE);
     }
 
     deleteByGuid(guid: string): Observable<any> {
