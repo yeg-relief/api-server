@@ -335,10 +335,11 @@ describe("/protected", () => {
                 .put("/protected/program-description/")
                 .set('Content-Type', 'application/json')
                 .send(data)
-                // .expect(201)
+                .expect(200)
                 .end( (err, res) => {
                     if (err) throw err;
 
+                    expect(res.body.created).toEqual(true);
                     expect(res.body).toMatchSnapshot();
                     done();
                 })
