@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { ProgramModule } from "./Program"
 import { QueryModule } from "./query"
 import { KeyModule } from "./key"
-import { NotificationModule } from "./notification";
 import { ProtectedModule } from "./protected"
 import { ApiModule } from "./api"
 
@@ -12,7 +11,6 @@ import { ApiModule } from "./api"
       ProgramModule,
       QueryModule,
       KeyModule,
-      NotificationModule,
       ProtectedModule,
       ApiModule
   ],
