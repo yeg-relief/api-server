@@ -976,6 +976,111 @@ You can apply online by following the link below or visit your local EPL branch 
 }
 `;
 
+exports[`/api POST /notification -- returns programs 1`] = `
+Array [
+  Object {
+    "description": "Helps pay for eyeglasses, prescriptions and dental visits for children in families with low income",
+    "detailLinks": Array [],
+    "details": "What is it?
+The Alberta Child Health Benefit plan pays for health services, such as dental care, eyewear, prescription drugs, ambulance services, and diabetic supplies that are not available through standard Alberta Health Care Insurance. There are no fees to sign up.
+
+Who is Eligible?
+- Families with low income who do not have any other form of government health benefits
+- Children up to age 18
+- Children from 18 - 20 who live at home and are still attending high school
+
+Families receiving Health Benefits from Income Support, Indigenous Programs, or the Alberta Adult Health Benefit are NOT eligible.
+
+How do I apply?
+
+Complete the paper application in the link below and mail it to the included Alberta Human Services address.
+",
+    "externalLink": "www.humanservices.alberta.ca/financial-support/2076.html",
+    "guid": "nQXxT1OMhPGbkqkPHc2QTpofRv",
+    "tags": Array [
+      "Alberta",
+      "Children",
+      "Health",
+    ],
+    "title": "Child Health Benefit",
+  },
+  Object {
+    "description": "Free library card which gets you access to library services",
+    "detailLinks": Array [],
+    "details": "What is it?
+Membership with the Edmonton Public Library (EPL) gets you free access to over 13,000 programs, millions of books, movies, video games, software, and more.
+
+Who is Eligible?
+- Any resident of Edmonton
+
+What do I need to Apply?
+- An identification
+- Proof of residence
+
+You can apply online by following the link below or visit your local EPL branch to sign up",
+    "externalLink": "www2.epl.ca/signup/",
+    "guid": "GiufEa3ziFwfBEgkjI2gIlfNkk",
+    "tags": Array [
+      "Education",
+      "Edmonton",
+    ],
+    "title": "Edmonton Public Library Card",
+  },
+  Object {
+    "description": "Helps eligible Edmontonians access City of Edmonton Recreation, Leisure and Attraction facilities for free or at a reduced cost",
+    "detailLinks": Array [],
+    "details": "Leisure Access Program
+ 
+What is it?
+ 
+The Leisure Access Program helps you access participating City of Edmonton Recreation, Leisure and Attraction facilities for free or at a reduced cost. The program consists of two parts based on income eligibility: the Annual Program and the Monthly Pass. The Annual Program includes FREE access to the facilities as well discounts on registered programs. For people who do not qualify for the Annual program they may qualify for the Monthly Pass which includes access to participating facilities for $20/month for an individual or $70/month for a family. 
+ 
+Who is eligible?
+ 
+The Leisure Access Program is available to all Edmonton residents who are under the income threshold, are on AISH, are new immigrant or refugees, or a child in government care.
+ 
+How do I apply?
+ 
+Citizens who apply for the Leisure Access Program are automatically considered for the Ride Transit program and will be enrolled if they are eligible; you are not required to have a separate application. Complete the paper application and take it one of the City of Edmonton Community and Recreation Facilities or the Edmonton Service Center in the Edmonton Tower. Be sure to include your proof of residency and proof of income supporting documents. 
+
+For more information and to find the application follow the link below",
+    "externalLink": "www.edmonton.ca/programs_services/leisure-access-program.aspx",
+    "guid": "NMh2Fu1IG5XnpOf5b6zu2t1Hh6",
+    "tags": Array [
+      "Edmonton",
+      "Recreation",
+      "Children",
+      "Adult",
+    ],
+    "title": "Leisure Access Program",
+  },
+  Object {
+    "description": "Monthly transit pass for eligible low-income Edmontonians at a subsidized rate of $35/month. ",
+    "detailLinks": Array [],
+    "details": "What is it?
+The Ride Transit Program gives low income Edmonton residents the ability to buy a $35 a month transit pass at certain locations.
+ 
+Who is eligible?
+ 
+Edmontonians whose income is at or under the Federal, before tax Low Income Cut Off (LICO)  household amounts.
+ 
+How do I apply?
+ 
+The Ride Transit Program has the same application process as the Leisure Access Pass. Complete the paper application and take it one of the City of Edmonton Recreation Centers or the Edmonton Service Center in the Edmonton Tower along with the required ID and proof of income.
+ 
+If you already have the Leisure Access Pass then you can sign up online at the following link: https://www.edmonton.ca/projects_plans/transit/ride-transit-application-form.aspx
+",
+    "externalLink": "www.edmonton.ca/ets/subsidized-transit.aspx",
+    "guid": "7Vo9xE20WJJJ1ZORDlog1odyzo",
+    "tags": Array [
+      "Edmonton",
+      "Transit",
+    ],
+    "title": "Ride Transit Program",
+  },
+]
+`;
+
 exports[`/protected /key/ can create a new key 1`] = `
 Object {
   "update": true,

@@ -23,7 +23,7 @@ describe("/api", () => {
             .end( (err, res) => {
                 if (err) throw err;
 
-                delete res.body.created
+                delete res.body.created;
 
                 expect(res.body).toMatchSnapshot();
                 done();
@@ -62,8 +62,39 @@ describe("/api", () => {
     });
 
     it("POST /notification -- returns programs", done => {
-        expect(true).toBe(true);
-        done()
+        /*
+        {"query":{"bool":{"must":[{"term":{"aish":false}},{"term":{"albertaworks":false}},
+        {"term":{"spouse":false}},{"term":{"children":true}},{"range":{"numberchildren":{"lte":2}}},
+        {"range":{"grossincome":{"lte":36325}}}]}},
+        "meta":{"program_guid":"nQXxT1OMhPGbkqkPHc2QTpofRv","id":"m6b1jkRrVWGTxqr33nmh5gExfD"}}
+
+         */
+
+        const data = {
+            "aish": false,
+            "albertaworks": false,
+            "spouse": false,
+            "children": true,
+            "numberchildren": 1,
+            "grossincome": 10000
+        };
+
+        return request(instance)
+            .post("/api/notification")
+            .set('Content-Type', 'application/json')
+            .send(data)
+            .expect(201)
+            .end( (err, response) => {
+                if (err) throw err;
+
+                const data = response.body.map( program => {
+                    delete program.created;
+                    return program;
+                }).sort( (a, b) => a.title.localeCompare(b.title));
+
+                expect(data).toMatchSnapshot();
+                done()
+            })
     })
 
 });
