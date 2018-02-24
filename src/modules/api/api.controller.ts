@@ -17,10 +17,10 @@ export class ApiController {
 
     @Get('screener')
     getScreener(): Observable<any> {
-        return this.screenerService.getByEnvironmentDomain();
+        return this.screenerService.getLatest();
     }
 
-    @Get('programs')
+    @Get('program')
     getAllUserPrograms(): Observable<ProgramDto[]> {
         return this.programService.findAll();
     }

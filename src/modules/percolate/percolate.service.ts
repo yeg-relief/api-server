@@ -2,7 +2,6 @@ import { Component } from '@nestjs/common';
 import { Client, SearchParams } from "elasticsearch";
 import { ClientService } from "../db.elasticsearch/client.service"
 import { Observable } from "rxjs/Observable";
-import { ConstantsReadonly } from "../constants.readonly"
 import { ProgramDto } from "../Program/program.dto";
 import { ProgramService } from "../Program/program.service";
 const uniqBy = require("lodash.uniqby");

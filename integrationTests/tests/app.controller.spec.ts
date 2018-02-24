@@ -14,6 +14,59 @@ describe("/", () => {
     });
 });
 
+describe("/api", () => {
+
+    it("/GET screener -- returns latest screener", done => {
+        return request(instance)
+            .get("/api/screener/")
+            .expect(200)
+            .end( (err, res) => {
+                if (err) throw err;
+
+                delete res.body.created
+
+                expect(res.body).toMatchSnapshot();
+                done();
+            })
+    });
+
+    it("/GET programs -- returns all programs", done => {
+        return request(instance)
+            .get("/api/program/")
+            .expect(200)
+            .end( (err, res) => {
+                if (err) throw err;
+
+                const data = res.body.map( program => {
+                    delete program.created;
+                    return program;
+                }).sort( (a, b) => a.title.localeCompare(b.title));
+
+                expect(data).toMatchSnapshot();
+                done();
+            })
+    });
+
+    it("/GET:guid -- returns the specific program", done => {
+        return request(instance)
+            .get("/api/program/GiufEa3ziFwfBEgkjI2gIlfNkk")
+            .expect(200)
+            .end( (err, res) => {
+                if (err) throw err;
+
+                delete res.body.created;
+
+                expect(res.body).toMatchSnapshot();
+                done();
+            })
+    });
+
+    it("POST /notification -- returns programs", done => {
+        expect(true).toBe(true);
+        done()
+    })
+
+});
 
 describe("/protected", () => {
 
@@ -344,6 +397,75 @@ describe("/protected", () => {
                     done();
                 })
         })
-    })
-});
+    });
 
+    describe("/key/", () => {
+        it("can get all keys", done => {
+            return request(instance)
+                .get("/protected/key/")
+                .expect(200)
+                .end( (err, res) => {
+                    if (err) throw err;
+
+                    expect(res.body).toMatchSnapshot();
+                    done();
+                })
+        });
+
+        it("can create a new key", done => {
+            const data = {
+                "test_key": {
+                    type: "boolean"
+                }
+            };
+
+
+            return request(instance)
+               .post("/protected/key/")
+               .set('Content-Type', 'application/json')
+               .send(data)
+               .expect(201)
+               .end( (err, res) => {
+                   if (err) throw err;
+
+                   expect(res.body).toMatchSnapshot();
+                   done();
+               })
+        })
+    });
+
+    describe("/screener/", () => {
+        it("can get the screener with keys", done => {
+            return request(instance)
+                .get("/protected/screener/")
+                .expect(200)
+                .end( (err, res) => {
+                    if (err) throw err;
+
+                    delete res.body.response.created;
+
+                    expect(res.body).toMatchSnapshot();
+                    done();
+                })
+        });
+
+        it("can post a new screener", done => {
+           const data = {
+               questions: [ "imagine there were questions here" ]
+           };
+
+            return request(instance)
+                .post("/protected/screener/")
+                .set('Content-Type', 'application/json')
+                .send(data)
+                .expect(201)
+                .end( (err, res) => {
+                    if (err) throw err;
+
+                    expect(res.body).toMatchSnapshot();
+                    done();
+                })
+        })
+    })
+
+});

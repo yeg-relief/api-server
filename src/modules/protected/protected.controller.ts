@@ -6,18 +6,12 @@ import { ApplicationQueryService } from "../query/ApplicationQuery.service";
 import { ApplicationQueryDto } from "../query/ApplicationQuery.dto"
 import "rxjs/add/observable/fromPromise"
 import "rxjs/add/observable/from"
-import "rxjs/add/observable/forkJoin"
 import "rxjs/add/operator/map"
 import "rxjs/add/observable/zip"
-import "rxjs/add/operator/mapTo"
 import "rxjs/add/operator/mergeMap"
-import "rxjs/add/operator/retry"
-import "rxjs/add/observable/concat"
-import "rxjs/add/observable/merge"
 import "rxjs/add/observable/throw"
 import {KeyService} from "../key/key.service";
 import {KeyDto} from "../key/key.dto";
-import {ProgramDto} from "../Program/program.dto";
 import {ScreenerDto} from "../screener/screener.dto";
 import {ScreenerService} from "../screener/screener.service";
 import { ConstantsReadonly } from "../constants.readonly"
@@ -51,14 +45,14 @@ export class ProtectedController {
     @Post('/key')
     saveKey(@Body() data) {
         return Observable.fromPromise( this.keyService.create(data) )
-            .map(updated => ({ update: updated }) )
+            .map(update => ({ update }) )
     }
 
 
     @Get('/screener/')
     getScreenerWithKeys(): Observable<{[key:string]: ScreenerDto}> {
         return Observable.zip(
-            this.screenerService.getByEnvironmentDomain(),
+            this.screenerService.getLatest(),
             this.keyService.findAll()
         ).map( ([screener, keys]) => {
             return {
@@ -73,14 +67,14 @@ export class ProtectedController {
 
     @Post('/screener/')
     saveScreener(@Body() data) {
-        return this.screenerService.update((<ScreenerDto> data), this.constants.domain)
+        return this.screenerService.update((<ScreenerDto> data))
     }
 
     @Get('/program/')
     getProgramsWithQueries(): Observable<ApplicationProgramDto[]> {
         return Observable.zip(
-            this.programService.findAll().retry(3),
-            this.queryService.findAll().retry(3)
+            this.programService.findAll(),
+            this.queryService.findAll()
         ).map(([programs, queries]) => {
             return programs.map( program => {
                 return new ApplicationProgramDto(
