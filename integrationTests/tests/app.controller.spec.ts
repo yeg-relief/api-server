@@ -155,9 +155,8 @@ describe("/protected", () => {
                     };
 
                     extractedProps.queryIDs.sort( (a, b) => a.localeCompare(b));
-                    expect(extractedProps).toMatchSnapshot();
                     expect(applicationProgramDto.application.some(query => query.guid !== extractedProps.guid)).toBe(false);
-                    expect(applicationProgramDto.application.length).toBe(9);
+                    expect(applicationProgramDto.application.length).toBe(10);
                     done();
                 })
         });
@@ -343,7 +342,8 @@ describe("/protected", () => {
                 .end( (err, res) => {
                     if (err) throw err;
 
-                    expect(res.body.created).toEqual(true);
+                    expect(res.body.created).toEqual(null);
+                    expect(res.body.result).toEqual('created');
                     expect(res.body).toMatchSnapshot();
                     done();
                 })
@@ -393,7 +393,8 @@ describe("/protected", () => {
                 .end( (err, res) => {
                     if (err) throw err;
 
-                    expect(res.body.created).toEqual(true);
+                    expect(res.body.created).toEqual(null);
+                    expect(res.body.result).toEqual('updated');
                     expect(res.body).toMatchSnapshot();
                     done();
                 })
@@ -423,7 +424,8 @@ describe("/protected", () => {
                 .end( (err, res) => {
                     if (err) throw err;
 
-                    expect(res.body.created).toEqual(true);
+                    expect(res.body.created).toEqual(null);
+                    expect(res.body.result).toEqual("created");
                     expect(res.body).toMatchSnapshot();
                     done();
                 })
@@ -473,7 +475,7 @@ describe("/protected", () => {
                 .end( (err, res) => {
                     if (err) throw err;
 
-                    delete res.body.response.created;
+                    delete res.body.created;
 
                     expect(res.body).toMatchSnapshot();
                     done();

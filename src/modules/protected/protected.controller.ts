@@ -50,17 +50,14 @@ export class ProtectedController {
 
 
     @Get('/screener/')
-    getScreenerWithKeys(): Observable<{[key:string]: ScreenerDto}> {
+    getScreenerWithKeys(): Observable<any> {
         return Observable.zip(
             this.screenerService.getLatest(),
             this.keyService.findAll()
         ).map( ([screener, keys]) => {
             return {
-                response: {
-                    questions: screener.questions,
-                    created: screener.created,
-                    keys: keys
-                }
+                ...screener,
+                keys: keys
             }
         })
     }

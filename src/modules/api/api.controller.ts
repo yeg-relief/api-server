@@ -5,6 +5,7 @@ import { ScreenerService } from "../screener/screener.service"
 import { ProgramDto } from "../Program/program.dto";
 import { PercolateService } from "../percolate/percolate.service";
 import "rxjs/add/observable/fromPromise"
+import "rxjs/add/operator/do"
 
 @Controller('api')
 export class ApiController {
@@ -32,6 +33,7 @@ export class ApiController {
 
     @Post('notification')
     getProgramsFromForm(@Body() body): Observable<ProgramDto[]> {
-        return this.percolateService.precolate(body)
+        console.log(body)
+        return this.percolateService.precolate(body).do(console.log)
     }
 }

@@ -6,6 +6,7 @@ import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/fromPromise";
 import "rxjs/add/operator/pluck";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/reduce";
 
 @Component()
 export class KeyService {
@@ -53,6 +54,20 @@ export class KeyService {
                 delete keyObj['meta'];
                 delete keyObj['query'];
                 return keyObj
-            });
+            })
+            .map(obj => {
+                const array = [];
+
+                for(const name in obj) {
+                    if (obj.hasOwnProperty(name)) {
+                        array.push({
+                            name,
+                            type: obj[name].type
+                        })
+                    }
+                }
+
+                return array
+            })
     }
 }

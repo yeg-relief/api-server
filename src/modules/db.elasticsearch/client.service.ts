@@ -62,7 +62,10 @@ export class ClientService {
                 console.log(err);
                 return err
             })
-            .then(() => ({ created: true}) )
+            .then((res: any) => {
+                console.log(res)
+                return { created: res.created || null, result: res.result}
+            } )
     }
 
     delete(index: string, type: string, id?: string): Promise<any> {

@@ -1,6 +1,5 @@
 import { ApplicationQueryDto } from "./ApplicationQuery.dto"
 import {EsQueryDto} from "./EsQuery.dto";
-import {EsConditionModel, esQuery} from "./EsCondition.model";
 
 export class EsQueryModel {
     public applicationQueryDto: EsQueryDto = null;
@@ -20,6 +19,8 @@ export class EsQueryModel {
             throw new Error("EsQueryModel: unable to build query from invalid data.")
         }
 
+        console.log(this.data);
+
         const meta = {
             program_guid: this.data.guid,
             id: this.data.id
@@ -30,11 +31,13 @@ export class EsQueryModel {
                 must: this.data.conditions.map( (applicationCondition: any) => {
                     let type;
 
+                    const isNumberOrInteger = applicationCondition.key.type === "number" || applicationCondition.key.type === "integer";
+
                     if (applicationCondition.key.type === "boolean") {
                         type = "term"
-                    } else if (applicationCondition.key.type === "number" && applicationCondition.qualifier === "equal") {
+                    } else if (isNumberOrInteger && applicationCondition.qualifier === "equal") {
                         type = "term"
-                    } else if (applicationCondition.key.type === "number" && applicationCondition.qualifier !== "equal") {
+                    } else if (isNumberOrInteger && applicationCondition.qualifier !== "equal") {
                         type = "range"
                     }
 

@@ -1,9 +1,9 @@
 export class ProgramDto {
-    readonly created: number;
+    created: number;
+    guid: string;
     readonly description: string;
     readonly details: string;
     readonly externalLink: string;
-    readonly guid: string;
     readonly tags: string[];
     readonly title: string;
 

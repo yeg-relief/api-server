@@ -5,6 +5,8 @@ import { ClientService } from "../db.elasticsearch/client.service"
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/fromPromise"
 import "rxjs/add/operator/map"
+import "rxjs/add/operator/do"
+const uuidv4 = require("uuid/v4");
 
 @Component()
 export class ProgramService {
@@ -27,10 +29,13 @@ export class ProgramService {
     }
 
     findAll(): Observable<ProgramDto[]> {
-        return Observable.fromPromise( this.clientService.findAll(this.baseParams) );
+        return Observable.fromPromise( this.clientService.findAll(this.baseParams) )
+           // .do(programs => programs.map(({guid}) => guid).forEach(console.log));
     }
 
-    index(program: ProgramDto): Promise<any> {
+    index(program: ProgramDto) {
+        console.log(program);
+        program.created = Date.now();
         return this.clientService.index(program, this.INDEX, this.TYPE, program.guid)
     }
 
