@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "chai": "registry:npm/chai#3.5.0+20160723033700",
-    "node-uuid": "registry:npm/node-uuid#1.4.7+20160723033700"
-  },
-  "globalDependencies": {
-    "node": "registry:env/node#6.0.0+20170115054122"
-  }
-}

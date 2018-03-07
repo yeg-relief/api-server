@@ -1,18 +1,27 @@
 {
-	"compilerOptions": {
-		"target": "es6",
-		"module": "commonjs",
-        "experimentalDecorators": true,
-		"sourceMap": false,
-		"outDir": "build",
-		"types": [ "node", "tape" ],
-		"strictNullChecks": false
-	},
-    "include": [
-        "app/**/*",
-		"test/unit/**/*"
-    ],
-	"exclude": [
-		"node_modules"
-	]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "sourceMap": true,
+    "allowJs": true,
+    "outDir": "./dist",
+    "types": [
+      "node",
+      "jest",
+      "elasticsearch"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "integrationTests/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
