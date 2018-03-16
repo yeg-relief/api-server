@@ -12,16 +12,7 @@ export class ClientService {
         const log = this.constants.logLevel;
         const host = this.constants.host;
 
-        console.log("************************");
-        console.dir(host);
-        console.dir(process.env);
-        console.log("*************************");
-
         this._client = new Client({ host, log });
-        this.ping().catch(err => {
-            console.error(err);
-            process.exit(-1);
-        })
     }
 
     public ping(): Promise<any> {
