@@ -12,17 +12,15 @@ export class ClientService {
         const log = this.constants.logLevel;
         const host = this.constants.host;
 
-        // const host = this.connectionString ? this.connectionString : this.constants.host;
-        // const log = this.logLevel ? this.logLevel : this.constants.logLevel;
         this._client = new Client({ host, log });
+        this.ping().catch(err => {
+            console.error(err);
+            process.exit(-1);
+        })
     }
 
     public ping(): Promise<any> {
-        return this._client.ping({}).then(this.handlePing);
-    }
-
-    private handlePing(pingResponse: any): void {
-        return pingResponse;
+        return this._client.ping({});
     }
 
     get client() {
