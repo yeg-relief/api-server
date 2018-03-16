@@ -18,7 +18,7 @@ export class EsQueryModel {
         if (this.data === undefined || this.data === null) {
             throw new Error("EsQueryModel: unable to build query from invalid data.")
         }
-        
+
         const meta = {
             program_guid: this.data.guid,
             id: this.data.id
