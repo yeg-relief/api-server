@@ -32,7 +32,6 @@ export class ApplicationQueryService {
     async index(applicationDto: ApplicationQueryDto): Promise<any> {
         const model = new EsQueryModel(applicationDto);
         const esDto = model.buildEsQuery();
-        console.log(esDto);
         return this.queryService.index(esDto)
     }
 

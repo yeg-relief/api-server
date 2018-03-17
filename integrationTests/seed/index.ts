@@ -36,7 +36,6 @@ export class Seeder {
 
         ]).catch(e => {
             console.error(e);
-            console.log("HERHEHRE");
             process.exit(1);
         });
 
@@ -76,7 +75,6 @@ export class Seeder {
             index,
         })
             .catch(err => {
-                console.log("bebrebrbe");
                 console.log("\x1b[31m", err);
                 process.exit(69);
                 return Error(err)

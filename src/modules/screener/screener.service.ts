@@ -22,8 +22,6 @@ export class ScreenerService {
     }
 
     update(data: ScreenerDto, id?: string): Observable<{[key: string]: boolean}> {
-        console.log(id);
-        console.log(data);
         data.created = Date.now();
         return Observable.fromPromise( this.clientService.index(data, this.INDEX, this.TYPE, id || this.constants.domain) );
     }

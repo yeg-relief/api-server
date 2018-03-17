@@ -5,6 +5,7 @@
 /.idea
 /.awcache
 /.vscode
+integrationTests/seed/.idea/
 
 # misc
 npm-debug.log

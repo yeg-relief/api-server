@@ -30,11 +30,9 @@ export class ProgramService {
 
     findAll(): Observable<ProgramDto[]> {
         return Observable.fromPromise( this.clientService.findAll(this.baseParams) )
-           // .do(programs => programs.map(({guid}) => guid).forEach(console.log));
     }
 
     index(program: ProgramDto) {
-        console.log(program);
         program.created = Date.now();
         return this.clientService.index(program, this.INDEX, this.TYPE, program.guid)
     }

@@ -57,7 +57,6 @@ export class ClientService {
                 return err
             })
             .then((res: any) => {
-                console.log(res)
                 return { created: res.created || null, result: res.result}
             } )
     }

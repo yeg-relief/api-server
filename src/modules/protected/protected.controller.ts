@@ -21,8 +21,6 @@ const path = require('path');
 
 @Controller('protected')
 export class ProtectedController {
-    private readonly constants = new ConstantsReadonly();
-
     constructor(
         private programService: ProgramService,
         private queryService: ApplicationQueryService,

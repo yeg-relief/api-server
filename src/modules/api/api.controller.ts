@@ -33,7 +33,6 @@ export class ApiController {
 
     @Post('notification')
     getProgramsFromForm(@Body() body): Observable<ProgramDto[]> {
-        console.log(body)
-        return this.percolateService.precolate(body).do(console.log)
+        return this.percolateService.precolate(body);
     }
 }
