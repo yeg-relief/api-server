@@ -10,13 +10,22 @@ export class InitService {
         this.client = this.clientService.client
     }
 
+    async hasBeenInitialized(): Promise<boolean> {
+        const masterScreenerExists = await this.client.indices.exists({ index: 'master_screener'});
+        const questionsExists = await this.client.indices.exists({ index: 'questions'});
+        const programsExists = await this.client.indices.exists({ index: 'programs'});
+
+        return masterScreenerExists && questionsExists && programsExists;
+    }
+
 
     async initialize(force = false): Promise<any> {
         const masterScreenerExists = await this.client.indices.exists({ index: 'master_screener'});
         const questionsExists = await this.client.indices.exists({ index: 'questions'});
         const programsExists = await this.client.indices.exists({ index: 'programs'});
 
-        const hasBeenInitialized = masterScreenerExists || questionsExists || programsExists;
+        const hasBeenInitialized = masterScreenerExists && questionsExists && programsExists;
+
 
         if (hasBeenInitialized && !force) {
             throw new Error("Database has already been initialized.");

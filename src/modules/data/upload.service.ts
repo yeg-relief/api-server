@@ -40,6 +40,7 @@ export class UploadService {
                 body: { properties: { ...normalizedMapping } }
             })
         } else {
+            console.dir(Object.keys(data));
             throw new Error("No queryMappings")
         }
         if (data.queries) {

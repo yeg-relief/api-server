@@ -16,6 +16,14 @@ export class DataController {
         return this.backupService.execute()
     }
 
+    @Get('/has-been-initialized')
+    async hasBeenInitialized(): Promise<any> {
+        const hasBeenInitialized = await this.initService.hasBeenInitialized();
+        return Promise.resolve({
+            hasBeenInitialized
+        })
+    }
+
     @Post('/init')
     init(@Body() body): Promise<any> {
         return this.initService.initialize(body.force)
