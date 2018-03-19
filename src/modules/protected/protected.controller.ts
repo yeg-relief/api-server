@@ -28,8 +28,6 @@ export class ProtectedController {
         private screenerService: ScreenerService
     ) {}
 
-
-
     @Get('/login/')
     loginAlwaysTrue(): Observable<{[key: string]: boolean}> {
         return Observable.of({created: true})
@@ -42,10 +40,9 @@ export class ProtectedController {
 
     @Post('/key')
     saveKey(@Body() data) {
-        return Observable.fromPromise( this.keyService.create(data) )
+        return Observable.fromPromise( this.keyService.create(data.key || data) )
             .map(update => ({ update }) )
     }
-
 
     @Get('/screener/')
     getScreenerWithKeys(): Observable<any> {
@@ -157,9 +154,5 @@ export class ProtectedController {
     @Put('/program-description/')
     updateUserFacingProgram(@Body() data): Promise<any> {
         return this.programService.index(data)
-    }
-
-    writeError(err) {
-        fs.writeFileSync(path.resolve(__dirname, "error.json"), JSON.stringify(err));
     }
 }

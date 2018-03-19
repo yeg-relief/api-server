@@ -18,10 +18,7 @@ export class DataController {
 
     @Get('/has-been-initialized')
     async hasBeenInitialized(): Promise<any> {
-        const hasBeenInitialized = await this.initService.hasBeenInitialized();
-        return Promise.resolve({
-            hasBeenInitialized
-        })
+        return this.initService.hasBeenInitialized()
     }
 
     @Post('/init')

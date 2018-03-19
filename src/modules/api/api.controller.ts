@@ -4,8 +4,6 @@ import { ProgramService } from "../Program/program.service";
 import { ScreenerService } from "../screener/screener.service"
 import { ProgramDto } from "../Program/program.dto";
 import { PercolateService } from "../percolate/percolate.service";
-import "rxjs/add/observable/fromPromise"
-import "rxjs/add/operator/do"
 
 @Controller('api')
 export class ApiController {
@@ -14,7 +12,6 @@ export class ApiController {
         private screenerService: ScreenerService,
         private percolateService: PercolateService
     ) {}
-
 
     @Get('screener')
     getScreener(): Observable<any> {
@@ -27,8 +24,8 @@ export class ApiController {
     }
 
     @Get('program/:guid')
-    getProgramByGuid(@Param() params): Observable<ProgramDto> {
-        return Observable.fromPromise( this.programService.getByGuid(params.guid) );
+    getProgramByGuid(@Param() params): Promise<ProgramDto> {
+        return this.programService.getByGuid(params.guid);
     }
 
     @Post('notification')

@@ -10,29 +10,23 @@ import "rxjs/add/operator/reduce";
 
 @Component()
 export class KeyService {
-    private readonly INDEX = "master_screener";
-    private readonly TYPE = "queries";
     private client: Client;
     private readonly baseParams = {
-        index: this.INDEX,
-        type: this.TYPE
+        index: "master_screener",
+        type: "queries"
     };
 
-    constructor(
-        private readonly clientService: ClientService
-    ) {
+    constructor(private readonly clientService: ClientService) {
         this.client = this.clientService.client;
     }
 
     create(key: KeyDto): Promise<any> {
-        const name = Object.keys(key)[0] || null;
-
         return this.client.indices.putMapping({
             ...this.baseParams,
             body: {
                 properties: {
-                    [name]: {
-                        type: key[name]['type']  // || "integer"
+                    [key.name]: {
+                        type: key['type'] === "number" ? "integer" : "boolean"
                     }
                 }
             }
