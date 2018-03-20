@@ -11,7 +11,7 @@ describe('ProgramService', () => {
         details: "test details",
         externalLink: "test externalLink",
         guid: "test guid7",
-        tags: "test tags",
+        tags: ["test tags"],
         title: "test title"
     };
 
@@ -63,7 +63,7 @@ describe('ProgramService', () => {
             // tested by hand against db grabs 36
             const res = await programService.findAll();
             expect(res).toMatchObject(result);
-            expect(res.length).toBe(1);
+            expect(res['length']).toBe(1);
         })
     });
 
@@ -76,7 +76,7 @@ describe('ProgramService', () => {
                 "details": "test details",
                 "externalLink": "test externalLink",
                 "guid": "test guid6",
-                "tags": "test tags",
+                "tags": ["test tags"],
                 "title": "test title"
             });
 
@@ -105,7 +105,7 @@ describe('ProgramService', () => {
                     "details": "test details",
                     "externalLink": "test externalLink",
                     "guid": "test guid6",
-                    "tags": "test tags",
+                    "tags": ["test tags"],
                     "title": "test title"
                 })
             ];
