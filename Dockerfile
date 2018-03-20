@@ -9,4 +9,4 @@ RUN npm run prestart:prod
 
 EXPOSE 3000
 
-CMD ["pm2-runtime", "dist/server.js", "--name", "api-server"]
+CMD ["pm2-runtime", "dist/src/server.js", "--name", "api-server"]
