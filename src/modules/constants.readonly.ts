@@ -1,7 +1,8 @@
 export class ConstantsReadonly {
-    readonly host:string = determineHost();
-    readonly logLevel:string = determineLogLevel();
-    readonly domain:string = determineTenant();
+    readonly host: string = determineHost();
+    readonly logLevel: string = determineLogLevel();
+    readonly domain: string = determineTenant();
+    readonly logPath: string = '/var/log/'
 }
 
 function determineHost() {

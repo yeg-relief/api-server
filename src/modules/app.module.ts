@@ -6,6 +6,7 @@ import { KeyModule } from "./key"
 import { ProtectedModule } from "./protected"
 import { ApiModule } from "./api"
 import { DataModule } from './data/data.module';
+import { LogModule } from './log/log.module'
 
 @Module({
   modules: [
@@ -14,7 +15,8 @@ import { DataModule } from './data/data.module';
       KeyModule,
       ProtectedModule,
       ApiModule,
-      DataModule
+      DataModule,
+      LogModule
   ],
   controllers: [AppController],
   components: [],

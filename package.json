@@ -4,11 +4,11 @@
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon",
-    "start:watch": "nodemon",
-    "prestart:prod": "tsc",
-    "start:prod": "node dist/server.js",
-    "unit-test": "jest \"(/__tests__/.*|\\.(test))\\.(ts|tsx|js)$\"",
+    "start": "NODE_ENV=development nodemon",
+    "start:watch": "NODE_ENV=development nodemon",
+    "prestart:prod": "NODE_ENV=production tsc",
+    "start:prod": "NODE_ENV=production node dist/server.js",
+    "unit-test": "NODE_ENV=test jest \"(/__tests__/.*|\\.(test))\\.(ts|tsx|js)$\"",
     "integration-test": "jest \"(/__tests__/.*|\\.(spec))\\.(ts|tsx|js)$\" --forceExit",
     "integration-test-update": "jest \"(/__tests__/.*|\\.(spec))\\.(ts|tsx|js)$\" -u --forceExit"
   },
