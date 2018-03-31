@@ -21,7 +21,7 @@ export class LogService {
 
         fs.writeFile(_path, JSON.stringify(data), err => {
             if (err) {
-                throw err
+                console.error("COULD NOT WRITE FORM SUBMISSION")
             }
             console.log("form submission saved!")
         });
@@ -34,7 +34,7 @@ export class LogService {
 
         fs.writeFile(_path, JSON.stringify(namesAndGuids), err => {
             if (err) {
-                throw err
+                console.error("COULD NOT WRITE PROGRAM RESULTS")
             }
             console.log("result saved!")
         })
