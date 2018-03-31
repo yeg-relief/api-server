@@ -2,7 +2,7 @@ import { Component } from '@nestjs/common';
 import { ConstantsReadonly } from "../constants.readonly";
 import * as fs from 'fs';
 import * as path from 'path';
-import {ProgramDto} from "../Program/program.dto";
+import { ProgramDto } from "../Program";
 
 @Component()
 export class LogService {
