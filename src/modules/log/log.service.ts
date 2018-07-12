@@ -17,27 +17,11 @@ export class LogService {
     }
 
     logFormSubmission(data: Object) {
-        const _path = path.resolve(this.LOG_PATH, 'youcanbenefit', 'form_submission', `${String(Date.now())}.json` );
-
-        fs.writeFile(_path, JSON.stringify(data), err => {
-            if (err) {
-                throw err
-            }
-            console.log("form submission saved!")
-        });
+        /*no-op*/
     }
 
     logProgramResults(data: ProgramDto[]) {
-        const _path = path.resolve(this.LOG_PATH, 'youcanbenefit', 'form_results', `${String(Date.now())}.json` );
-
-        const namesAndGuids = data.map(({title, guid}) => ({title, guid}));
-
-        fs.writeFile(_path, JSON.stringify(namesAndGuids), err => {
-            if (err) {
-                throw err
-            }
-            console.log("result saved!")
-        })
+        /*no-op*/
     }
 
 }
