@@ -21,7 +21,7 @@ This is the `API` for the `YouCanBenefit` project.
 ### Docker
 
 * `docker build -t youcanbenefit-api .`
-* `docker run -p 3000:3000 youcanebenfit-api`
+* `docker run -p 3000:3000 youcanbenefit-api`
 
 ---
 
