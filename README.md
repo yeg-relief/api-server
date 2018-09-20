@@ -13,7 +13,7 @@ This is the `API` for the `YouCanBenefit` project.
 * `npm run prestart:prod`
 * `npm run start:prod`
   * one should use a process management tool
-* `http get localhost:3000/data/init`
+* `http POST localhost:3000/data/init`
   * this will create and map required elasticsearch indices
 
 ---
