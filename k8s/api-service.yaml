@@ -16,3 +16,4 @@ spec:
     technology: nodejs
     tier: backend
     product: youcanbenefit
+  type: NodePort
