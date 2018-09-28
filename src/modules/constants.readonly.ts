@@ -6,6 +6,8 @@ export class ConstantsReadonly {
 }
 
 function determineHost() {
+    if (process.env.ELASTICSEARCH_URL) return process.env.ELASTICSEARCH_URL;
+
     if (process.env.COMPOSER_ENV === "true") return `elasticsearch:${process.env.ELASTICSEARCH_PORT}`;
 
     if (process.env.NODE_ENV === "INTEGRATION_TEST") return "http://localhost:9400";
